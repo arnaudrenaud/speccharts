@@ -3,10 +3,13 @@ import { Project, Node } from "ts-morph";
 const project = new Project();
 const sourceFile = project.addSourceFileAtPath("src/index.spec.ts");
 
-function visit(
-  node: Node,
-  parentId?: string
-): { type: string; content: string; children: any } {
+type SpecNode = {
+  type: "case" | "behavior";
+  content: string;
+  children: SpecNode[];
+};
+
+function visit(node: Node, parentId?: string): SpecNode {
   // If it's a call expression, check what function is being called
   if (Node.isCallExpression(node)) {
     const expr = node.getExpression();
@@ -26,13 +29,12 @@ function visit(
       return {
         type: functionName === "describe" ? "case" : "behavior",
         content,
-        children: node.forEachChild(visit),
+        children: node.getChildren().map((node) => visit(node)),
       };
     }
-  } else {
-    // Recurse into children
-    return node.forEachChild(visit);
   }
+  // Recurse into children
+  return node.forEachChild(visit);
 }
 
 console.log(visit(sourceFile));
