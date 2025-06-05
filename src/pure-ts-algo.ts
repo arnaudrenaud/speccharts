@@ -65,12 +65,15 @@ function parseTestStructure(sourceCode: string, fileName: string): FileResult {
   return result;
 }
 
-const SOURCE_FILE_PATH = "src/index.spec.ts";
+const SOURCE_FILE_PATH = "src/getEBXUser.spec.ts";
 const result = parseTestStructure(
   fs.readFileSync(SOURCE_FILE_PATH).toString(),
   SOURCE_FILE_PATH
 );
 
+function escapeMermaidLabelMarkdown(text: string): string {
+  return text.replace(/`/g, "\\`");
+}
 function generateMermaidFlowchart(result: FileResult): string {
   let lines: string[] = ["flowchart TD"];
 
@@ -85,7 +88,7 @@ function generateMermaidFlowchart(result: FileResult): string {
     nodes: string[]
   ): string {
     const thisId = getNodeId();
-    const label = `${node.type}: ${node.name}`;
+    const label = `${node.type}: ${escapeMermaidLabelMarkdown(node.name)}`;
 
     nodes.push(`${thisId}["${label}"]`);
     if (parentId) {
