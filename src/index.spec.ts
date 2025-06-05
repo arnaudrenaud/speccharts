@@ -7,7 +7,7 @@ function sum(a: number, b: number): number {
 sum(1, 2);
 
 describe("Sum", () => {
-  describe("does it?", () => {
+  describe("does it do it?", () => {
     describe("yes", () => {
       it("does this", () => {});
     });
@@ -22,6 +22,6 @@ describe("Sum", () => {
   });
 
   it("does not crash", () => {
-    expect(sum(1, 2)).not.toThrow();
+    expect(() => sum(1, 2)).not.toThrow();
   });
 });
