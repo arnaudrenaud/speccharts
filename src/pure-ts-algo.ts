@@ -71,4 +71,45 @@ const result = parseTestStructure(
   SOURCE_FILE_PATH
 );
 
-console.log(JSON.stringify(result, null, 2));
+function generateMermaidFlowchart(result: FileResult): string {
+  let lines: string[] = ["flowchart TD"];
+
+  let nodeId = 0;
+  function getNodeId() {
+    return `N${nodeId++}`;
+  }
+
+  function walk(
+    node: NodeResult,
+    parentId: string | null,
+    nodes: string[]
+  ): string {
+    const thisId = getNodeId();
+    const label = `${node.type}: ${node.name}`;
+
+    nodes.push(`${thisId}["${label}"]`);
+    if (parentId) {
+      nodes.push(`${parentId} --> ${thisId}`);
+    }
+
+    if (node.children) {
+      for (const child of node.children) {
+        walk(child, thisId, nodes);
+      }
+    }
+
+    return thisId;
+  }
+
+  const rootId = getNodeId();
+  lines.push(`${rootId}["file: ${result.name}"]`);
+
+  for (const child of result.children) {
+    walk(child, rootId, lines);
+  }
+
+  return lines.join("\n");
+}
+
+const mermaidCode = generateMermaidFlowchart(result);
+console.log(mermaidCode);
