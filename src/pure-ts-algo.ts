@@ -88,9 +88,11 @@ function generateMermaidFlowchart(result: FileResult): string {
     nodes: string[]
   ): string {
     const thisId = getNodeId();
-    const label = `${node.type}: ${escapeMermaidLabelMarkdown(node.name)}`;
+    const label = escapeMermaidLabelMarkdown(node.name);
 
-    nodes.push(`${thisId}["${label}"]`);
+    const isQuestion = node.type === "describe" && node.name.endsWith("?");
+
+    nodes.push(`${thisId}${isQuestion ? `{"${label}"}` : `["${label}"]`}`);
     if (parentId) {
       nodes.push(`${parentId} --> ${thisId}`);
     }
