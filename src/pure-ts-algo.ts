@@ -80,7 +80,7 @@ function endsWithQuestionMark(text: string): boolean {
 }
 
 function generateMermaidFlowchart(result: FileResult): string {
-  let lines: string[] = [`%% ${result.name}`, "flowchart TD"];
+  let lines: string[] = ["flowchart TD"];
   let nodeId = 0;
 
   function getNodeId() {
@@ -126,6 +126,9 @@ function generateMermaidFlowchart(result: FileResult): string {
 
     return thisId;
   }
+
+  // Add standalone title node
+  lines.push(`title["**${escapeMermaidLabelMarkdown(result.name)}**"]`);
 
   for (const child of result.children) {
     walk(child, null, lines);
