@@ -74,10 +74,15 @@ const result = parseTestStructure(
 function escapeMermaidLabelMarkdown(text: string): string {
   return text.replace(/`/g, "\\`");
 }
+
+function endsWithQuestionMark(text: string): boolean {
+  return text.trim().endsWith("?");
+}
+
 function generateMermaidFlowchart(result: FileResult): string {
   let lines: string[] = ["flowchart TD"];
-
   let nodeId = 0;
+
   function getNodeId() {
     return `N${nodeId++}`;
   }
@@ -90,16 +95,32 @@ function generateMermaidFlowchart(result: FileResult): string {
     const thisId = getNodeId();
     const label = escapeMermaidLabelMarkdown(node.name);
 
-    const isQuestion = node.type === "describe" && node.name.endsWith("?");
+    nodes.push(
+      `${thisId}${
+        endsWithQuestionMark(label) ? `{"${label}"}` : `["${label}"]`
+      }`
+    );
 
-    nodes.push(`${thisId}${isQuestion ? `{"${label}"}` : `["${label}"]`}`);
     if (parentId) {
       nodes.push(`${parentId} --> ${thisId}`);
     }
 
     if (node.children) {
       for (const child of node.children) {
-        walk(child, thisId, nodes);
+        // Custom rule:
+        if (
+          endsWithQuestionMark(node.name) &&
+          child.type === "describe" &&
+          child.children
+        ) {
+          for (const grandchild of child.children) {
+            const grandchildId = walk(grandchild, null, nodes);
+            const edgeLabel = escapeMermaidLabelMarkdown(child.name);
+            nodes.push(`${thisId} -- ${edgeLabel} --> ${grandchildId}`);
+          }
+        } else {
+          walk(child, thisId, nodes);
+        }
       }
     }
 
@@ -107,7 +128,9 @@ function generateMermaidFlowchart(result: FileResult): string {
   }
 
   const rootId = getNodeId();
-  lines.push(`${rootId}["file: ${result.name}"]`);
+  lines.push(
+    `${rootId}["**file**: ${escapeMermaidLabelMarkdown(result.name)}"]`
+  );
 
   for (const child of result.children) {
     walk(child, rootId, lines);
