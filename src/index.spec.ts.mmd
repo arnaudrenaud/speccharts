@@ -1,0 +1,15 @@
+flowchart TD
+title["**src/index.spec.ts**"]
+N0(["Sum"])
+N1{"does it do it?"}
+N0 --> N1
+N2(["does this"])
+N1 -- yes --> N2
+N3(["does that"])
+N1 -- no --> N3
+N4["when passed two numbers"]
+N0 --> N4
+N5(["returns the sum of two numbers"])
+N4 --> N5
+N6(["does not crash"])
+N4 --> N6

@@ -1,5 +1,7 @@
 import ts from "typescript";
+import path from "path";
 import fs from "fs";
+import glob from "fast-glob";
 
 type NodeResult = {
   type: "describe" | "it";
@@ -13,7 +15,7 @@ type FileResult = {
   children: NodeResult[];
 };
 
-function parseTestStructure(sourceCode: string, fileName: string): FileResult {
+function parseTestFile(sourceCode: string, fileName: string): FileResult {
   const sourceFile = ts.createSourceFile(
     fileName,
     sourceCode,
@@ -64,12 +66,6 @@ function parseTestStructure(sourceCode: string, fileName: string): FileResult {
 
   return result;
 }
-
-const SOURCE_FILE_PATH = "src/index.spec.ts";
-const result = parseTestStructure(
-  fs.readFileSync(SOURCE_FILE_PATH).toString(),
-  SOURCE_FILE_PATH
-);
 
 function escapeMermaidLabelMarkdown(text: string): string {
   return text.replace(/`/g, "\\`");
@@ -141,5 +137,29 @@ function generateMermaidFlowchart(result: FileResult): string {
   return lines.join("\n");
 }
 
-const mermaidCode = generateMermaidFlowchart(result);
-console.log(mermaidCode);
+async function runOnAllTests(rootDir: string = ".") {
+  const patterns = ["src/**/*.spec.{ts,tsx,js,jsx}"];
+  const entries = await glob(patterns, { cwd: rootDir, absolute: true });
+
+  for (const fileName of entries) {
+    try {
+      const parsed = parseTestFile(
+        fs.readFileSync(fileName).toString(),
+        path.relative(rootDir, fileName)
+      );
+      const mermaid = generateMermaidFlowchart(parsed);
+      const mmdPath = `${fileName}.mmd`;
+      fs.writeFileSync(mmdPath, mermaid, "utf8");
+      console.log(
+        `✅ ${path.relative(rootDir, fileName)} → ${path.relative(
+          rootDir,
+          mmdPath
+        )}`
+      );
+    } catch (err) {
+      console.error(`❌ Failed to process ${fileName}`, err);
+    }
+  }
+}
+
+runOnAllTests();
