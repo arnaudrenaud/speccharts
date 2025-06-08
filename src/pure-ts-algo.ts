@@ -139,25 +139,30 @@ function generateMermaidFlowchart(result: FileResult): string {
 
 async function runOnAllTests(rootDir: string = ".") {
   const patterns = ["src/**/*.spec.{ts,tsx,js,jsx}"];
-  const entries = await glob(patterns, { cwd: rootDir, absolute: true });
+  const testFileRelativePaths = (
+    await glob(patterns, { cwd: rootDir, absolute: true })
+  ).map((filePath) => path.relative(rootDir, filePath));
 
-  for (const fileName of entries) {
+  const specchartsDir = path.join(rootDir, "speccharts");
+  fs.mkdirSync(specchartsDir, { recursive: true });
+
+  for (const testFileRelativePath of testFileRelativePaths) {
     try {
       const parsed = parseTestFile(
-        fs.readFileSync(fileName).toString(),
-        path.relative(rootDir, fileName)
+        fs.readFileSync(testFileRelativePath).toString(),
+        testFileRelativePath
       );
       const mermaid = generateMermaidFlowchart(parsed);
-      const mmdPath = `${fileName}.mmd`;
+      const mmdPath = path.join(
+        specchartsDir,
+        `${path.basename(testFileRelativePath)}.mmd`
+      );
       fs.writeFileSync(mmdPath, mermaid, "utf8");
       console.log(
-        `✅ ${path.relative(rootDir, fileName)} → ${path.relative(
-          rootDir,
-          mmdPath
-        )}`
+        `✅ ${path.relative(rootDir, testFileRelativePath)} → ${mmdPath}`
       );
     } catch (err) {
-      console.error(`❌ Failed to process ${fileName}`, err);
+      console.error(`❌ Failed to process ${testFileRelativePath}`, err);
     }
   }
 }
