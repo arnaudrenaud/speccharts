@@ -65,7 +65,7 @@ function parseTestStructure(sourceCode: string, fileName: string): FileResult {
   return result;
 }
 
-const SOURCE_FILE_PATH = "src/getEBXUser.spec.ts";
+const SOURCE_FILE_PATH = "src/index.spec.ts";
 const result = parseTestStructure(
   fs.readFileSync(SOURCE_FILE_PATH).toString(),
   SOURCE_FILE_PATH
@@ -97,7 +97,11 @@ function generateMermaidFlowchart(result: FileResult): string {
 
     nodes.push(
       `${thisId}${
-        endsWithQuestionMark(label) ? `{"${label}"}` : `(["${label}"])`
+        endsWithQuestionMark(label)
+          ? `{"${label}"}`
+          : node.type === "describe" && parentId
+          ? `["${label}"]`
+          : `(["${label}"])`
       }`
     );
 
