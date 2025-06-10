@@ -68,7 +68,7 @@ function parseTestFile(sourceCode: string, fileName: string): FileResult {
 }
 
 function escapeMermaidLabelMarkdown(text: string): string {
-  return text.replace(/`/g, "\\`");
+  return text.replace(/`/g, "\\`").replace(/"/g, "&quot");
 }
 
 function endsWithQuestionMark(text: string): boolean {
