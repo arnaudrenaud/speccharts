@@ -1,47 +1,33 @@
-export type Config = {
-  specFilePatterns: string[];
-  // and more…
-};
-
-type FileWithContent = {
-  name: string;
-  content: string;
-};
-
-type SpecEntity = {};
-
-type ChartFromSpec = {
-  specFile: FileWithContent;
-  chart: string;
-};
+import { Config, FileWithContent, SpecTree, SpecChart } from "./types";
 
 export class SpecChartsGenerator {
   constructor(
     private config: Config,
-    private getFileNames: (patterns: string[]) => Promise<string[]>,
-    private readFile: (name: string) => Promise<FileWithContent>,
+    private getFilePaths: (patterns: string[]) => Promise<string[]>,
+    private readFile: (path: string) => Promise<FileWithContent>,
     private writeFile: (file: FileWithContent) => Promise<void>
   ) {}
 
-  getSpecTree(fileContent: string): SpecEntity {
-    // TODO
-    return {};
-  }
-
-  getChart(specParts: SpecEntity): string {
-    // TODO
-    return "";
-  }
-
-  getChartFromSpecFile(specFile: FileWithContent): ChartFromSpec {
+  getSpecTree(file: FileWithContent): SpecTree {
     // TODO
     return {
-      specFile,
-      chart: this.getChart(this.getSpecTree(specFile.content)),
+      name: file.path,
+      children: [],
     };
   }
 
-  getChartFiles(charts: ChartFromSpec[]): FileWithContent[] {
+  getChart(specTree: SpecTree): string {
+    return "";
+  }
+
+  getChartFromSpecFile(specFile: FileWithContent): SpecChart {
+    return {
+      specFile,
+      chart: this.getChart(this.getSpecTree(specFile)),
+    };
+  }
+
+  getChartFiles(charts: SpecChart[]): FileWithContent[] {
     // TODO
     // can be either an array:
     // - with one chart per file,
@@ -50,10 +36,10 @@ export class SpecChartsGenerator {
   }
 
   async generate() {
-    const specFileNames = await this.getFileNames(this.config.specFilePatterns);
-    const specFiles = await Promise.all(specFileNames.map(this.readFile));
-    const chartsForSpecFiles = specFiles.map(this.getChartFromSpecFile);
-    const filesToWrite = this.getChartFiles(chartsForSpecFiles);
+    const specFilePaths = await this.getFilePaths(this.config.specFilePatterns);
+    const specFiles = await Promise.all(specFilePaths.map(this.readFile));
+    const charts = specFiles.map(this.getChartFromSpecFile);
+    const filesToWrite = this.getChartFiles(charts);
     await Promise.all(filesToWrite.map(this.writeFile));
   }
 }
