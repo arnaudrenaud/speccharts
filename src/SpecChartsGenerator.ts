@@ -8,38 +8,39 @@ export class SpecChartsGenerator {
     private writeFile: (file: FileWithContent) => Promise<void>
   ) {}
 
-  getSpecTree(file: FileWithContent): SpecTree {
+  getSpecTree = (file: FileWithContent): SpecTree => {
     // TODO
     return {
       name: file.path,
       children: [],
     };
-  }
+  };
 
-  getChart(specTree: SpecTree): string {
+  getChart = (specTree: SpecTree): string => {
     return "";
-  }
+  };
 
-  getChartFromSpecFile(specFile: FileWithContent): SpecChart {
+  getChartFromSpecFile = (specFile: FileWithContent): SpecChart => {
     return {
       specFile,
       chart: this.getChart(this.getSpecTree(specFile)),
     };
-  }
+  };
 
-  getChartFiles(charts: SpecChart[]): FileWithContent[] {
+  getChartFiles = (charts: SpecChart[]): FileWithContent[] => {
     // TODO
     // can be either an array:
     // - with one chart per file,
     // - or a single file with all charts
     return [];
-  }
+  };
 
-  async generate() {
+  generate = async () => {
+    console.log(this);
     const specFilePaths = await this.getFilePaths(this.config.specFilePatterns);
     const specFiles = await Promise.all(specFilePaths.map(this.readFile));
     const charts = specFiles.map(this.getChartFromSpecFile);
     const filesToWrite = this.getChartFiles(charts);
     await Promise.all(filesToWrite.map(this.writeFile));
-  }
+  };
 }
