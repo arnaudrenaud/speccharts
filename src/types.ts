@@ -1,7 +1,5 @@
 export type Config = {
   specFilePatterns: string[];
-  outputDir?: string;
-  outputFormat?: "single" | "split"; // support future flexibility
 };
 
 export type FileWithContent = {
