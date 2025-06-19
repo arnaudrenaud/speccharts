@@ -1,8 +1,8 @@
 import { FileWithContent, SpecChart } from "../../types";
-import getChart from "../getChart/getChart";
-import getSpecTree from "../getSpecTree/getSpecTree";
+import { getSpecTree } from "../getSpecTree/getSpecTree";
+import { getChart } from "../getChart/getChart";
 
-export default (specFile: FileWithContent): SpecChart => {
+export const getChartFromSpecFile = (specFile: FileWithContent): SpecChart => {
   return {
     specFile,
     chart: getChart(getSpecTree(specFile)),

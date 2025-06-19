@@ -34,7 +34,7 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
   }
 }
 
-export default (specFile: FileWithContent): SpecTree => {
+export const getSpecTree = (specFile: FileWithContent): SpecTree => {
   const sourceFile = ts.createSourceFile(
     specFile.path,
     specFile.content,

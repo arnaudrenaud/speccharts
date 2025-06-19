@@ -8,7 +8,7 @@ function endsWithQuestionMark(text: string): boolean {
   return text.trim().endsWith("?");
 }
 
-export default (specTree: SpecTree): string => {
+export const getChart = (specTree: SpecTree): string => {
   let lines: string[] = ["flowchart TD"];
   let nodeId = 0;
 

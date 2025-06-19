@@ -1,6 +1,6 @@
-import getChartFiles from "./getChartFiles/getChartFiles";
-import getChartFromSpecFile from "./getChartFromSpecFile/getChartFromSpecFile";
 import { GenerateArgs, FileWithContent } from "../types";
+import { getChartFromSpecFile } from "./getChartFromSpecFile/getChartFromSpecFile";
+import { getChartFiles } from "./getChartFiles/getChartFiles";
 
 export default (
     getFilePaths: (patterns: string[]) => Promise<string[]>,
