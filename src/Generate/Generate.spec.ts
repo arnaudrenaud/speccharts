@@ -1,7 +1,7 @@
-import { SpecChartsGenerator } from "./SpecChartsGenerator";
-import { FileWithContent } from "./types";
+import { FileWithContent } from "../types";
+import Generate from "./Generate";
 
-describe("SpecChartsGenerator (integration tests)", () => {
+describe("Generate", () => {
   it("writes chart file based on spec file", async () => {
     const SPEC_FILE_NAME = "math.spec.ts";
     const SPEC_FILE_CONTENT = `
@@ -13,10 +13,8 @@ describe("SpecChartsGenerator (integration tests)", () => {
     `;
 
     const writeFileMock = jest.fn();
-    const generator = new SpecChartsGenerator(
-      {
-        specFilePatterns: [SPEC_FILE_NAME],
-      },
+
+    const generate = Generate(
       async () => [SPEC_FILE_NAME],
       async (path) => {
         return {
@@ -27,7 +25,9 @@ describe("SpecChartsGenerator (integration tests)", () => {
       writeFileMock
     );
 
-    await generator.generate();
+    await generate({
+      specFilePatterns: [SPEC_FILE_NAME],
+    });
 
     expect(writeFileMock).toHaveBeenCalledTimes(1);
     expect(writeFileMock).toHaveBeenCalledWith({
