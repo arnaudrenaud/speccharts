@@ -2,7 +2,7 @@ export type GenerateArgs = {
   specFilePatterns: string[];
 };
 
-export type FileWithContent = {
+export type File = {
   path: string;
   content: string;
 };
@@ -23,6 +23,6 @@ export type SpecTree = {
 };
 
 export type SpecChart = {
-  specFile: FileWithContent;
+  specFile: File;
   chart: string;
 };

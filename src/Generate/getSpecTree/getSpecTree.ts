@@ -1,6 +1,6 @@
 import ts from "typescript";
 
-import { FileWithContent, SpecNode, SpecTree } from "../../types";
+import { File, SpecNode, SpecTree } from "../../types";
 
 function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
   if (
@@ -34,7 +34,7 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
   }
 }
 
-export const getSpecTree = (specFile: FileWithContent): SpecTree => {
+export const getSpecTree = (specFile: File): SpecTree => {
   const sourceFile = ts.createSourceFile(
     specFile.path,
     specFile.content,

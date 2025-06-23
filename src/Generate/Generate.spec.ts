@@ -1,4 +1,4 @@
-import { FileWithContent } from "../types";
+import { File } from "../types";
 import Generate from "./Generate";
 
 describe("Generate", () => {
@@ -26,12 +26,7 @@ describe("Generate", () => {
       writeFileMock
     );
 
-    await generate({
-      specFilePatterns: [SPEC_FILE_FULL_PATH],
-    });
-
-    expect(writeFileMock).toHaveBeenCalledTimes(1);
-    expect(writeFileMock.mock.calls[0][0]).toMatchObject({
+    const expectedResult: File = {
       path: `${SPEC_FILE_BASE_PATH}.mmd`,
       content: `flowchart TD
 title["**${SPEC_FILE_FULL_PATH}**"]
@@ -40,6 +35,15 @@ N1["add"]
 N0 --> N1
 N2(["adds two numbers"])
 N1 --> N2`,
-    } as FileWithContent);
+    };
+
+    const actualResult = await generate({
+      specFilePatterns: [SPEC_FILE_FULL_PATH],
+    });
+
+    expect(actualResult).toEqual(expectedResult);
+
+    expect(writeFileMock).toHaveBeenCalledTimes(1);
+    expect(writeFileMock.mock.calls[0][0]).toMatchObject(expectedResult);
   });
 });
