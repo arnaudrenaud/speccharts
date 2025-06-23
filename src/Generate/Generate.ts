@@ -2,7 +2,8 @@ import { GenerateArgs, File } from "../types";
 import { getChartFromSpecFile } from "./getChartFromSpecFile/getChartFromSpecFile";
 import { getChartFiles } from "./getChartFiles/getChartFiles";
 
-export default (
+export const Generate =
+  (
     getFilePaths: (patterns: string[]) => Promise<string[]>,
     readFile: (path: string) => Promise<File>,
     writeFile: (file: File) => Promise<File>

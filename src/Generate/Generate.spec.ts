@@ -1,5 +1,5 @@
 import { File } from "../types";
-import Generate from "./Generate";
+import { Generate } from "./Generate";
 
 describe("Generate", () => {
   it("writes chart file based on spec file", async () => {
