@@ -11,11 +11,11 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
     const [nameNode, callback] = node.arguments;
     if (ts.isStringLiteral(nameNode) && ts.isFunctionLike(callback)) {
       const current: SpecNode = {
-        type: node.expression.text as "describe" | "it",
+        type: node.expression.text === "describe" ? "case" : "behavior",
         name: nameNode.text,
       };
 
-      if (current.type === "describe") {
+      if (current.type === "case") {
         current.children = [];
         const body = callback.body;
         if (body && ts.isBlock(body)) {

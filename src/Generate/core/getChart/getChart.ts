@@ -28,7 +28,7 @@ export const getChart = (specTree: SpecTree): string => {
       `${thisId}${
         endsWithQuestionMark(label)
           ? `{"${label}"}`
-          : node.type === "describe" && parentId
+          : node.type === "case" && parentId
           ? `["${label}"]`
           : `(["${label}"])`
       }`
@@ -43,7 +43,7 @@ export const getChart = (specTree: SpecTree): string => {
         // Custom rule:
         if (
           endsWithQuestionMark(node.name) &&
-          child.type === "describe" &&
+          child.type === "case" &&
           child.children
         ) {
           for (const grandchild of child.children) {
