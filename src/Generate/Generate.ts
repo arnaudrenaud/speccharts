@@ -1,7 +1,7 @@
 import { GenerateArgs, File } from "../types";
-import { getChartFiles } from "./getChartFiles/getChartFiles";
-import { getChartFromTestFile } from "./getChartFromTestFile/getChartFromTestFile";
-import { logChartFilesWritten, logTestFilesFound } from "./logTestFilesFound";
+import { getChartFiles } from "./helpers/getChartFiles";
+import { getChartFromTestFile } from "./helpers/getChartFromTestFile";
+import { logChartFilesWritten, logTestFilesFound } from "./helpers/log";
 
 export const Generate =
   (

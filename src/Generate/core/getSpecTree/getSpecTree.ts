@@ -1,6 +1,6 @@
 import ts from "typescript";
 
-import { File, SpecNode, SpecTree } from "../../types";
+import { File, SpecNode, SpecTree } from "../../../types";
 
 function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
   if (
