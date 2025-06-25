@@ -2,29 +2,29 @@ import fsExtra from "fs-extra";
 import path from "path";
 import { generateLocalFileSystem } from "./generateLocalFileSystem";
 
-const SPEC_FILES_DIRECTORY = ".test.local-file-system.src";
+const TEST_FILES_DIRECTORY = ".test.local-file-system.src";
 const OUTPUT_DIRECTORY = ".test.slocal-file-system.speccharts";
 
 const cleanUpLocalFileSystem = async () => {
-  await fsExtra.remove(SPEC_FILES_DIRECTORY);
+  await fsExtra.remove(TEST_FILES_DIRECTORY);
   await fsExtra.remove(OUTPUT_DIRECTORY);
 };
 
 describe("generateLocalFileSystem", () => {
-  const specFile1 = "index1.spec.ts";
-  const specFile2 = "index2.spec.ts";
+  const testFile1 = "index1.spec.ts";
+  const testFile2 = "index2.spec.ts";
 
   beforeEach(async () => {
     await cleanUpLocalFileSystem();
 
     await fsExtra.outputFile(
-      path.join(SPEC_FILES_DIRECTORY, specFile1),
+      path.join(TEST_FILES_DIRECTORY, testFile1),
       `describe("index 1", () => {
   it("works", () => {});
 });`
     );
     await fsExtra.outputFile(
-      path.join(SPEC_FILES_DIRECTORY, specFile2),
+      path.join(TEST_FILES_DIRECTORY, testFile2),
       `describe("index 2", () => {
   it("works too", () => {});
 });`
@@ -33,9 +33,9 @@ describe("generateLocalFileSystem", () => {
 
   afterAll(cleanUpLocalFileSystem);
 
-  it("reads spec files from glob pattern, writes chart files to output directory", async () => {
+  it("reads test files from glob pattern, writes chart files to output directory", async () => {
     await generateLocalFileSystem({
-      specFilesGlobPatterns: [`${SPEC_FILES_DIRECTORY}/**/*.spec.ts`],
+      testFilesGlobPatterns: [`${TEST_FILES_DIRECTORY}/**/*.spec.ts`],
       outputDirectoryPath: OUTPUT_DIRECTORY,
     });
 

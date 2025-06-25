@@ -2,9 +2,9 @@ import { File, SpecChart } from "../../types";
 import { getSpecTree } from "../getSpecTree/getSpecTree";
 import { getChart } from "../getChart/getChart";
 
-export const getChartFromSpecFile = (specFile: File): SpecChart => {
+export const getChartFromTestFile = (testFile: File): SpecChart => {
   return {
-    specFile,
-    chart: getChart(getSpecTree(specFile)),
+    testFile,
+    chart: getChart(getSpecTree(testFile)),
   };
 };

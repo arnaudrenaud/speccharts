@@ -34,17 +34,17 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
   }
 }
 
-export const getSpecTree = (specFile: File): SpecTree => {
+export const getSpecTree = (testFile: File): SpecTree => {
   const sourceFile = ts.createSourceFile(
-    specFile.path,
-    specFile.content,
+    testFile.path,
+    testFile.content,
     ts.ScriptTarget.Latest,
     true,
     ts.ScriptKind.TS
   );
 
   const specTree = {
-    name: specFile.path,
+    name: testFile.path,
     children: [],
   };
 

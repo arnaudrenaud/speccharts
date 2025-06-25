@@ -2,9 +2,9 @@ import { File } from "../types";
 import { Generate } from "./Generate";
 
 describe("Generate", () => {
-  const SPEC_FILE_BASE_PATH = "math.spec.ts";
-  const SPEC_FILE_FULL_PATH = `src/${SPEC_FILE_BASE_PATH}`;
-  const SPEC_FILE_CONTENT = `
+  const TEST_FILE_BASE_PATH = "math.spec.ts";
+  const TEST_FILE_FULL_PATH = `src/${TEST_FILE_BASE_PATH}`;
+  const TEST_FILE_CONTENT = `
       describe("math", () => {
         describe("add", () => {
           it("adds two numbers", () => {});
@@ -14,25 +14,25 @@ describe("Generate", () => {
 
   const OUTPUT_DIRECTORY_PATH = "speccharts";
 
-  describe("if found no spec files", () => {
+  describe("if found no test files", () => {
     it("throws", async () => {
       const generate = Generate(async () => [], jest.fn(), jest.fn());
 
       return expect(
         generate({
-          specFilesGlobPatterns: [SPEC_FILE_FULL_PATH],
+          testFilesGlobPatterns: [TEST_FILE_FULL_PATH],
           outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
         })
       ).rejects.toEqual(
         new Error(
-          `❌ Found no spec files – did you pass directory name instead of glob pattern (e.g. "src" instead of "src/**/*.spec.ts")?`
+          `❌ Found no test files – did you pass directory name instead of glob pattern (e.g. "src" instead of "src/**/*.spec.ts")?`
         )
       );
     });
   });
 
-  describe("when found at least one spec file", () => {
-    it("writes chart file based on spec file", async () => {
+  describe("when found at least one test file", () => {
+    it("writes chart file based on test file", async () => {
       const writeFileMock = jest
         .fn()
         .mockImplementation(
@@ -40,26 +40,26 @@ describe("Generate", () => {
         );
 
       const generate = Generate(
-        async () => [SPEC_FILE_FULL_PATH],
+        async () => [TEST_FILE_FULL_PATH],
         async (path) => {
           return {
             path,
-            content: path === SPEC_FILE_FULL_PATH ? SPEC_FILE_CONTENT : "",
+            content: path === TEST_FILE_FULL_PATH ? TEST_FILE_CONTENT : "",
           };
         },
         writeFileMock
       );
 
       const actualResult = await generate({
-        specFilesGlobPatterns: [SPEC_FILE_FULL_PATH],
+        testFilesGlobPatterns: [TEST_FILE_FULL_PATH],
         outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
       });
 
       const expectedResult: File[] = [
         {
-          path: `${OUTPUT_DIRECTORY_PATH}/${SPEC_FILE_BASE_PATH}.mmd`,
+          path: `${OUTPUT_DIRECTORY_PATH}/${TEST_FILE_BASE_PATH}.mmd`,
           content: `flowchart TD
-title["**${SPEC_FILE_FULL_PATH}**"]
+title["**${TEST_FILE_FULL_PATH}**"]
 N0(["math"])
 N1["add"]
 N0 --> N1

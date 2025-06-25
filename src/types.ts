@@ -1,5 +1,5 @@
 export type GenerateArgs = {
-  specFilesGlobPatterns: string[];
+  testFilesGlobPatterns: string[];
   outputDirectoryPath: string;
 };
 
@@ -24,6 +24,6 @@ export type SpecTree = {
 };
 
 export type SpecChart = {
-  specFile: File;
+  testFile: File;
   chart: string;
 };
