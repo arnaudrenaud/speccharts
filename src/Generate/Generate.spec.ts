@@ -13,7 +13,11 @@ describe("Generate", () => {
       });
     `;
 
-    const writeFileMock = jest.fn();
+    const OUTPUT_DIRECTORY_PATH = "speccharts";
+
+    const writeFileMock = jest
+      .fn()
+      .mockImplementation((file: File): Promise<File> => Promise.resolve(file));
 
     const generate = Generate(
       async () => [SPEC_FILE_FULL_PATH],
@@ -26,24 +30,27 @@ describe("Generate", () => {
       writeFileMock
     );
 
-    const expectedResult: File = {
-      path: `${SPEC_FILE_BASE_PATH}.mmd`,
-      content: `flowchart TD
+    const actualResult = await generate({
+      specFilePathPatterns: [SPEC_FILE_FULL_PATH],
+      outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
+    });
+
+    const expectedResult: File[] = [
+      {
+        path: `${OUTPUT_DIRECTORY_PATH}/${SPEC_FILE_BASE_PATH}.mmd`,
+        content: `flowchart TD
 title["**${SPEC_FILE_FULL_PATH}**"]
 N0(["math"])
 N1["add"]
 N0 --> N1
 N2(["adds two numbers"])
 N1 --> N2`,
-    };
-
-    const actualResult = await generate({
-      specFilePatterns: [SPEC_FILE_FULL_PATH],
-    });
+      },
+    ];
 
     expect(actualResult).toEqual(expectedResult);
 
     expect(writeFileMock).toHaveBeenCalledTimes(1);
-    expect(writeFileMock.mock.calls[0][0]).toMatchObject(expectedResult);
+    expect(writeFileMock.mock.calls[0][0]).toEqual(expectedResult[0]);
   });
 });

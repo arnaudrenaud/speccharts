@@ -9,9 +9,9 @@ export const Generate =
     writeFile: (file: File) => Promise<File>
   ) =>
   async (args: GenerateArgs): Promise<File[]> => {
-    const specFilePaths = await getFilePaths(args.specFilePatterns);
+    const specFilePaths = await getFilePaths(args.specFilePathPatterns);
     const specFiles = await Promise.all(specFilePaths.map(readFile));
     const charts = specFiles.map(getChartFromSpecFile);
-    const filesToWrite = getChartFiles(charts);
+    const filesToWrite = getChartFiles(charts, args.outputDirectoryPath);
     return await Promise.all(filesToWrite.map(writeFile));
   };

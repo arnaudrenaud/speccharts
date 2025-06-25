@@ -1,5 +1,6 @@
 export type GenerateArgs = {
-  specFilePatterns: string[];
+  specFilePathPatterns: string[];
+  outputDirectoryPath: string;
 };
 
 export type File = {
