@@ -2,8 +2,8 @@ import { File } from "../types";
 import { Generate } from "./Generate";
 
 describe("Generate", () => {
-  const TEST_FILE_BASE_PATH = "math.spec.ts";
-  const TEST_FILE_FULL_PATH = `src/${TEST_FILE_BASE_PATH}`;
+  const TEST_FILE_BASE_NAME = "math.spec.ts";
+  const TEST_FILE_PATH = `src/${TEST_FILE_BASE_NAME}`;
   const TEST_FILE_CONTENT = `
       describe("math", () => {
         describe("add", () => {
@@ -20,7 +20,7 @@ describe("Generate", () => {
 
       return expect(
         generate({
-          testFilesGlobPatterns: [TEST_FILE_FULL_PATH],
+          testFilesGlobPatterns: [TEST_FILE_PATH],
           outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
         })
       ).rejects.toEqual(
@@ -40,26 +40,26 @@ describe("Generate", () => {
         );
 
       const generate = Generate(
-        async () => [TEST_FILE_FULL_PATH],
+        async () => [TEST_FILE_PATH],
         async (path) => {
           return {
             path,
-            content: path === TEST_FILE_FULL_PATH ? TEST_FILE_CONTENT : "",
+            content: path === TEST_FILE_PATH ? TEST_FILE_CONTENT : "",
           };
         },
         writeFileMock
       );
 
       const actualResult = await generate({
-        testFilesGlobPatterns: [TEST_FILE_FULL_PATH],
+        testFilesGlobPatterns: [TEST_FILE_PATH],
         outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
       });
 
       const expectedResult: File[] = [
         {
-          path: `${OUTPUT_DIRECTORY_PATH}/${TEST_FILE_BASE_PATH}.mmd`,
+          path: `${OUTPUT_DIRECTORY_PATH}/${TEST_FILE_BASE_NAME}.mmd`,
           content: `flowchart TD
-title["**${TEST_FILE_FULL_PATH}**"]
+title["**${TEST_FILE_PATH}**"]
 N0(["math"])
 N1["add"]
 N0 --> N1
