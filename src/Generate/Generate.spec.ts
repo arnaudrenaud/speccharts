@@ -31,7 +31,7 @@ describe("Generate", () => {
     );
 
     const actualResult = await generate({
-      specFilePathPatterns: [SPEC_FILE_FULL_PATH],
+      specFilesPathPatterns: [SPEC_FILE_FULL_PATH],
       outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
     });
 

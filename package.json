@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "test:watch": "jest --watch",
     "speccharts": "node dist/pure-ts-algo.js"
   },
   "keywords": [],
@@ -12,12 +13,14 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.14",
     "jest": "^29.7.0",
     "ts-jest": "^29.3.4"
   },
   "dependencies": {
     "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.0",
     "typescript": "^5.8.3"
   }
 }
