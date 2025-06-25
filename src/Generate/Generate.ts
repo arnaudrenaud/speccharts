@@ -1,7 +1,7 @@
 import { GenerateArgs, File } from "../types";
 import { getChartFiles } from "./getChartFiles/getChartFiles";
 import { getChartFromTestFile } from "./getChartFromTestFile/getChartFromTestFile";
-import { logTestFilesFound } from "./logTestFilesFound";
+import { logChartFilesWritten, logTestFilesFound } from "./logTestFilesFound";
 
 export const Generate =
   (
@@ -19,7 +19,11 @@ export const Generate =
     logTestFilesFound(testFilePaths);
 
     const testFiles = await Promise.all(testFilePaths.map(readFile));
+
     const charts = testFiles.map(getChartFromTestFile);
+
     const filesToWrite = getChartFiles(charts, args.outputDirectoryPath);
-    return await Promise.all(filesToWrite.map(writeFile));
+    const filesWritten = await Promise.all(filesToWrite.map(writeFile));
+    logChartFilesWritten(filesWritten);
+    return filesWritten;
   };
