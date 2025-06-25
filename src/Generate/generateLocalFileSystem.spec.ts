@@ -2,8 +2,8 @@ import fsExtra from "fs-extra";
 import path from "path";
 import { generateLocalFileSystem } from "./generateLocalFileSystem";
 
-const TEST_FILES_DIRECTORY = ".test.local-file-system.src";
-const OUTPUT_DIRECTORY = ".test.slocal-file-system.speccharts";
+const TEST_FILES_DIRECTORY = ".tmp.src";
+const OUTPUT_DIRECTORY = ".tmp.speccharts";
 
 const cleanUpLocalFileSystem = async () => {
   await fsExtra.remove(TEST_FILES_DIRECTORY);
@@ -49,7 +49,7 @@ describe("generateLocalFileSystem", () => {
       await fsExtra.readFile(path.join(OUTPUT_DIRECTORY, chart1FileName))
     ).toString();
     expect(chart1FileContent).toEqual(`flowchart TD
-title[\"**.test.local-file-system.src/index1.spec.ts**\"]
+title[\"**${TEST_FILES_DIRECTORY}/index1.spec.ts**\"]
 N0([\"index 1\"])
 N1([\"works\"])
 N0 --> N1`);
@@ -61,7 +61,7 @@ N0 --> N1`);
       await fsExtra.readFile(path.join(OUTPUT_DIRECTORY, chart2FileName))
     ).toString();
     expect(chart2FileContent).toEqual(`flowchart TD
-title[\"**.test.local-file-system.src/index2.spec.ts**\"]
+title[\"**${TEST_FILES_DIRECTORY}/index2.spec.ts**\"]
 N0([\"index 2\"])
 N1([\"works too\"])
 N0 --> N1`);
