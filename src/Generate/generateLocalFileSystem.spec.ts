@@ -10,6 +10,8 @@ const cleanUpLocalFileSystem = async () => {
   await fsExtra.remove(OUTPUT_DIRECTORY);
 };
 
+jest.mock("./helpers/log");
+
 describe("generateLocalFileSystem", () => {
   const testFile1 = "index1.spec.ts";
   const testFile2 = "index2.spec.ts";

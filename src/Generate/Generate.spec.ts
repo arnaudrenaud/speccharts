@@ -1,5 +1,8 @@
 import { File } from "../types";
 import { Generate } from "./Generate";
+import { logTestFilesFound, logChartFilesWritten } from "./helpers/log";
+
+jest.mock("./helpers/log");
 
 describe("Generate", () => {
   const TEST_FILE_BASE_NAME = "math.spec.ts";
@@ -68,10 +71,16 @@ N1 --> N2`,
         },
       ];
 
+      expect(logTestFilesFound).toHaveBeenCalledTimes(1);
+      expect(logTestFilesFound).toHaveBeenCalledWith([TEST_FILE_PATH]);
+
       expect(actualResult).toEqual(expectedResult);
 
       expect(writeFileMock).toHaveBeenCalledTimes(1);
       expect(writeFileMock.mock.calls[0][0]).toEqual(expectedResult[0]);
+
+      expect(logChartFilesWritten).toHaveBeenCalledTimes(1);
+      expect(logChartFilesWritten).toHaveBeenCalledWith(expectedResult);
     });
   });
 });
