@@ -31,7 +31,7 @@ describe("Generate", () => {
     });
   });
 
-  describe("when found at least one test file", () => {
+  describe("if found at least one test file", () => {
     it("writes chart file based on test file", async () => {
       const writeFileMock = jest
         .fn()

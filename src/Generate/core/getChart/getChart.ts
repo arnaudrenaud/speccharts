@@ -4,10 +4,6 @@ function escapeMermaidLabelMarkdown(text: string): string {
   return text.replace(/`/g, "\\`").replace(/"/g, "&quot");
 }
 
-function endsWithQuestionMark(text: string): boolean {
-  return text.trim().endsWith("?");
-}
-
 export const getChart = (specTree: SpecTree): string => {
   let lines: string[] = ["flowchart TD"];
   let nodeId = 0;
@@ -26,7 +22,7 @@ export const getChart = (specTree: SpecTree): string => {
 
     nodes.push(
       `${thisId}${
-        endsWithQuestionMark(label)
+        node.type === "question"
           ? `{"${label}"}`
           : node.type === "case" && parentId
           ? `["${label}"]`
@@ -40,10 +36,9 @@ export const getChart = (specTree: SpecTree): string => {
 
     if (node.children) {
       for (const child of node.children) {
-        // Custom rule:
         if (
-          endsWithQuestionMark(node.name) &&
-          child.type === "case" &&
+          node.type === "question" &&
+          child.type === "answer" &&
           child.children
         ) {
           for (const grandchild of child.children) {

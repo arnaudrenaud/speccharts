@@ -44,4 +44,48 @@ N0 --> N3
 N4(["multiplies two numbers"])
 N3 --> N4`);
   });
+
+  describe("if spec tree contains nodes with type `question`, `answer`", () => {
+    it("returns a Mermaid flowchart with rhombus-shaped node for question, answer as edge label instead of node", () => {
+      const SPEC_TREE: SpecTree = {
+        name: "src/math.spec.ts",
+        children: [
+          {
+            type: "case",
+            name: "division",
+            children: [
+              {
+                type: "question",
+                name: "is divider 0?",
+                children: [
+                  {
+                    type: "answer",
+                    name: "yes",
+                    children: [{ type: "behavior", name: "returns NaN" }],
+                  },
+                  {
+                    type: "answer",
+                    name: "no",
+                    children: [{ type: "behavior", name: "returns division" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = getChart(SPEC_TREE);
+
+      expect(result).toEqual(`flowchart TD
+title["**src/math.spec.ts**"]
+N0(["division"])
+N1{"is divider 0?"}
+N0 --> N1
+N2(["returns NaN"])
+N1 -- yes --> N2
+N3(["returns division"])
+N1 -- no --> N3`);
+    });
+  });
 });

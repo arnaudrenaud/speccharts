@@ -2,6 +2,10 @@ import ts from "typescript";
 
 import { File, SpecNode, SpecTree } from "../../../types";
 
+function endsWithQuestionMark(text: string): boolean {
+  return text.trim().endsWith("?");
+}
+
 function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
   if (
     ts.isCallExpression(node) &&
@@ -11,11 +15,18 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
     const [nameNode, callback] = node.arguments;
     if (ts.isStringLiteral(nameNode) && ts.isFunctionLike(callback)) {
       const current: SpecNode = {
-        type: node.expression.text === "describe" ? "case" : "behavior",
+        type:
+          node.expression.text === "describe"
+            ? endsWithQuestionMark(nameNode.text)
+              ? "question"
+              : parentDescribe?.type === "question"
+              ? "answer"
+              : "case"
+            : "behavior",
         name: nameNode.text,
       };
 
-      if (current.type === "case") {
+      if (["case", "question", "answer"].includes(current.type)) {
         current.children = [];
         const body = callback.body;
         if (body && ts.isBlock(body)) {

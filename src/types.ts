@@ -9,7 +9,7 @@ export type File = {
 };
 
 export type SpecNode = {
-  type: "case" | "behavior";
+  type: "case" | "question" | "answer" | "behavior";
   name: string;
   location?: {
     file: string;
