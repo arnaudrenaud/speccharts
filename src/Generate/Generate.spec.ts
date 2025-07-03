@@ -1,4 +1,4 @@
-import { File } from "../types";
+import { File } from "./types";
 import { Generate } from "./Generate";
 import { logTestFilesFound, logChartFilesWritten } from "./helpers/log";
 

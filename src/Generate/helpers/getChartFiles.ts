@@ -1,6 +1,6 @@
 import path from "path";
 
-import { SpecChart, File } from "../../types";
+import { SpecChart, File } from "../types";
 
 export const getChartFiles = (
   charts: SpecChart[],

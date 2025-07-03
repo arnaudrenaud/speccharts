@@ -1,7 +1,7 @@
 import { glob } from "fast-glob";
 import fsExtra from "fs-extra";
 
-import { File } from "../types";
+import { File } from "./types";
 import { Generate } from "./Generate";
 
 const getFilePaths = async (patterns: string[]): Promise<string[]> => {

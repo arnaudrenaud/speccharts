@@ -1,4 +1,4 @@
-import { GenerateArgs, File } from "../types";
+import { GenerateArgs, File } from "./types";
 import { getChartFiles } from "./helpers/getChartFiles";
 import { getChartFromTestFile } from "./helpers/getChartFromTestFile";
 import { logChartFilesWritten, logTestFilesFound } from "./helpers/log";

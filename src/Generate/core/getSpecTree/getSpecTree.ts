@@ -1,6 +1,6 @@
 import ts from "typescript";
 
-import { File, SpecNode, SpecTree } from "../../../types";
+import { File, SpecNode, SpecTree } from "../../types";
 
 function endsWithQuestionMark(text: string): boolean {
   return text.trim().endsWith("?");

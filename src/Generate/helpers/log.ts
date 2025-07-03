@@ -1,4 +1,4 @@
-import { File } from "../../types";
+import { File } from "../types";
 
 export function logTestFilesFound(testFilePaths: string[]) {
   console.log(
