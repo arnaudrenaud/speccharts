@@ -1,0 +1,9 @@
+flowchart TD
+title["**src/Generate/core/getSpecTree/getSpecTree.spec.ts**"]
+N0(["getSpecTree"])
+N1(["returns a spec tree"])
+N0 --> N1
+N2["if case node label ends with a question mark"]
+N0 --> N2
+N3(["returns case node with type \`question\`, children with type \`answer\`"])
+N2 --> N3

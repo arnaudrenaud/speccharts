@@ -1,0 +1,11 @@
+flowchart TD
+title["**src/Generate/Generate.spec.ts**"]
+N0(["Generate"])
+N1["if found no test files"]
+N0 --> N1
+N2(["throws"])
+N1 --> N2
+N3["if found at least one test file"]
+N0 --> N3
+N4(["writes chart file based on test file"])
+N3 --> N4
