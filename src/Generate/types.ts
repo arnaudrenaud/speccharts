@@ -1,6 +1,7 @@
 export type GenerateArgs = {
   testFilesGlobPatterns: string[];
   outputDirectoryPath: string;
+  singleOutputFile: boolean;
 };
 
 export type File = {

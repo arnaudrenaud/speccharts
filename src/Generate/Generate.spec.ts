@@ -25,6 +25,7 @@ describe("Generate", () => {
         generate({
           testFilesGlobPatterns: [TEST_FILE_PATH],
           outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
+          singleOutputFile: false,
         })
       ).rejects.toEqual(
         new Error(
@@ -56,6 +57,7 @@ describe("Generate", () => {
       const actualResult = await generate({
         testFilesGlobPatterns: [TEST_FILE_PATH],
         outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
+        singleOutputFile: false,
       });
 
       const expectedResult: File[] = [

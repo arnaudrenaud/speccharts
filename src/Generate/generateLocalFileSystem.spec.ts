@@ -42,6 +42,7 @@ describe("generateLocalFileSystem", () => {
         `${TEST_FILES_DIRECTORY}/**/*.test.ts`,
       ],
       outputDirectoryPath: OUTPUT_DIRECTORY,
+      singleOutputFile: false,
     });
 
     const filesInOutputDirectory = await fsExtra.readdir(OUTPUT_DIRECTORY);

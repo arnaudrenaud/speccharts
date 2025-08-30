@@ -14,6 +14,11 @@ const args = new Command()
     "path to output directory for chart files (will be created if not existing already)",
     "speccharts"
   )
+  .option(
+    "-s, --single-output-file",
+    "gather all charts in a single Markdown file",
+    false
+  )
   .showHelpAfterError()
   .parse()
   .opts();
@@ -21,4 +26,5 @@ const args = new Command()
 generateLocalFileSystem({
   testFilesGlobPatterns: args.testFilePatterns,
   outputDirectoryPath: args.outputDirectory,
+  singleOutputFile: args.singleOutputFile,
 });

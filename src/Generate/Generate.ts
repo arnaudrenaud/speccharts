@@ -22,7 +22,9 @@ export const Generate =
 
     const charts = testFiles.map(getChartFromTestFile);
 
-    const filesToWrite = getChartFiles(charts, args.outputDirectoryPath);
+    const filesToWrite = getChartFiles(charts, args.outputDirectoryPath, {
+      singleOutputFile: args.singleOutputFile,
+    });
     const filesWritten = await Promise.all(filesToWrite.map(writeFile));
     logChartFilesWritten(filesWritten);
     return filesWritten;
