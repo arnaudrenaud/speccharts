@@ -23,7 +23,7 @@ describe("Generate", () => {
 
       return expect(
         generate({
-          testFilesGlobPatterns: [TEST_FILE_PATH],
+          inputFilePatterns: [TEST_FILE_PATH],
           outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
           singleOutputFile: false,
         })
@@ -55,7 +55,7 @@ describe("Generate", () => {
       );
 
       const actualResult = await generate({
-        testFilesGlobPatterns: [TEST_FILE_PATH],
+        inputFilePatterns: [TEST_FILE_PATH],
         outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
         singleOutputFile: false,
       });

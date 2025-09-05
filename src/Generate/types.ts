@@ -1,5 +1,5 @@
 export type GenerateArgs = {
-  testFilesGlobPatterns: string[];
+  inputFilePatterns: string[];
   outputDirectoryPath: string;
   singleOutputFile: boolean;
 };

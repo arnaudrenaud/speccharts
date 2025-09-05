@@ -5,9 +5,9 @@ import { generateLocalFileSystem } from "./Generate/generateLocalFileSystem";
 
 const args = new Command()
   .option(
-    "-p, --test-file-patterns <patterns...>",
-    "glob patterns to match test files that will serve to generate charts",
-    ["**/*.spec.ts"]
+    "-i, --input-file-patterns <patterns...>",
+    "glob pattern(s) to match input test files that will serve to generate charts",
+    ["**/*.{spec,test}.{ts,tsx}"]
   )
   .option(
     "-o, --output-directory <path>",
@@ -24,7 +24,7 @@ const args = new Command()
   .opts();
 
 generateLocalFileSystem({
-  testFilesGlobPatterns: args.testFilePatterns,
+  inputFilePatterns: args.inputFilePatterns,
   outputDirectoryPath: args.outputDirectory,
   singleOutputFile: args.singleOutputFile,
 });
