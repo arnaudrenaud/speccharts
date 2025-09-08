@@ -1,4 +1,4 @@
-# speccharts
+# speccharts [![Published on NPM](https://img.shields.io/npm/v/speccharts)](https://www.npmjs.com/package/speccharts)
 
 Based on test suites in your source code, generate diagrams that reveal your application specs.
 
