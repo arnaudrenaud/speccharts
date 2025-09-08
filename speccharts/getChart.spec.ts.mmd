@@ -1,9 +1,0 @@
-flowchart TD
-title["**src/Generate/core/getChart/getChart.spec.ts**"]
-N0(["getChart"])
-N1(["returns a Mermaid flowchart with spec name as title, stadium-shaped node for root and leaves, rectangle node for cases, edge between each case and its children"])
-N0 --> N1
-N2["if spec tree contains nodes with type \`question\`, \`answer\`"]
-N0 --> N2
-N3(["returns a Mermaid flowchart with rhombus-shaped node for question, answer as edge label instead of node"])
-N2 --> N3

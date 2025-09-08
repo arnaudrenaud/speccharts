@@ -35,7 +35,7 @@ describe("generateLocalFileSystem", () => {
 
   afterAll(cleanUpLocalFileSystem);
 
-  it("reads test files from glob pattern, writes chart files to output directory", async () => {
+  it("reads spec files from glob pattern, writes chart files to output directory", async () => {
     await generateLocalFileSystem({
       inputFilePatterns: [
         `${TEST_FILES_DIRECTORY}/**/*.spec.ts`,

@@ -17,7 +17,7 @@ describe("Generate", () => {
 
   const OUTPUT_DIRECTORY_PATH = "speccharts";
 
-  describe("if found no test files", () => {
+  describe("if found no spec files", () => {
     it("throws", async () => {
       const generate = Generate(async () => [], jest.fn(), jest.fn());
 
@@ -29,7 +29,7 @@ describe("Generate", () => {
         })
       ).rejects.toEqual(
         new Error(
-          `❌ Found no test files – did you pass directory name instead of glob pattern (e.g. "src" instead of "src/**/*.spec.ts")?`
+          `❌ Found no spec files – did you pass directory name instead of glob pattern (e.g. "src" instead of "src/**/*.spec.ts")?`
         )
       );
     });

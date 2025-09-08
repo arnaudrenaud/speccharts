@@ -2,7 +2,7 @@ import { File } from "../types";
 
 export function logTestFilesFound(testFilePaths: string[]) {
   console.log(
-    `🔎 Found ${testFilePaths.length} test files:\n${testFilePaths.join(
+    `🔎 Found ${testFilePaths.length} spec files:\n${testFilePaths.join(
       "\n"
     )}\n`
   );

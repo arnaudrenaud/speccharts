@@ -13,7 +13,7 @@ export const Generate =
     const testFilePaths = await getFilePaths(args.inputFilePatterns);
     if (testFilePaths.length === 0) {
       throw new Error(
-        `❌ Found no test files – did you pass directory name instead of glob pattern (e.g. "src" instead of "src/**/*.spec.ts")?`
+        `❌ Found no spec files – did you pass directory name instead of glob pattern (e.g. "src" instead of "src/**/*.spec.ts")?`
       );
     }
     logTestFilesFound(testFilePaths);

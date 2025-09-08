@@ -1,6 +1,6 @@
 {
-  "name": "test-suites-to-flowcharts",
-  "version": "1.0.0",
+  "name": "speccharts",
+  "version": "0.1.0",
   "main": "index.js",
   "bin": {
     "speccharts": "./dist/cli.js"
@@ -8,8 +8,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "speccharts": "node dist/pure-ts-algo.js"
+    "test:watch": "jest --watch"
   },
   "keywords": [],
   "author": "",

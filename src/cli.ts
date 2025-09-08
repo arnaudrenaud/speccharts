@@ -6,7 +6,7 @@ import { generateLocalFileSystem } from "./Generate/generateLocalFileSystem";
 const args = new Command()
   .option(
     "-i, --input-file-patterns <patterns...>",
-    "glob pattern(s) to match input test files that will serve to generate charts",
+    "glob pattern(s) to match input spec files that will serve to generate charts",
     ["**/*.{spec,test}.{ts,tsx}"]
   )
   .option(
