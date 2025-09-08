@@ -1,10 +1,6 @@
 # speccharts
 
-Struggling to read long or nested test suites?
-
-Based on test files in your source code, `speccharts` generates diagrams that reveal your application specs.
-
----
+Based on test files in your source code, generate diagrams that reveal your application specs.
 
 From this spec file:
 
