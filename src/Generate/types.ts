@@ -25,6 +25,6 @@ export type SpecTree = {
 };
 
 export type SpecChart = {
-  testFile: File;
+  specFile: File;
   chart: string;
 };

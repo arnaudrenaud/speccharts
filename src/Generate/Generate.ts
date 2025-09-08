@@ -1,7 +1,7 @@
 import { GenerateArgs, File } from "./types";
 import { getChartFiles } from "./helpers/getChartFiles";
-import { getChartFromTestFile } from "./helpers/getChartFromTestFile";
-import { logChartFilesWritten, logTestFilesFound } from "./helpers/log";
+import { logChartFilesWritten, logSpecFilesFound } from "./helpers/log";
+import { getChartFromSpecFile } from "./helpers/getChartFromSpecFile";
 
 export const Generate =
   (
@@ -10,17 +10,17 @@ export const Generate =
     writeFile: (file: File) => Promise<File>
   ) =>
   async (args: GenerateArgs): Promise<File[]> => {
-    const testFilePaths = await getFilePaths(args.inputFilePatterns);
-    if (testFilePaths.length === 0) {
+    const specFilePaths = await getFilePaths(args.inputFilePatterns);
+    if (specFilePaths.length === 0) {
       throw new Error(
         `❌ Found no spec files – did you pass directory name instead of glob pattern (e.g. "src" instead of "src/**/*.spec.ts")?`
       );
     }
-    logTestFilesFound(testFilePaths);
+    logSpecFilesFound(specFilePaths);
 
-    const testFiles = await Promise.all(testFilePaths.map(readFile));
+    const specFiles = await Promise.all(specFilePaths.map(readFile));
 
-    const charts = testFiles.map(getChartFromTestFile);
+    const charts = specFiles.map(getChartFromSpecFile);
 
     const filesToWrite = getChartFiles(charts, args.outputDirectoryPath, {
       singleOutputFile: args.singleOutputFile,

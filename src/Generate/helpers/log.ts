@@ -1,8 +1,8 @@
 import { File } from "../types";
 
-export function logTestFilesFound(testFilePaths: string[]) {
+export function logSpecFilesFound(specFilePaths: string[]) {
   console.log(
-    `🔎 Found ${testFilePaths.length} spec files:\n${testFilePaths.join(
+    `🔎 Found ${specFilePaths.length} spec files:\n${specFilePaths.join(
       "\n"
     )}\n`
   );

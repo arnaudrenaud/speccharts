@@ -16,10 +16,10 @@ export const getChartFiles = (
       },
     ];
   } else {
-    return charts.map(({ testFile, chart }) => ({
+    return charts.map(({ specFile, chart }) => ({
       path: `${path.join(
         outputDirectoryPath,
-        path.basename(testFile.path)
+        path.basename(specFile.path)
       )}.mmd`,
       content: chart,
     }));

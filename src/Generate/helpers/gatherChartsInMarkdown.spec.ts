@@ -4,11 +4,11 @@ describe("gatherChartsInMarkdown", () => {
   it("gathers charts in Markdown", () => {
     const charts = [
       {
-        testFile: { path: "testFile1.ts", content: "testFile1" },
+        specFile: { path: "specFile1.ts", content: "specFile1" },
         chart: "flowchart TD\nfirst chart…",
       },
       {
-        testFile: { path: "testFile2.ts", content: "testFile2" },
+        specFile: { path: "specFile2.ts", content: "specFile2" },
         chart: "flowchart TD\nsecond chart…",
       },
     ];

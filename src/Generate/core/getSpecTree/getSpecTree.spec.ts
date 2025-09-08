@@ -1,10 +1,10 @@
 import { getSpecTree } from "./getSpecTree";
 
 describe("getSpecTree", () => {
-  const TEST_FILE_PATH = `src/math.spec.ts`;
+  const SPEC_FILE_PATH = `src/math.spec.ts`;
 
   it("returns a spec tree", () => {
-    const TEST_FILE_CONTENT = `describe("math", () => {
+    const SPEC_FILE_CONTENT = `describe("math", () => {
   describe("add", () => {
     it("adds two numbers", () => {
       expect(1 + 1).toEqual(2);
@@ -19,12 +19,12 @@ describe("getSpecTree", () => {
 });`;
 
     const result = getSpecTree({
-      path: TEST_FILE_PATH,
-      content: TEST_FILE_CONTENT,
+      path: SPEC_FILE_PATH,
+      content: SPEC_FILE_CONTENT,
     });
 
     expect(result).toEqual({
-      name: TEST_FILE_PATH,
+      name: SPEC_FILE_PATH,
       children: [
         {
           type: "case",
@@ -53,7 +53,7 @@ describe("getSpecTree", () => {
 
   describe("if case node label ends with a question mark", () => {
     it("returns case node with type `question`, children with type `answer`", () => {
-      const TEST_FILE_CONTENT = `describe("division", () => {
+      const SPEC_FILE_CONTENT = `describe("division", () => {
   describe("is divider 0?", () => {
     describe("yes", () => {
       it("returns NaN", () => {});
@@ -67,12 +67,12 @@ describe("getSpecTree", () => {
 `;
 
       const result = getSpecTree({
-        path: TEST_FILE_PATH,
-        content: TEST_FILE_CONTENT,
+        path: SPEC_FILE_PATH,
+        content: SPEC_FILE_CONTENT,
       });
 
       expect(result).toEqual({
-        name: TEST_FILE_PATH,
+        name: SPEC_FILE_PATH,
         children: [
           {
             type: "case",

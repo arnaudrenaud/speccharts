@@ -4,11 +4,11 @@ import { getChartFiles } from "./getChartFiles";
 describe("getChartFiles", () => {
   const CHARTS = [
     {
-      testFile: { path: "testFile1.ts", content: "testFile1" },
+      specFile: { path: "specFile1.ts", content: "specFile1" },
       chart: "flowchart TD\nfirst chart…",
     },
     {
-      testFile: { path: "testFile2.ts", content: "testFile2" },
+      specFile: { path: "specFile2.ts", content: "specFile2" },
       chart: "flowchart TD\nsecond chart…",
     },
   ];
@@ -21,11 +21,11 @@ describe("getChartFiles", () => {
 
       expect(result).toEqual([
         {
-          path: `outputDirectoryPath/${CHARTS[0].testFile.path}.mmd`,
+          path: `outputDirectoryPath/${CHARTS[0].specFile.path}.mmd`,
           content: CHARTS[0].chart,
         },
         {
-          path: `outputDirectoryPath/${CHARTS[1].testFile.path}.mmd`,
+          path: `outputDirectoryPath/${CHARTS[1].specFile.path}.mmd`,
           content: CHARTS[1].chart,
         },
       ]);
