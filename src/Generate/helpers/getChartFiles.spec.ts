@@ -1,5 +1,6 @@
 import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown";
 import { getChartFiles } from "./getChartFiles";
+import { getChartFileContent } from "./getChartFileContent";
 
 describe("getChartFiles", () => {
   const CHARTS = [
@@ -22,11 +23,11 @@ describe("getChartFiles", () => {
       expect(result).toEqual([
         {
           path: `outputDirectoryPath/${CHARTS[0].specFile.path}.mmd`,
-          content: CHARTS[0].chart,
+          content: getChartFileContent(CHARTS[0].chart),
         },
         {
           path: `outputDirectoryPath/${CHARTS[1].specFile.path}.mmd`,
-          content: CHARTS[1].chart,
+          content: getChartFileContent(CHARTS[1].chart),
         },
       ]);
     });

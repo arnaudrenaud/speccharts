@@ -1,6 +1,7 @@
 import { File } from "./types";
 import { Generate } from "./Generate";
 import { logSpecFilesFound, logChartFilesWritten } from "./helpers/log";
+import { GENERATED_BY_SPECCHARTS_LABEL } from "./helpers/constants";
 
 jest.mock("./helpers/log");
 
@@ -69,7 +70,10 @@ N0(["math"])
 N1["add"]
 N0 --> N1
 N2(["adds two numbers"])
-N1 --> N2`,
+N1 --> N2
+
+%% ${GENERATED_BY_SPECCHARTS_LABEL}
+`,
         },
       ];
 

@@ -2,6 +2,7 @@ import path from "path";
 
 import { SpecChart, File } from "../types";
 import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown";
+import { getChartFileContent } from "./getChartFileContent";
 
 export const getChartFiles = (
   charts: SpecChart[],
@@ -21,7 +22,7 @@ export const getChartFiles = (
         outputDirectoryPath,
         path.basename(specFile.path)
       )}.mmd`,
-      content: chart,
+      content: getChartFileContent(chart),
     }));
   }
 };

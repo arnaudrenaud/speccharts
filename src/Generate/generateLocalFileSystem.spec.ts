@@ -1,6 +1,7 @@
 import fsExtra from "fs-extra";
 import path from "path";
 import { generateLocalFileSystem } from "./generateLocalFileSystem";
+import { GENERATED_BY_SPECCHARTS_LABEL } from "./helpers/constants";
 
 const SPEC_FILES_DIRECTORY = ".tmp.src";
 const OUTPUT_DIRECTORY = ".tmp.speccharts";
@@ -58,7 +59,10 @@ describe("generateLocalFileSystem", () => {
 title[\"**${SPEC_FILES_DIRECTORY}/${SPEC_FILE_NAME_1}**\"]
 N0([\"some test suite\"])
 N1([\"works\"])
-N0 --> N1`);
+N0 --> N1
+
+%% ${GENERATED_BY_SPECCHARTS_LABEL}
+`);
 
     const chart2FileName = filesInOutputDirectory[1];
     expect(chart2FileName).toEqual(`${SPEC_FILE_NAME_2}.mmd`);
@@ -70,6 +74,9 @@ N0 --> N1`);
 title[\"**${SPEC_FILES_DIRECTORY}/${SPEC_FILE_NAME_2}**\"]
 N0([\"some other test suite\"])
 N1([\"works too\"])
-N0 --> N1`);
+N0 --> N1
+
+%% ${GENERATED_BY_SPECCHARTS_LABEL}
+`);
   });
 });
