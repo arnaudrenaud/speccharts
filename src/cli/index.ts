@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from "@commander-js/extra-typings";
-import { generateLocalFileSystem } from "./Generate/generateLocalFileSystem";
+
+import { generateLocalFileSystem } from "../Generate/generateLocalFileSystem";
+import { printHeader } from "./utils";
 
 const args = new Command()
   .option(
@@ -23,6 +25,7 @@ const args = new Command()
   .parse()
   .opts();
 
+printHeader();
 generateLocalFileSystem({
   inputFilePatterns: args.inputFilePatterns,
   outputDirectoryPath: args.outputDirectory,

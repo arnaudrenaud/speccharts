@@ -3,7 +3,7 @@
   "version": "0.1.6",
   "main": "index.js",
   "bin": {
-    "speccharts": "./dist/cli.js"
+    "speccharts": "./dist/cli/index.js"
   },
   "scripts": {
     "build": "tsc",
