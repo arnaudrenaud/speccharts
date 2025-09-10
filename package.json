@@ -1,6 +1,6 @@
 {
   "name": "speccharts",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "main": "index.js",
   "bin": {
     "speccharts": "./dist/cli/index.js"
