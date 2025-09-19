@@ -14,31 +14,43 @@ function buildFileTree(paths: string[]): any {
   return root;
 }
 
-function renderTree(node: any, prefix = ""): string {
+function renderTreeWithLinks(
+  node: any,
+  fullPath: string[] = [],
+  prefix = ""
+): string {
   const entries = Object.keys(node);
   return entries
     .map((key, idx) => {
       const isLast = idx === entries.length - 1;
       const branch = isLast ? "└── " : "├── ";
       const nextPrefix = prefix + (isLast ? "    " : "│   ");
-      const children = renderTree(node[key], nextPrefix);
-      return prefix + branch + key + (children ? "\n" + children : "");
+      const currentPath = [...fullPath, key];
+      const isFile = Object.keys(node[key]).length === 0;
+      const display = isFile
+        ? `<a href="${currentPath.join("/")}">${key}</a>`
+        : key;
+      let result = `${prefix}${branch}${display}<br />`;
+      if (!isFile) {
+        result += renderTreeWithLinks(node[key], currentPath, nextPrefix);
+      }
+      return result;
     })
-    .join("\n");
+    .join("");
 }
 
 function getTreeText(charts: SpecChart[]): string {
-  return `Below is a visual tree of the source files represented in this document:\n
-\`\`\`
-${renderTree(buildFileTree(charts.map((c: any) => c.specFile.path || "")))}
-\`\`\`
-`;
+  const filePaths = charts.map((c: any) => c.specFile.path || "");
+  return `<pre><code>${renderTreeWithLinks(
+    buildFileTree(filePaths)
+  )}</code></pre>`;
 }
 
 export function gatherChartsInMarkdown(charts: SpecChart[]): string {
   return `# speccharts
 
-  ${getTreeText(charts)}
+Jump to chart for spec file:
+${getTreeText(charts)}
 
 ${charts
   .map(({ chart }) => `\`\`\`mermaid\n${chart}\n\`\`\``)

@@ -16,6 +16,9 @@ describe("gatherChartsInMarkdown", () => {
     const result = gatherChartsInMarkdown(charts);
     expect(result).toEqual(`# speccharts
 
+Jump to chart for spec file:
+<pre><code>├── <a href="specFile1.ts">specFile1.ts</a><br />└── <a href="specFile2.ts">specFile2.ts</a><br /></code></pre>
+
 \`\`\`mermaid
 flowchart TD
 first chart…
