@@ -1,5 +1,5 @@
 import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown";
-import { GENERATED_BY_SPECCHARTS_LABEL } from "./constants";
+import { GENERATED_BY_SPECCHARTS_LABEL } from "../constants";
 
 describe("gatherChartsInMarkdown", () => {
   it("gathers charts in Markdown", () => {

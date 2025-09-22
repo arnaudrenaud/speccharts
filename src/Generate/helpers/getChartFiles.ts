@@ -1,7 +1,7 @@
 import path from "path";
 
 import { SpecChart, File } from "../types";
-import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown";
+import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown/gatherChartsInMarkdown";
 import { getChartFileContent } from "./getChartFileContent";
 
 export const getChartFiles = (

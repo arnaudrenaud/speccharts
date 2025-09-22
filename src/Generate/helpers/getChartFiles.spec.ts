@@ -1,4 +1,4 @@
-import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown";
+import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown/gatherChartsInMarkdown";
 import { getChartFiles } from "./getChartFiles";
 import { getChartFileContent } from "./getChartFileContent";
 
