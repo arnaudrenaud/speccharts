@@ -59,7 +59,7 @@ function getTreeText(charts: SpecChart[]): string {
 export function gatherChartsInMarkdown(charts: SpecChart[]): string {
   return `# speccharts
 
-Jump to chart for spec file:
+Jump to chart for each spec file:
 ${getTreeText(charts)}
 
 ${charts
