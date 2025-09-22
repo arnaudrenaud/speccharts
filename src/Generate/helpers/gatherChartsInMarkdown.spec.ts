@@ -13,7 +13,7 @@ describe("gatherChartsInMarkdown", () => {
         chart: "flowchart TD\nsecond chart…",
       },
     ];
-    const result = gatherChartsInMarkdown(charts);
+    const result = gatherChartsInMarkdown(charts, "");
     expect(result).toEqual(`# speccharts
 
 Jump to chart for each spec file:

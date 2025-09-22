@@ -1,3 +1,5 @@
+import path from "path";
+
 import { SpecChart } from "../types";
 import { GENERATED_BY_SPECCHARTS_LABEL } from "./constants";
 
@@ -49,23 +51,29 @@ function renderTreeWithLinks(
     .join("");
 }
 
-function getTreeText(charts: SpecChart[]): string {
-  const filePaths = charts.map((c: SpecChart) => c.specFile.path || "");
+function getTreeText(charts: SpecChart[], outputDirectoryPath: string): string {
+  const filePaths = charts.map(
+    (c: SpecChart) => path.relative(outputDirectoryPath, c.specFile.path) || ""
+  );
   return `<pre><code>${renderTreeWithLinks(
     buildFileTree(filePaths)
   )}</code></pre>`;
 }
 
-export function gatherChartsInMarkdown(charts: SpecChart[]): string {
+export function gatherChartsInMarkdown(
+  charts: SpecChart[],
+  outputDirectoryPath: string
+): string {
   return `# speccharts
 
 Jump to chart for each spec file:
-${getTreeText(charts)}
+${getTreeText(charts, outputDirectoryPath)}
 
 ${charts
   .map(({ specFile, chart }) => {
-    const anchor = generateAnchor(specFile.path);
-    return `<a id="${anchor}"></a><a href="${specFile.path}">${specFile.path}</a>\n\n\`\`\`mermaid\n${chart}\n\`\`\``;
+    const relativePath = path.relative(outputDirectoryPath, specFile.path);
+    const anchor = generateAnchor(relativePath);
+    return `<a id="${anchor}"></a><a href="${relativePath}">${specFile.path}</a>\n\n\`\`\`mermaid\n${chart}\n\`\`\``;
   })
   .join("\n\n---\n\n")}
 

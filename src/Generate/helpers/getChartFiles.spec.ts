@@ -42,7 +42,7 @@ describe("getChartFiles", () => {
       expect(result).toEqual([
         {
           path: "outputDirectoryPath/speccharts.md",
-          content: gatherChartsInMarkdown(CHARTS),
+          content: gatherChartsInMarkdown(CHARTS, "outputDirectoryPath"),
         },
       ]);
     });

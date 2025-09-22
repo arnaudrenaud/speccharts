@@ -13,7 +13,7 @@ export const getChartFiles = (
     return [
       {
         path: `${outputDirectoryPath}/speccharts.md`,
-        content: gatherChartsInMarkdown(charts),
+        content: gatherChartsInMarkdown(charts, outputDirectoryPath),
       },
     ];
   } else {
