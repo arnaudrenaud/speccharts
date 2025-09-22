@@ -67,11 +67,13 @@ export function gatherChartsInMarkdown(
 Jump to chart for each spec file:
 ${getTreeText(charts)}
 
+---
+
 ${charts
   .map(({ specFile, chart }) => {
     const relativePath = path.relative(outputDirectoryPath, specFile.path);
     const anchor = generateAnchor(specFile.path);
-    return `<a id="${anchor}"></a><a href="${relativePath}">${specFile.path}</a>\n\n\`\`\`mermaid\n${chart}\n\`\`\``;
+    return `Spec file: <a id="${anchor}"></a><a href="${relativePath}">${specFile.path}</a>\n\n\`\`\`mermaid\n${chart}\n\`\`\``;
   })
   .join("\n\n---\n\n")}
 
