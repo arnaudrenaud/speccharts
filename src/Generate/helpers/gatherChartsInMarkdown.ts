@@ -51,10 +51,8 @@ function renderTreeWithLinks(
     .join("");
 }
 
-function getTreeText(charts: SpecChart[], outputDirectoryPath: string): string {
-  const filePaths = charts.map(
-    (c: SpecChart) => path.relative(outputDirectoryPath, c.specFile.path) || ""
-  );
+function getTreeText(charts: SpecChart[]): string {
+  const filePaths = charts.map((c: SpecChart) => c.specFile.path || "");
   return `<pre><code>${renderTreeWithLinks(
     buildFileTree(filePaths)
   )}</code></pre>`;
@@ -67,12 +65,12 @@ export function gatherChartsInMarkdown(
   return `# speccharts
 
 Jump to chart for each spec file:
-${getTreeText(charts, outputDirectoryPath)}
+${getTreeText(charts)}
 
 ${charts
   .map(({ specFile, chart }) => {
     const relativePath = path.relative(outputDirectoryPath, specFile.path);
-    const anchor = generateAnchor(relativePath);
+    const anchor = generateAnchor(specFile.path);
     return `<a id="${anchor}"></a><a href="${relativePath}">${specFile.path}</a>\n\n\`\`\`mermaid\n${chart}\n\`\`\``;
   })
   .join("\n\n---\n\n")}
