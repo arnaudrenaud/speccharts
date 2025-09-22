@@ -13,6 +13,7 @@ export function gatherChartsInMarkdown(
   return `# speccharts
 
 Jump to chart for each spec file:
+
 ${getTreeText(charts)}
 
 ---
