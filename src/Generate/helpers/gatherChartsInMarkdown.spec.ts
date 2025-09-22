@@ -19,7 +19,9 @@ describe("gatherChartsInMarkdown", () => {
 Jump to chart for each spec file:
 <pre><code>├── <a href="#specFile1ts">specFile1.ts</a><br />└── <a href="#specFile2ts">specFile2.ts</a><br /></code></pre>
 
-<a id="specFile1ts"></a><a href="specFile1.ts">specFile1.ts</a>
+---
+
+Spec file: <a id="specFile1ts"></a><a href="specFile1.ts">specFile1.ts</a>
 
 \`\`\`mermaid
 flowchart TD
@@ -28,7 +30,7 @@ first chart…
 
 ---
 
-<a id="specFile2ts"></a><a href="specFile2.ts">specFile2.ts</a>
+Spec file: <a id="specFile2ts"></a><a href="specFile2.ts">specFile2.ts</a>
 
 \`\`\`mermaid
 flowchart TD
