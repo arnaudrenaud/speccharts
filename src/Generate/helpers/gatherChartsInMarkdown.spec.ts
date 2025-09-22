@@ -17,7 +17,7 @@ describe("gatherChartsInMarkdown", () => {
     expect(result).toEqual(`# speccharts
 
 Jump to chart for each spec file:
-<pre><code>├── <a href="#specFile1ts">specFile1.ts</a><br />└── <a href="#specFile2ts">specFile2.ts</a><br /></code></pre>
+<pre>├── <a href="#specFile1ts">specFile1.ts</a><br />└── <a href="#specFile2ts">specFile2.ts</a><br /></pre>
 
 ---
 

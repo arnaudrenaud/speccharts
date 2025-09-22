@@ -53,9 +53,7 @@ function renderTreeWithLinks(
 
 function getTreeText(charts: SpecChart[]): string {
   const filePaths = charts.map((c: SpecChart) => c.specFile.path || "");
-  return `<pre><code>${renderTreeWithLinks(
-    buildFileTree(filePaths)
-  )}</code></pre>`;
+  return `<pre>${renderTreeWithLinks(buildFileTree(filePaths))}</pre>`;
 }
 
 export function gatherChartsInMarkdown(
