@@ -1,25 +1,27 @@
 import { SpecChart } from "../types";
 import { GENERATED_BY_SPECCHARTS_LABEL } from "./constants";
 
+type Tree = { [key: string]: Tree | {} };
+
 function generateAnchor(path: string): string {
   return path.replace(/[\\/]/g, "-").replace(/[^a-zA-Z0-9-_]/g, "");
 }
 
-function buildFileTree(paths: string[]): any {
-  const root: any = {};
+function buildFileTree(paths: string[]): Tree {
+  const root: Tree = {};
   for (const path of paths) {
     const parts = path.split(/[\\/]/);
-    let node = root;
+    let node: Tree | {} = root;
     for (const part of parts) {
-      if (!node[part]) node[part] = {};
-      node = node[part];
+      if (!(node as any)[part]) (node as any)[part] = {};
+      node = (node as any)[part];
     }
   }
   return root;
 }
 
 function renderTreeWithLinks(
-  node: any,
+  node: Tree,
   fullPath: string[] = [],
   prefix = ""
 ): string {
@@ -36,7 +38,11 @@ function renderTreeWithLinks(
         : key;
       let result = `${prefix}${branch}${display}<br />`;
       if (!isFile) {
-        result += renderTreeWithLinks(node[key], currentPath, nextPrefix);
+        result += renderTreeWithLinks(
+          node[key] as Tree,
+          currentPath,
+          nextPrefix
+        );
       }
       return result;
     })
@@ -44,7 +50,7 @@ function renderTreeWithLinks(
 }
 
 function getTreeText(charts: SpecChart[]): string {
-  const filePaths = charts.map((c: any) => c.specFile.path || "");
+  const filePaths = charts.map((c: SpecChart) => c.specFile.path || "");
   return `<pre><code>${renderTreeWithLinks(
     buildFileTree(filePaths)
   )}</code></pre>`;
