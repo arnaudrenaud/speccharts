@@ -1,6 +1,10 @@
 import { SpecChart } from "../types";
 import { GENERATED_BY_SPECCHARTS_LABEL } from "./constants";
 
+function generateAnchor(path: string): string {
+  return path.replace(/[\\/]/g, "-").replace(/[^a-zA-Z0-9-_]/g, "");
+}
+
 function buildFileTree(paths: string[]): any {
   const root: any = {};
   for (const path of paths) {
@@ -28,7 +32,7 @@ function renderTreeWithLinks(
       const currentPath = [...fullPath, key];
       const isFile = Object.keys(node[key]).length === 0;
       const display = isFile
-        ? `<a href="${currentPath.join("/")}">${key}</a>`
+        ? `<a href="#${generateAnchor(currentPath.join("/"))}">${key}</a>`
         : key;
       let result = `${prefix}${branch}${display}<br />`;
       if (!isFile) {
@@ -53,7 +57,10 @@ Jump to chart for spec file:
 ${getTreeText(charts)}
 
 ${charts
-  .map(({ chart }) => `\`\`\`mermaid\n${chart}\n\`\`\``)
+  .map(({ specFile, chart }) => {
+    const anchor = generateAnchor(specFile.path);
+    return `<a id="${anchor}"></a><a href="${specFile.path}">${specFile.path}</a>\n\n\`\`\`mermaid\n${chart}\n\`\`\``;
+  })
   .join("\n\n---\n\n")}
 
 <!-- ${GENERATED_BY_SPECCHARTS_LABEL} -->
