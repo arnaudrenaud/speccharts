@@ -5,7 +5,7 @@ function pluralize(word: string, count: number): string {
 }
 
 export class Logger {
-  constructor(private log: (message: string) => void) {}
+  constructor(public log: (message: string) => void) {}
 
   logSpecFilesFound(specFilePaths: string[]) {
     this.log(

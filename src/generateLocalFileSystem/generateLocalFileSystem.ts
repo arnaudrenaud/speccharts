@@ -26,5 +26,5 @@ export const generateAndWriteToStandardOutput = async (
 ): Promise<void> => {
   const charts = await Generate(getFilePaths, readFile)(args);
   const output = getChartsInSingleFile(charts, process.cwd());
-  console.log(output);
+  standardOutputLogger.log(output);
 };
