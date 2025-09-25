@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-import { generateAndWriteToFiles, generateAndWriteToStandardOutput } from "../";
 import { printCommandHeader } from "./utils";
 import { args } from "./args";
+import {
+  generateAndWriteToFiles,
+  generateAndWriteToStandardOutput,
+} from "../generateLocalFileSystem/generateLocalFileSystem";
 
 if (args.singleOutputFile && args.multipleOutputFiles) {
   console.error(
