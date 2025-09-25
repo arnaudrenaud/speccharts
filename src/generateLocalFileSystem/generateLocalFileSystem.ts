@@ -4,8 +4,8 @@ import { writeToLocalFileSystem } from "./helpers/writeFiles";
 import { readFile } from "./helpers/readFile";
 import { getFilePaths } from "./helpers/getFilePaths";
 import { standardOutputLogger } from "./helpers/standardOutputLogger";
-import { getChartFiles } from "./helpers/getChartFiles/getChartFiles";
-import { getChartsInSingleFile } from "./helpers/getChartsInSingleFile/getChartsInSingleFile";
+import { getChartFiles } from "../chart-files/getChartFiles/getChartFiles";
+import { getChartsInSingleFile } from "../chart-files/getChartsInSingleFile/getChartsInSingleFile";
 
 export const generateAndWriteToFiles = async (
   args: GenerateLocalFileSystemArgs

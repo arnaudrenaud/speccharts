@@ -2,7 +2,7 @@ import path from "path";
 
 import { GENERATED_BY_SPECCHARTS_LABEL } from "../constants";
 import { getTreeText, generateHTMLLocalAnchor } from "./helpers";
-import { SpecChart } from "../../../types";
+import { SpecChart } from "../../types";
 
 export type Tree = { [key: string]: Tree | {} };
 
