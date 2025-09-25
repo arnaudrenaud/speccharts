@@ -1,5 +1,5 @@
-import { SpecChart } from "./types";
-import { Generate } from "./Generate";
+import { SpecChart } from "../types";
+import { SpecChartsGenerator } from "./SpecChartsGenerator";
 import { Logger } from "./helpers/log";
 
 class MockLogger extends Logger {
@@ -11,7 +11,7 @@ class MockLogger extends Logger {
   }
 }
 
-describe("Generate", () => {
+describe("SpecChartsGenerator", () => {
   const SPEC_FILE_BASE_NAME = "math.spec.ts";
   const SPEC_FILE_PATH = `src/${SPEC_FILE_BASE_NAME}`;
   const SPEC_FILE_CONTENT = `
@@ -25,10 +25,14 @@ describe("Generate", () => {
   describe("if found no spec files", () => {
     it("throws", async () => {
       const mockLogger = new MockLogger();
-      const generate = Generate(async () => [], jest.fn(), mockLogger);
+      const generator = new SpecChartsGenerator(
+        async () => [],
+        jest.fn(),
+        mockLogger
+      );
 
       return expect(
-        generate({
+        generator.generate({
           inputFilePatterns: [SPEC_FILE_PATH],
         })
       ).rejects.toEqual(
@@ -42,7 +46,7 @@ describe("Generate", () => {
   describe("if found at least one spec file", () => {
     it("returns chart file based on spec file", async () => {
       const mockLogger = new MockLogger();
-      const generate = Generate(
+      const generator = new SpecChartsGenerator(
         async () => [SPEC_FILE_PATH],
         async (path) => {
           return {
@@ -53,7 +57,7 @@ describe("Generate", () => {
         mockLogger
       );
 
-      const actualResult = await generate({
+      const actualResult = await generator.generate({
         inputFilePatterns: [SPEC_FILE_PATH],
       });
 

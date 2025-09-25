@@ -1,4 +1,4 @@
-import { GenerateArgs } from "../Generate/types";
+import { GenerateArgs } from "../types";
 
 export type GenerateLocalFileSystemArgs = GenerateArgs & {
   singleOutputFilePath?: string;

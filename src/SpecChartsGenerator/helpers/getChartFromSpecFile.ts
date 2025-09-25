@@ -1,4 +1,4 @@
-import { File, SpecChart } from "../types";
+import { File, SpecChart } from "../../types";
 import { getSpecTree } from "../core/getSpecTree/getSpecTree";
 import { getChart } from "../core/getChart/getChart";
 

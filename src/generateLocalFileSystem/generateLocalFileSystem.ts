@@ -1,18 +1,21 @@
-import { Generate } from "../Generate/Generate";
-import { getChartFiles } from "../Generate/helpers/getChartFiles/getChartFiles";
-import { getChartsInSingleFile } from "../Generate/helpers/getChartsInSingleFile/getChartsInSingleFile";
+import { SpecChartsGenerator } from "../SpecChartsGenerator/SpecChartsGenerator";
 import { GenerateLocalFileSystemArgs } from "./types";
-import { getFilePaths, readFile, writeToLocalFileSystem } from "./helpers";
-import { standardOutputLogger } from "./standardOutputLogger";
+import { writeToLocalFileSystem } from "./helpers/writeFiles";
+import { readFile } from "./helpers/readFile";
+import { getFilePaths } from "./helpers/getFilePaths";
+import { standardOutputLogger } from "./helpers/standardOutputLogger";
+import { getChartFiles } from "./helpers/getChartFiles/getChartFiles";
+import { getChartsInSingleFile } from "./helpers/getChartsInSingleFile/getChartsInSingleFile";
 
 export const generateAndWriteToFiles = async (
   args: GenerateLocalFileSystemArgs
 ): Promise<void> => {
-  const charts = await Generate(
+  const generator = new SpecChartsGenerator(
     getFilePaths,
     readFile,
     standardOutputLogger
-  )(args);
+  );
+  const charts = await generator.generate(args);
   const files = getChartFiles(charts, args.singleOutputFilePath);
   await writeToLocalFileSystem(files);
 };
@@ -20,7 +23,8 @@ export const generateAndWriteToFiles = async (
 export const generateAndWriteToStandardOutput = async (
   args: GenerateLocalFileSystemArgs
 ): Promise<void> => {
-  const charts = await Generate(getFilePaths, readFile)(args);
+  const generator = new SpecChartsGenerator(getFilePaths, readFile);
+  const charts = await generator.generate(args);
   const output = getChartsInSingleFile(charts, process.cwd());
   standardOutputLogger.log(output);
 };

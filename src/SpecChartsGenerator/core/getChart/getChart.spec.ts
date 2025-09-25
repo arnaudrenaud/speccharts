@@ -1,4 +1,4 @@
-import { SpecTree } from "../../types";
+import { SpecTree } from "../../../types";
 import { getChart } from "./getChart";
 
 describe("getChart", () => {

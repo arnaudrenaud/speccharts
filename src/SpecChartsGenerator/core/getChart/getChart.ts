@@ -1,4 +1,4 @@
-import { SpecNode, SpecTree } from "../../types";
+import { SpecNode, SpecTree } from "../../../types";
 
 function escapeMermaidLabelMarkdown(text: string): string {
   return text.replace(/`/g, "\\`").replace(/"/g, "&quot");

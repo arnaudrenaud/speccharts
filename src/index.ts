@@ -1,1 +1,1 @@
-export { Generate } from "./Generate/Generate";
+export { SpecChartsGenerator } from "./SpecChartsGenerator/SpecChartsGenerator";

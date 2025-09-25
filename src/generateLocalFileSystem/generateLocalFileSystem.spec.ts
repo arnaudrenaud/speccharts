@@ -4,9 +4,9 @@ import {
   generateAndWriteToFiles,
   generateAndWriteToStandardOutput,
 } from "./generateLocalFileSystem";
-import { standardOutputLogger } from "./standardOutputLogger";
+import { standardOutputLogger } from "./helpers/standardOutputLogger";
 
-jest.mock("./standardOutputLogger");
+jest.mock("./helpers/standardOutputLogger");
 
 const SPEC_FILES_DIRECTORY = ".tmp.src";
 const SINGLE_OUTPUT_FILE = ".tmp.speccharts.md";
@@ -19,8 +19,6 @@ const cleanUpLocalFileSystem = async () => {
 describe("generateLocalFileSystem", () => {
   const SPEC_FILE_NAME_1 = "index.spec.ts";
   const SPEC_FILE_NAME_2 = "index.test.ts";
-
-  let logMock: jest.Mock;
 
   beforeEach(async () => {
     await cleanUpLocalFileSystem();
@@ -41,7 +39,9 @@ describe("generateLocalFileSystem", () => {
     (standardOutputLogger.log as jest.Mock) = jest.fn();
   });
 
-  afterAll(cleanUpLocalFileSystem);
+  afterAll(async () => {
+    await cleanUpLocalFileSystem();
+  });
 
   describe("generateAndWriteToFiles", () => {
     it("writes chart files next to spec files", async () => {

@@ -1,15 +1,6 @@
-import { glob } from "fast-glob";
 import fsExtra from "fs-extra";
-import { File } from "../Generate/types";
+import { File } from "../../types";
 import { standardOutputLogger } from "./standardOutputLogger";
-
-export const getFilePaths = async (patterns: string[]): Promise<string[]> => {
-  return glob(patterns);
-};
-
-export const readFile = async (path: string): Promise<File> => {
-  return { path, content: (await fsExtra.readFile(path)).toString() };
-};
 
 export const writeToLocalFileSystem = async (
   files: File[]
