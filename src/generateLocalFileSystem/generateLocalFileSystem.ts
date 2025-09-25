@@ -1,5 +1,4 @@
-import { SpecChartsGenerator } from "@/SpecChartsGenerator/SpecChartsGenerator";
-
+import { SpecChartsGenerator } from "../SpecChartsGenerator/SpecChartsGenerator";
 import { GenerateLocalFileSystemArgs } from "./types";
 import { writeToLocalFileSystem } from "./helpers/writeFiles";
 import { readFile } from "./helpers/readFile";

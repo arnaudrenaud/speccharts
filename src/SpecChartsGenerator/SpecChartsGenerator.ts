@@ -1,6 +1,6 @@
-import { GenerateArgs, File, SpecChart } from "@/types";
-import { Logger } from "@/SpecChartsGenerator/helpers/log";
-import { getChartFromSpecFile } from "@/SpecChartsGenerator/helpers/getChartFromSpecFile";
+import { GenerateArgs, File, SpecChart } from "../types";
+import { Logger } from "./helpers/log";
+import { getChartFromSpecFile } from "./helpers/getChartFromSpecFile";
 
 /**
  * A generator for creating spec charts from test specification files.

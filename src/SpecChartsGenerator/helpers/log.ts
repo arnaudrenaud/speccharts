@@ -1,4 +1,4 @@
-import { File } from "@/types";
+import { File } from "../../types";
 
 function pluralize(word: string, count: number): string {
   return `${count} ${word}${count === 1 ? "" : "s"}`;

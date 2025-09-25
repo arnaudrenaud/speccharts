@@ -1,4 +1,4 @@
-import packageJson from "@/../package.json";
+import packageJson from "../../package.json";
 import { args as _args } from "./args";
 
 function getTextWithColorTags(text: string, color: "blue" | "green" = "blue") {

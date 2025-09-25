@@ -1,8 +1,8 @@
 import path from "path";
 
-import { SpecChart, File } from "@/types";
 import { getChartsInSingleFile } from "../getChartsInSingleFile/getChartsInSingleFile";
 import { getChartFileContent } from "../getChartFileContent";
+import { SpecChart, File } from "../../../types";
 
 export const getChartFiles = (
   charts: SpecChart[],

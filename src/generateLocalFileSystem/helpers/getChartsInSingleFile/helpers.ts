@@ -1,4 +1,4 @@
-import { SpecChart } from "@/types";
+import { SpecChart } from "../../../types";
 import { Tree } from "./getChartsInSingleFile";
 
 /**

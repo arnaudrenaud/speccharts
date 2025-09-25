@@ -1,6 +1,5 @@
 import fsExtra from "fs-extra";
-import { File } from "@/types";
-
+import { File } from "../../types";
 import { standardOutputLogger } from "./standardOutputLogger";
 
 export const writeToLocalFileSystem = async (
