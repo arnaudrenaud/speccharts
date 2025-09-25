@@ -7,21 +7,14 @@ export const args = new Command()
     ["**/*.{spec,test}.{ts,tsx}"]
   )
   .option(
-    "-o, --output-file <path>",
-    "path to output Markdown file compiling all charts"
+    "-s, --single-output-file <path>",
+    "writes charts in single Markdown file"
   )
   .option(
-    "-s, --separate-output-files",
-    "output separate Mermaid charts next to each corresponding spec file",
+    "-m, --multiple-output-files",
+    "writes each chart in a Mermaid file next to corresponding spec file",
     false
   )
   .showHelpAfterError()
   .parse()
   .opts();
-
-if (args.outputFile && args.separateOutputFiles) {
-  console.error(
-    "❌ Error: Cannot specify both --output-file and --separate-files."
-  );
-  process.exit(1);
-}

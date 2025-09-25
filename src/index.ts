@@ -1,5 +1,5 @@
 export { Generate } from "./Generate/Generate";
 export {
-  generateAndWriteToFiles as generateLocalFileSystemReadWrite,
-  generateAndWriteToStandardOutput as generateLocalFileSystemReadOnly,
+  generateAndWriteToFiles,
+  generateAndWriteToStandardOutput,
 } from "./generateLocalFileSystem/generateLocalFileSystem";
