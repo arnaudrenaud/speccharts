@@ -4,7 +4,7 @@ import fsExtra from "fs-extra";
 import { File, GenerateArgs } from "../Generate/types";
 import { Generate } from "../Generate/Generate";
 import { logChartFilesWritten } from "../Generate/helpers/log";
-import { getChartFiles } from "../Generate/helpers/getChartFiles";
+import { getChartFiles } from "../Generate/helpers/getChartFiles/getChartFiles";
 import { getChartsInSingleFile } from "../Generate/helpers/getChartsInSingleFile/getChartsInSingleFile";
 import { GenerateLocalFileSystemArgs } from "./types";
 

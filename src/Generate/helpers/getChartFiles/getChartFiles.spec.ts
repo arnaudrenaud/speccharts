@@ -1,6 +1,6 @@
-import { getChartsInSingleFile } from "./getChartsInSingleFile/getChartsInSingleFile";
+import { getChartsInSingleFile } from "../getChartsInSingleFile/getChartsInSingleFile";
 import { getChartFiles } from "./getChartFiles";
-import { getChartFileContent } from "./getChartFileContent";
+import { getChartFileContent } from "../getChartFileContent";
 
 describe("getChartFiles", () => {
   const CHARTS = [
