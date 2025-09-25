@@ -22,7 +22,7 @@ export function printCommandHeader(args: typeof _args) {
   let outputInfo = "";
   if (args.outputFile) {
     outputInfo = `· Output file: ${getTextWithColorTags(args.outputFile)}`;
-  } else if (args.separateFiles) {
+  } else if (args.separateOutputFiles) {
     outputInfo = `· Output mode: ${getTextWithColorTags(
       "one chart file per spec file next to spec"
     )}`;

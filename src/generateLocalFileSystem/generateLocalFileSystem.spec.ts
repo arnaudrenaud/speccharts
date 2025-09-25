@@ -4,20 +4,23 @@ import {
   generateAndWriteToFiles,
   generateAndWriteToStandardOutput,
 } from "./generateLocalFileSystem";
+import { standardOutputLogger } from "./standardOutputLogger";
+
+jest.mock("./standardOutputLogger");
 
 const SPEC_FILES_DIRECTORY = ".tmp.src";
-const OUTPUT_DIRECTORY = ".tmp.speccharts";
+const SINGLE_OUTPUT_FILE = ".tmp.speccharts.md";
 
 const cleanUpLocalFileSystem = async () => {
   await fsExtra.remove(SPEC_FILES_DIRECTORY);
-  await fsExtra.remove(OUTPUT_DIRECTORY);
+  await fsExtra.remove(SINGLE_OUTPUT_FILE);
 };
 
-jest.mock("../Generate/helpers/log");
-
-describe("generateAndWriteToFiles", () => {
+describe("generateLocalFileSystem", () => {
   const SPEC_FILE_NAME_1 = "index.spec.ts";
   const SPEC_FILE_NAME_2 = "index.test.ts";
+
+  let logMock: jest.Mock;
 
   beforeEach(async () => {
     await cleanUpLocalFileSystem();
@@ -34,11 +37,13 @@ describe("generateAndWriteToFiles", () => {
   it("works too", () => {});
 });`
     );
+
+    (standardOutputLogger.log as jest.Mock) = jest.fn();
   });
 
   afterAll(cleanUpLocalFileSystem);
 
-  describe("when outputFilePath is not provided", () => {
+  describe("generateAndWriteToFiles", () => {
     it("writes chart files next to spec files", async () => {
       await generateAndWriteToFiles({
         inputFilePatterns: [
@@ -47,7 +52,6 @@ describe("generateAndWriteToFiles", () => {
         ],
       });
 
-      // Check that files were written
       const chart1Path = `${SPEC_FILES_DIRECTORY}/${SPEC_FILE_NAME_1}.mmd`;
       const chart2Path = `${SPEC_FILES_DIRECTORY}/${SPEC_FILE_NAME_2}.mmd`;
 
@@ -55,76 +59,50 @@ describe("generateAndWriteToFiles", () => {
       expect(await fsExtra.pathExists(chart2Path)).toBe(true);
 
       const chart1Content = (await fsExtra.readFile(chart1Path)).toString();
-      expect(chart1Content).toContain(
-        `title[\"**${SPEC_FILES_DIRECTORY}/${SPEC_FILE_NAME_1}**\"]`
-      );
+      expect(chart1Content).toContain(`some test suite`);
 
       const chart2Content = (await fsExtra.readFile(chart2Path)).toString();
-      expect(chart2Content).toContain(
-        `title[\"**${SPEC_FILES_DIRECTORY}/${SPEC_FILE_NAME_2}**\"]`
-      );
+      expect(chart2Content).toContain(`some other test suite`);
+    });
+
+    describe("when `singleOutputFilePath` is provided", () => {
+      it("writes single Markdown file", async () => {
+        await generateAndWriteToFiles({
+          inputFilePatterns: [
+            `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
+            `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
+          ],
+          singleOutputFilePath: SINGLE_OUTPUT_FILE,
+        });
+
+        expect(await fsExtra.pathExists(SINGLE_OUTPUT_FILE)).toBe(true);
+        const fileContent = (
+          await fsExtra.readFile(SINGLE_OUTPUT_FILE)
+        ).toString();
+        expect(fileContent).toContain("spec.ts");
+        expect(fileContent).toContain("test.ts");
+        expect(fileContent).toContain("some test suite");
+        expect(fileContent).toContain("some other test suite");
+      });
     });
   });
 
-  describe("when outputFilePath is provided", () => {
-    it("writes single Markdown file", async () => {
-      const outputFilePath = ".tmp.output.md";
-      await generateAndWriteToFiles({
+  describe("generateAndWriteToStandardOutput", () => {
+    it("logs single Markdown file content to standard output", async () => {
+      await generateAndWriteToStandardOutput({
         inputFilePatterns: [
           `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
           `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
         ],
-        singleOutputFilePath: outputFilePath,
       });
 
-      expect(await fsExtra.pathExists(outputFilePath)).toBe(true);
-      const content = (await fsExtra.readFile(outputFilePath)).toString();
-      expect(content).toContain("# speccharts");
-      expect(content).toContain("some test suite");
-      expect(content).toContain("some other test suite");
+      expect(standardOutputLogger.log).toHaveBeenCalledTimes(1);
+      const logArgument = (standardOutputLogger.log as jest.Mock).mock
+        .lastCall[0];
+      expect(logArgument).toContain("spec.ts");
+      expect(logArgument).toContain("test.ts");
+      expect(logArgument).toContain("some test suite");
+      expect(logArgument).toContain("some other test suite");
     });
-  });
-});
-
-describe("generateAndWriteToStandardOutput", () => {
-  const SPEC_FILE_NAME_1 = "index.spec.ts";
-  const SPEC_FILE_NAME_2 = "index.test.ts";
-
-  beforeEach(async () => {
-    await cleanUpLocalFileSystem();
-
-    await fsExtra.outputFile(
-      path.join(SPEC_FILES_DIRECTORY, SPEC_FILE_NAME_1),
-      `describe("some test suite", () => {
-  it("works", () => {});
-});`
-    );
-    await fsExtra.outputFile(
-      path.join(SPEC_FILES_DIRECTORY, SPEC_FILE_NAME_2),
-      `describe("some other test suite", () => {
-  it("works too", () => {});
-});`
-    );
-  });
-
-  afterAll(cleanUpLocalFileSystem);
-
-  it("logs Markdown content to stdout", async () => {
-    const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-
-    await generateAndWriteToStandardOutput({
-      inputFilePatterns: [
-        `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
-        `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
-      ],
-    });
-
-    expect(consoleSpy).toHaveBeenCalledTimes(1);
-    const loggedContent = consoleSpy.mock.calls[0][0];
-    expect(loggedContent).toContain("# speccharts");
-    expect(loggedContent).toContain("some test suite");
-    expect(loggedContent).toContain("some other test suite");
-
-    consoleSpy.mockRestore();
   });
 });
