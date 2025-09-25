@@ -1,1 +1,1 @@
-export { SpecChartsGenerator } from "./SpecChartsGenerator/SpecChartsGenerator";
+export { SpecChartsGenerator } from "@/SpecChartsGenerator/SpecChartsGenerator";

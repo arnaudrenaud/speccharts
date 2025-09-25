@@ -5,7 +5,7 @@ import { args } from "./args";
 import {
   generateAndWriteToFiles,
   generateAndWriteToStandardOutput,
-} from "../generateLocalFileSystem/generateLocalFileSystem";
+} from "@/generateLocalFileSystem/generateLocalFileSystem";
 
 if (args.singleOutputFile && args.multipleOutputFiles) {
   console.error(

@@ -1,4 +1,4 @@
-import { SpecChart } from "../types";
+import { SpecChart } from "@/types";
 import { SpecChartsGenerator } from "./SpecChartsGenerator";
 import { Logger } from "./helpers/log";
 
