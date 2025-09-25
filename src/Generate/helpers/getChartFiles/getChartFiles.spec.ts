@@ -14,21 +14,21 @@ describe("getChartFiles", () => {
     },
   ];
 
-  describe("if `outputFilePath` is provided", () => {
+  describe("if `singleOutputFilePath` is provided", () => {
     it("returns one Markdown file gathering all charts at the specified path", () => {
-      const outputFilePath = "output.md";
-      const result = getChartFiles(CHARTS, outputFilePath);
+      const singleOutputFilePath = "output.md";
+      const result = getChartFiles(CHARTS, singleOutputFilePath);
 
       expect(result).toEqual([
         {
-          path: outputFilePath,
+          path: singleOutputFilePath,
           content: getChartsInSingleFile(CHARTS, "."),
         },
       ]);
     });
   });
 
-  describe("if `outputFilePath` is not provided", () => {
+  describe("if `singleOutputFilePath` is not provided", () => {
     it("returns one Mermaid file per chart next to spec file", () => {
       const result = getChartFiles(CHARTS);
 
