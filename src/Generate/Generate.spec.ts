@@ -1,8 +1,15 @@
 import { SpecChart } from "./types";
 import { Generate } from "./Generate";
-import { logSpecFilesFound } from "./helpers/log";
+import { Logger } from "./helpers/log";
 
-jest.mock("./helpers/log");
+class MockLogger extends Logger {
+  logSpecFilesFound = jest.fn();
+  logChartFilesWritten = jest.fn();
+
+  constructor() {
+    super(jest.fn());
+  }
+}
 
 describe("Generate", () => {
   const SPEC_FILE_BASE_NAME = "math.spec.ts";
@@ -17,7 +24,8 @@ describe("Generate", () => {
 
   describe("if found no spec files", () => {
     it("throws", async () => {
-      const generate = Generate(async () => [], jest.fn());
+      const mockLogger = new MockLogger();
+      const generate = Generate(async () => [], jest.fn(), mockLogger);
 
       return expect(
         generate({
@@ -33,6 +41,7 @@ describe("Generate", () => {
 
   describe("if found at least one spec file", () => {
     it("returns chart file based on spec file", async () => {
+      const mockLogger = new MockLogger();
       const generate = Generate(
         async () => [SPEC_FILE_PATH],
         async (path) => {
@@ -40,7 +49,8 @@ describe("Generate", () => {
             path,
             content: path === SPEC_FILE_PATH ? SPEC_FILE_CONTENT : "",
           };
-        }
+        },
+        mockLogger
       );
 
       const actualResult = await generate({
@@ -63,8 +73,10 @@ N1 --> N2`,
         },
       ];
 
-      expect(logSpecFilesFound).toHaveBeenCalledTimes(1);
-      expect(logSpecFilesFound).toHaveBeenCalledWith([SPEC_FILE_PATH]);
+      expect(mockLogger.logSpecFilesFound).toHaveBeenCalledTimes(1);
+      expect(mockLogger.logSpecFilesFound).toHaveBeenCalledWith([
+        SPEC_FILE_PATH,
+      ]);
 
       expect(actualResult).toEqual(expectedResult);
     });

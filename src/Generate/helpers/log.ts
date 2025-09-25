@@ -4,19 +4,23 @@ function pluralize(word: string, count: number): string {
   return `${count} ${word}${count === 1 ? "" : "s"}`;
 }
 
-export function logSpecFilesFound(specFilePaths: string[]) {
-  console.log(
-    `🔎 Found ${pluralize(
-      "spec file",
-      specFilePaths.length
-    )}:\n${specFilePaths.join("\n")}\n`
-  );
-}
+export class Logger {
+  constructor(private log: (message: string) => void) {}
 
-export function logChartFilesWritten(filesWritten: File[]): void {
-  console.log(
-    `✏️ Wrote ${pluralize("chart file", filesWritten.length)}:\n${filesWritten
-      .map((file) => file.path)
-      .join("\n")}`
-  );
+  logSpecFilesFound(specFilePaths: string[]) {
+    this.log(
+      `🔎 Found ${pluralize(
+        "spec file",
+        specFilePaths.length
+      )}:\n${specFilePaths.join("\n")}\n`
+    );
+  }
+
+  logChartFilesWritten(filesWritten: File[]): void {
+    this.log(
+      `✏️ Wrote ${pluralize("chart file", filesWritten.length)}:\n${filesWritten
+        .map((file) => file.path)
+        .join("\n")}`
+    );
+  }
 }

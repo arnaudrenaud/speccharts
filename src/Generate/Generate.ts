@@ -1,11 +1,12 @@
 import { GenerateArgs, File, SpecChart } from "./types";
-import { logSpecFilesFound } from "./helpers/log";
+import { Logger } from "./helpers/log";
 import { getChartFromSpecFile } from "./helpers/getChartFromSpecFile";
 
 export const Generate =
   (
     getFilePaths: (patterns: string[]) => Promise<string[]>,
-    readFile: (path: string) => Promise<File>
+    readFile: (path: string) => Promise<File>,
+    logger: Logger = new Logger(() => {})
   ) =>
   async (args: GenerateArgs): Promise<SpecChart[]> => {
     const specFilePaths = await getFilePaths(args.inputFilePatterns);
@@ -14,7 +15,7 @@ export const Generate =
         `❌ Found no spec files – did you pass directory name instead of glob pattern (e.g. "src" instead of "src/**/*.spec.ts")?`
       );
     }
-    logSpecFilesFound(specFilePaths);
+    logger.logSpecFilesFound(specFilePaths);
 
     const specFiles = await Promise.all(specFilePaths.map(readFile));
 
