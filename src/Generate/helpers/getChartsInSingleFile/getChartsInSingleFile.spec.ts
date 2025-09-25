@@ -1,8 +1,8 @@
-import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown";
+import { getChartsInSingleFile } from "./getChartsInSingleFile";
 import { GENERATED_BY_SPECCHARTS_LABEL } from "../constants";
 
-describe("gatherChartsInMarkdown", () => {
-  it("gathers charts in Markdown", () => {
+describe("getChartsInSingleFile", () => {
+  it("gathers charts in single Markdown file", () => {
     const charts = [
       {
         specFile: { path: "specFile1.ts", content: "specFile1" },
@@ -13,7 +13,7 @@ describe("gatherChartsInMarkdown", () => {
         chart: "flowchart TD\nsecond chart…",
       },
     ];
-    const result = gatherChartsInMarkdown(charts, "");
+    const result = getChartsInSingleFile(charts, "");
     expect(result).toEqual(`# speccharts
 
 Jump to chart for each spec file:

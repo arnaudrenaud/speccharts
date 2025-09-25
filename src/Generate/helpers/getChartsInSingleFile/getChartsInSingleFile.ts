@@ -6,7 +6,7 @@ import { getTreeText, generateHTMLLocalAnchor } from "./helpers";
 
 export type Tree = { [key: string]: Tree | {} };
 
-export function gatherChartsInMarkdown(
+export function getChartsInSingleFile(
   charts: SpecChart[],
   outputDirectoryPath: string
 ): string {

@@ -1,7 +1,6 @@
-import { File } from "./types";
+import { SpecChart } from "./types";
 import { Generate } from "./Generate";
-import { logSpecFilesFound, logChartFilesWritten } from "./helpers/log";
-import { GENERATED_BY_SPECCHARTS_LABEL } from "./helpers/constants";
+import { logSpecFilesFound } from "./helpers/log";
 
 jest.mock("./helpers/log");
 
@@ -16,17 +15,13 @@ describe("Generate", () => {
       });
     `;
 
-  const OUTPUT_DIRECTORY_PATH = "speccharts";
-
   describe("if found no spec files", () => {
     it("throws", async () => {
-      const generate = Generate(async () => [], jest.fn(), jest.fn());
+      const generate = Generate(async () => [], jest.fn());
 
       return expect(
         generate({
           inputFilePatterns: [SPEC_FILE_PATH],
-          outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
-          singleOutputFile: false,
         })
       ).rejects.toEqual(
         new Error(
@@ -37,13 +32,7 @@ describe("Generate", () => {
   });
 
   describe("if found at least one spec file", () => {
-    it("writes chart file based on spec file", async () => {
-      const writeFileMock = jest
-        .fn()
-        .mockImplementation(
-          (file: File): Promise<File> => Promise.resolve(file)
-        );
-
+    it("returns chart file based on spec file", async () => {
       const generate = Generate(
         async () => [SPEC_FILE_PATH],
         async (path) => {
@@ -51,29 +40,26 @@ describe("Generate", () => {
             path,
             content: path === SPEC_FILE_PATH ? SPEC_FILE_CONTENT : "",
           };
-        },
-        writeFileMock
+        }
       );
 
       const actualResult = await generate({
         inputFilePatterns: [SPEC_FILE_PATH],
-        outputDirectoryPath: OUTPUT_DIRECTORY_PATH,
-        singleOutputFile: false,
       });
 
-      const expectedResult: File[] = [
+      const expectedResult: SpecChart[] = [
         {
-          path: `${OUTPUT_DIRECTORY_PATH}/${SPEC_FILE_BASE_NAME}.mmd`,
-          content: `flowchart TD
+          specFile: {
+            path: SPEC_FILE_PATH,
+            content: SPEC_FILE_CONTENT,
+          },
+          chart: `flowchart TD
 title["**${SPEC_FILE_PATH}**"]
 N0(["math"])
 N1["add"]
 N0 --> N1
 N2(["adds two numbers"])
-N1 --> N2
-
-%% ${GENERATED_BY_SPECCHARTS_LABEL}
-`,
+N1 --> N2`,
         },
       ];
 
@@ -81,12 +67,6 @@ N1 --> N2
       expect(logSpecFilesFound).toHaveBeenCalledWith([SPEC_FILE_PATH]);
 
       expect(actualResult).toEqual(expectedResult);
-
-      expect(writeFileMock).toHaveBeenCalledTimes(1);
-      expect(writeFileMock.mock.calls[0][0]).toEqual(expectedResult[0]);
-
-      expect(logChartFilesWritten).toHaveBeenCalledTimes(1);
-      expect(logChartFilesWritten).toHaveBeenCalledWith(expectedResult);
     });
   });
 });

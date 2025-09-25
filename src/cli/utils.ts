@@ -19,6 +19,19 @@ function getStringWithoutInvisibleCharacters(line: string) {
 }
 
 export function printCommandHeader(args: typeof _args) {
+  let outputInfo = "";
+  if (args.outputFile) {
+    outputInfo = `· Output file: ${getTextWithColorTags(args.outputFile)}`;
+  } else if (args.separateFiles) {
+    outputInfo = `· Output mode: ${getTextWithColorTags(
+      "one chart file per spec file next to spec"
+    )}`;
+  } else {
+    outputInfo = `· Output mode: ${getTextWithColorTags(
+      "Markdown with all charts to stdout"
+    )}`;
+  }
+
   const text = `${getTextWithColorTags(
     `${packageJson.name} v${packageJson.version}`,
     "green"
@@ -29,12 +42,7 @@ export function printCommandHeader(args: typeof _args) {
       ? `\n    ${args.inputFilePatterns.join("\n    ")}`
       : args.inputFilePatterns[0]
   )}
-· Output directory: ${getTextWithColorTags(args.outputDirectory)}
-· Output mode: ${getTextWithColorTags(
-    args.singleOutputFile
-      ? "single Markdown file with all charts"
-      : "one chart file per spec file"
-  )}`;
+${outputInfo}`;
 
   const textWidth = Math.max(
     ...text

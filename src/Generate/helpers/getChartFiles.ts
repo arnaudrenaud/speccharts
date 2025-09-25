@@ -1,28 +1,28 @@
 import path from "path";
 
 import { SpecChart, File } from "../types";
-import { gatherChartsInMarkdown } from "./gatherChartsInMarkdown/gatherChartsInMarkdown";
+import { getChartsInSingleFile } from "./getChartsInSingleFile/getChartsInSingleFile";
 import { getChartFileContent } from "./getChartFileContent";
 
 export const getChartFiles = (
   charts: SpecChart[],
-  outputDirectoryPath: string,
-  { singleOutputFile }: { singleOutputFile: boolean }
+  singleOutputFilePath?: string
 ): File[] => {
-  if (singleOutputFile) {
-    return [
-      {
-        path: `${outputDirectoryPath}/speccharts.md`,
-        content: gatherChartsInMarkdown(charts, outputDirectoryPath),
-      },
-    ];
-  } else {
-    return charts.map(({ specFile, chart }) => ({
-      path: `${path.join(
-        outputDirectoryPath,
-        path.basename(specFile.path)
-      )}.mmd`,
-      content: getChartFileContent(chart),
-    }));
-  }
+  return singleOutputFilePath
+    ? [
+        {
+          path: singleOutputFilePath,
+          content: getChartsInSingleFile(
+            charts,
+            path.dirname(singleOutputFilePath)
+          ),
+        },
+      ]
+    : charts.map(({ specFile, chart }) => ({
+        path: path.join(
+          path.dirname(specFile.path),
+          `${path.basename(specFile.path)}.mmd`
+        ),
+        content: getChartFileContent(chart),
+      }));
 };

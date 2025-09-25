@@ -1,5 +1,5 @@
 import { SpecChart } from "../../types";
-import { Tree } from "./gatherChartsInMarkdown";
+import { Tree } from "./getChartsInSingleFile";
 
 /**
  * Generates a URL-friendly HTML local anchor string from a file path by sanitizing it.

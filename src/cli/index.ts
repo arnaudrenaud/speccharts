@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 
-import { generateLocalFileSystem } from "../Generate/generateLocalFileSystem";
+import {
+  generateAndWriteToFiles,
+  generateAndWriteToStandardOutput,
+} from "../generateLocalFileSystem/generateLocalFileSystem";
 import { printCommandHeader } from "./utils";
 import { args } from "./args";
 
-printCommandHeader(args);
-generateLocalFileSystem({
-  inputFilePatterns: args.inputFilePatterns,
-  outputDirectoryPath: args.outputDirectory,
-  singleOutputFile: args.singleOutputFile,
-});
+if (args.outputFile || args.separateOutputFiles) {
+  printCommandHeader(args);
+  generateAndWriteToFiles({
+    inputFilePatterns: args.inputFilePatterns,
+    singleOutputFilePath: args.outputFile,
+  });
+} else {
+  generateAndWriteToStandardOutput({
+    inputFilePatterns: args.inputFilePatterns,
+  });
+}
