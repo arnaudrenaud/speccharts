@@ -14,6 +14,21 @@ describe("getChartFiles", () => {
     },
   ];
 
+  it("returns one Mermaid file per chart next to corresponding spec file", () => {
+    const result = getChartFiles(CHARTS);
+
+    expect(result).toEqual([
+      {
+        path: `specFile1.ts.mmd`,
+        content: getChartFileContent(CHARTS[0].chart),
+      },
+      {
+        path: `specFile2.ts.mmd`,
+        content: getChartFileContent(CHARTS[1].chart),
+      },
+    ]);
+  });
+
   describe("if `singleOutputFilePath` is provided", () => {
     it("returns one Markdown file gathering all charts at the specified path", () => {
       const singleOutputFilePath = "output.md";
@@ -23,23 +38,6 @@ describe("getChartFiles", () => {
         {
           path: singleOutputFilePath,
           content: getChartsInSingleFile(CHARTS, "."),
-        },
-      ]);
-    });
-  });
-
-  describe("if `singleOutputFilePath` is not provided", () => {
-    it("returns one Mermaid file per chart next to spec file", () => {
-      const result = getChartFiles(CHARTS);
-
-      expect(result).toEqual([
-        {
-          path: `specFile1.ts.mmd`,
-          content: getChartFileContent(CHARTS[0].chart),
-        },
-        {
-          path: `specFile2.ts.mmd`,
-          content: getChartFileContent(CHARTS[1].chart),
         },
       ]);
     });

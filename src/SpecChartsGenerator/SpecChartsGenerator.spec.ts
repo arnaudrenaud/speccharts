@@ -44,7 +44,7 @@ describe("SpecChartsGenerator", () => {
   });
 
   describe("if found at least one spec file", () => {
-    it("returns chart file based on spec file", async () => {
+    it("returns chart files based on spec files", async () => {
       const mockLogger = new MockLogger();
       const generator = new SpecChartsGenerator(
         async () => [SPEC_FILE_PATH],
