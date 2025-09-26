@@ -1,0 +1,165 @@
+import fsExtra from "fs-extra";
+import path from "path";
+import { spawn } from "child_process";
+
+const ROOT_DIR = path.resolve(__dirname, "../..");
+const CLI_ENTRY_PATH = path.resolve(ROOT_DIR, "dist/cli/index.js");
+const SPEC_FILES_DIRECTORY = path.resolve(
+  ROOT_DIR,
+  ".tmp.cli--single-output-filepecs"
+);
+const SPEC_FILE_NAME = "cli-example.spec.ts";
+const SPEC_FILE_PATH = path.join(SPEC_FILES_DIRECTORY, SPEC_FILE_NAME);
+const SINGLE_OUTPUT_FILE = path.resolve(ROOT_DIR, ".tmp.cli-output.md");
+
+const SPEC_FILE_CONTENT = `describe("some test suite", () => {
+  it("works", () => {});
+});`;
+
+function toPosix(p: string): string {
+  return p.split(path.sep).join(path.posix.sep);
+}
+
+const relativeSpecDirectory =
+  toPosix(path.relative(ROOT_DIR, SPEC_FILES_DIRECTORY)) || ".";
+const SPEC_GLOB = `${relativeSpecDirectory}/**/*.spec.ts`;
+
+async function cleanUp() {
+  await fsExtra.remove(SPEC_FILES_DIRECTORY);
+  await fsExtra.remove(SINGLE_OUTPUT_FILE);
+}
+
+function runCli(args: string[]): Promise<{
+  stdout: string;
+  stderr: string;
+  exitCode: number;
+}> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [CLI_ENTRY_PATH, ...args], {
+      cwd: ROOT_DIR,
+      env: { ...process.env },
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    child.stdout?.setEncoding("utf8");
+    child.stdout?.on("data", (data: Buffer | string) => {
+      stdout += data.toString();
+    });
+
+    child.stderr?.setEncoding("utf8");
+    child.stderr?.on("data", (data: Buffer | string) => {
+      stderr += data.toString();
+    });
+
+    child.on("error", reject);
+    child.on("close", (code) => {
+      resolve({
+        stdout,
+        stderr,
+        exitCode: code ?? 0,
+      });
+    });
+  });
+}
+
+describe("speccharts CLI (integration)", () => {
+  beforeEach(async () => {
+    await cleanUp();
+    await fsExtra.outputFile(SPEC_FILE_PATH, SPEC_FILE_CONTENT);
+  });
+
+  afterAll(async () => {
+    await cleanUp();
+  });
+
+  describe("when --multiple-output-files is provided", () => {
+    it("writes Mermaid files next to spec files and prints command header", async () => {
+      const { stdout, stderr, exitCode } = await runCli([
+        "--input-file-patterns",
+        SPEC_GLOB,
+        "--multiple-output-files",
+      ]);
+
+      expect(exitCode).toBe(0);
+      expect(stderr).toBe("");
+
+      const chartPath = `${SPEC_FILE_PATH}.mmd`;
+      expect(await fsExtra.pathExists(chartPath)).toBe(true);
+
+      const chartContent = await fsExtra.readFile(chartPath, "utf8");
+      expect(chartContent).toContain("works");
+
+      expect(stdout).toContain("Input file patterns:");
+      expect(stdout).toContain("Wrote 1 chart file");
+    });
+  });
+
+  describe("when both single and multiple flags are provided", () => {
+    it("exits with an error without writing files", async () => {
+      const { stdout, stderr, exitCode } = await runCli([
+        "--input-file-patterns",
+        SPEC_GLOB,
+        "--single-output-file",
+        SINGLE_OUTPUT_FILE,
+        "--multiple-output-files",
+      ]);
+
+      expect(exitCode).toBe(1);
+      expect(stdout).toBe("");
+      expect(stderr).toContain(
+        "❌ Error: Cannot specify both --single-output-file and --multiple-output-files."
+      );
+
+      const chartPath = `${SPEC_FILE_PATH}.mmd`;
+      expect(await fsExtra.pathExists(chartPath)).toBe(false);
+      expect(await fsExtra.pathExists(SINGLE_OUTPUT_FILE)).toBe(false);
+    });
+  });
+
+  describe("when --single-output-file flag is provided", () => {
+    it("writes a single Markdown file with all charts", async () => {
+      const { stdout, stderr, exitCode } = await runCli([
+        "--input-file-patterns",
+        SPEC_GLOB,
+        "--single-output-file",
+        SINGLE_OUTPUT_FILE,
+      ]);
+
+      expect(exitCode).toBe(0);
+      expect(stderr).toBe("");
+
+      const chartPath = `${SPEC_FILE_PATH}.mmd`;
+      expect(await fsExtra.pathExists(chartPath)).toBe(false);
+      expect(await fsExtra.pathExists(SINGLE_OUTPUT_FILE)).toBe(true);
+
+      const fileContent = await fsExtra.readFile(SINGLE_OUTPUT_FILE, "utf8");
+      expect(fileContent).toContain("# speccharts");
+      expect(fileContent).toContain("```mermaid");
+      expect(fileContent).toContain("works");
+
+      expect(stdout).toContain("Input file patterns:");
+      expect(stdout).toContain("single Markdown file with all charts");
+    });
+  });
+
+  describe("when no output flag is provided", () => {
+    it("prints a single Markdown document to stdout", async () => {
+      const { stdout, stderr, exitCode } = await runCli([
+        "--input-file-patterns",
+        SPEC_GLOB,
+      ]);
+
+      expect(exitCode).toBe(0);
+      expect(stderr).toBe("");
+
+      const chartPath = `${SPEC_FILE_PATH}.mmd`;
+      expect(await fsExtra.pathExists(chartPath)).toBe(false);
+
+      expect(stdout).toContain("```mermaid");
+      expect(stdout).toContain("works");
+      expect(stdout).toContain("Generated by speccharts");
+    });
+  });
+});
