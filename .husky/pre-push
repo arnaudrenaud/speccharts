@@ -1,1 +1,1 @@
-./build-and-test.sh
+npm run build-and-test

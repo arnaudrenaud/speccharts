@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: "22"
       - run: npm ci
-      - run: ./build-and-test.sh
+      - run: npm run build-and-test
       - name: Upload dist artifact
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
