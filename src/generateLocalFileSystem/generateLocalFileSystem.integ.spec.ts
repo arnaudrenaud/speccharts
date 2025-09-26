@@ -16,7 +16,7 @@ const cleanUpLocalFileSystem = async () => {
   await fsExtra.remove(SINGLE_OUTPUT_FILE);
 };
 
-describe("generateLocalFileSystem", () => {
+describe("generateLocalFileSystem (integration tests)", () => {
   const SPEC_FILE_NAME_1 = "index.spec.ts";
   const SPEC_FILE_NAME_2 = "index.test.ts";
 
