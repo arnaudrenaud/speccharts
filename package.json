@@ -7,8 +7,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest --runInBand",
-    "test:watch": "npm run test -- --watch"
+    "test": "jest --testPathIgnorePatterns \".*\\.integ\\.spec\\.ts\"",
+    "test:watch": "npm run test -- --watch",
+    "test:integ": "jest --runInBand --testMatch \"**/*.integ.spec.ts\""
   },
   "keywords": [],
   "author": "",
