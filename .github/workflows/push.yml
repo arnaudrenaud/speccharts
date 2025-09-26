@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build and test
 
 on:
   push:
@@ -11,5 +11,6 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
+          registry-url: "https://registry.npmjs.org"
       - run: npm ci
       - run: ./build-and-test.sh
