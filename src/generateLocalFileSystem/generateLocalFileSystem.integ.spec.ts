@@ -5,6 +5,7 @@ import {
   generateAndWriteToStandardOutput,
 } from "./generateLocalFileSystem";
 import { standardOutputLogger } from "./helpers/standardOutputLogger";
+import { GENERATED_BY_SPECCHARTS_LABEL } from "../chart-files/constants";
 
 jest.mock("./helpers/standardOutputLogger");
 
@@ -84,6 +85,45 @@ describe("generateLocalFileSystem (integration tests)", () => {
         expect(fileContent).toContain("some test suite");
         expect(fileContent).toContain("some other test suite");
       });
+
+      it("removes existing single output chart file when `deleteExistingCharts` is true", async () => {
+        await fsExtra.outputFile(
+          SINGLE_OUTPUT_FILE,
+          `# old charts\n<!-- ${GENERATED_BY_SPECCHARTS_LABEL} -->\n`
+        );
+
+        await generateAndWriteToFiles({
+          inputFilePatterns: [
+            `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
+            `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
+          ],
+          singleOutputFilePath: SINGLE_OUTPUT_FILE,
+          deleteExistingCharts: true,
+        });
+
+        expect(await fsExtra.pathExists(SINGLE_OUTPUT_FILE)).toBe(true);
+        const fileContent = await fsExtra.readFile(SINGLE_OUTPUT_FILE, "utf8");
+        expect(fileContent).not.toContain("# old charts");
+      });
+    });
+
+    it("removes generated chart files before writing new ones when `deleteExistingCharts` is true", async () => {
+      const staleChartPath = path.join(SPEC_FILES_DIRECTORY, "stale-chart.mmd");
+
+      await fsExtra.outputFile(
+        staleChartPath,
+        `graph TD;\n%% ${GENERATED_BY_SPECCHARTS_LABEL}\n`
+      );
+
+      await generateAndWriteToFiles({
+        inputFilePatterns: [
+          `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
+          `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
+        ],
+        deleteExistingCharts: true,
+      });
+
+      expect(await fsExtra.pathExists(staleChartPath)).toBe(false);
     });
   });
 

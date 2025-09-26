@@ -23,4 +23,17 @@ export class Logger {
         .join("\n")}`
     );
   }
+
+  logChartFilesRemoved(paths: string[]): void {
+    if (paths.length === 0) {
+      return;
+    }
+
+    this.log(
+      `🧹 Deleted ${pluralize(
+        "existing chart file",
+        paths.length
+      )}:\n${paths.join("\n")}\n`
+    );
+  }
 }

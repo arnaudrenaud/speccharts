@@ -15,6 +15,11 @@ export const args = new Command()
     "writes each chart in a Mermaid file next to corresponding spec file",
     false
   )
+  .option(
+    "-d, --delete-existing-charts",
+    "delete existing chart files before writing new ones",
+    false
+  )
   .showHelpAfterError()
   .parse()
   .opts();

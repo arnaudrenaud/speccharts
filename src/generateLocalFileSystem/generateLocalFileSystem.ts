@@ -6,6 +6,7 @@ import { getFilePaths } from "./helpers/getFilePaths";
 import { standardOutputLogger } from "./helpers/standardOutputLogger";
 import { getChartFiles } from "../chart-files/getChartFiles/getChartFiles";
 import { getChartsInSingleFile } from "../chart-files/getChartsInSingleFile/getChartsInSingleFile";
+import { deleteGeneratedChartFiles } from "./helpers/deleteGeneratedChartFiles";
 
 export const generateAndWriteToFiles = async (
   args: GenerateLocalFileSystemArgs
@@ -17,6 +18,12 @@ export const generateAndWriteToFiles = async (
   );
   const charts = await generator.generate(args);
   const files = getChartFiles(charts, args.singleOutputFilePath);
+
+  if (args.deleteExistingCharts) {
+    const removedPaths = await deleteGeneratedChartFiles();
+    standardOutputLogger.logChartFilesRemoved(removedPaths);
+  }
+
   await writeToLocalFileSystem(files);
 };
 
