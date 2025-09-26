@@ -1,6 +1,10 @@
 {
   "name": "speccharts",
   "version": "0.3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arnaudrenaud/speccharts"
+  },
   "main": "index.js",
   "bin": {
     "speccharts": "./dist/cli/index.js"
