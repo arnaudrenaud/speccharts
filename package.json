@@ -10,7 +10,7 @@
     "test": "jest --testPathIgnorePatterns \".*\\.integ\\.spec\\.ts\"",
     "test:watch": "npm run test -- --watch",
     "test:integ": "jest --runInBand --testMatch \"**/*.integ.spec.ts\" --testPathIgnorePatterns \"cli\\.integ\\.spec\\.ts\"",
-    "test:cli": "npm run build && jest --runInBand --testMatch \"**/cli.integ.spec.ts\""
+    "test:cli": "jest --runInBand --testMatch \"**/cli.integ.spec.ts\""
   },
   "keywords": [],
   "author": "",
