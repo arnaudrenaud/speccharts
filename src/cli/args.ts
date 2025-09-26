@@ -8,7 +8,7 @@ export const args = new Command()
   )
   .option(
     "-s, --single-output-file <path>",
-    "writes charts in single Markdown file"
+    "writes charts in a single Markdown file"
   )
   .option(
     "-m, --multiple-output-files",
