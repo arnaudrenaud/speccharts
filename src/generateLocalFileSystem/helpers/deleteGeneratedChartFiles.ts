@@ -20,7 +20,7 @@ function containsGeneratedLabel(content: string): boolean {
 }
 
 export async function deleteGeneratedChartFiles(): Promise<string[]> {
-  const candidatePaths = await glob("**/*", {
+  const candidatePaths = await glob("**/*.{md,mmd}", {
     cwd: process.cwd(),
     dot: true,
     onlyFiles: true,
@@ -33,12 +33,7 @@ export async function deleteGeneratedChartFiles(): Promise<string[]> {
 
   for (const filePath of candidatePaths) {
     let content: string;
-    try {
-      content = await fsExtra.readFile(filePath, "utf8");
-    } catch (error) {
-      // Ignore files that cannot be read as text (binary or permission issues).
-      continue;
-    }
+    content = await fsExtra.readFile(filePath, "utf8");
 
     if (!containsGeneratedLabel(content)) {
       continue;
