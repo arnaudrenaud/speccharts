@@ -12,12 +12,39 @@ export const getChart = (specTree: SpecTree): string => {
     return `N${nodeId++}`;
   }
 
+  function formatTableChildren(children: any[]): string {
+    if (!children || children.length === 0) {
+      return "No test cases";
+    }
+
+    return children.map((child, index) => `<li>${child.name}</li>`).join("");
+  }
+
   function walk(
     node: SpecNode,
     parentId: string | null,
     nodes: string[]
   ): string {
     const thisId = getNodeId();
+
+    // Handle table nodes specially - render as leaf with children names
+    if (node.tableData) {
+      const tableContent = node.children
+        ? formatTableChildren(node.children)
+        : "No test cases";
+      const label = escapeMermaidLabelMarkdown(
+        `${node.name}<ul>${tableContent}</ul>`
+      );
+
+      nodes.push(`${thisId}(["${label}"])`);
+
+      if (parentId) {
+        nodes.push(`${parentId} --> ${thisId}`);
+      }
+
+      return thisId;
+    }
+
     const label = escapeMermaidLabelMarkdown(node.name);
 
     nodes.push(
@@ -34,7 +61,8 @@ export const getChart = (specTree: SpecTree): string => {
       nodes.push(`${parentId} --> ${thisId}`);
     }
 
-    if (node.children) {
+    // Skip processing children for table nodes since they're rendered as leaves
+    if (node.children && !node.tableData) {
       for (const child of node.children) {
         if (
           node.type === "question" &&
