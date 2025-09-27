@@ -18,16 +18,25 @@ export const getChart = (specTree: SpecTree): string => {
     nodes: string[]
   ): string {
     const subgraphId = `subgraph_${getNodeId()}`;
-    const tableTitle = escapeMermaidLabelMarkdown(node.name);
 
-    nodes.push(`subgraph ${subgraphId}["${tableTitle}"]`);
+    nodes.push(`subgraph ${subgraphId}[" "]`);
+    nodes.push(`  direction TB`);
 
     if (node.children && node.children.length > 0) {
+      const cellIds: string[] = [];
+
+      // First, create all the nodes
       node.children.forEach((child, index) => {
         const cellId = getNodeId();
+        cellIds.push(cellId);
         const cellLabel = escapeMermaidLabelMarkdown(child.name);
         nodes.push(`  ${cellId}(["${cellLabel}"])`);
       });
+
+      // Then, connect them sequentially
+      for (let i = 0; i < cellIds.length - 1; i++) {
+        nodes.push(`  ${cellIds[i]} --- ${cellIds[i + 1]}`);
+      }
     } else {
       const emptyId = getNodeId();
       nodes.push(`  ${emptyId}(["No test cases"])`);
