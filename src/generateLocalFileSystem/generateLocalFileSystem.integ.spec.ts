@@ -99,13 +99,10 @@ describe("generateLocalFileSystem (integration tests)", () => {
             `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
             `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
           ],
-          singleOutputFilePath: SINGLE_OUTPUT_FILE,
           deleteExistingCharts: true,
         });
 
-        expect(await fsExtra.pathExists(SINGLE_OUTPUT_FILE)).toBe(true);
-        const fileContent = await fsExtra.readFile(SINGLE_OUTPUT_FILE, "utf8");
-        expect(fileContent).not.toContain("# existing charts");
+        expect(await fsExtra.pathExists(SINGLE_OUTPUT_FILE)).toBe(false);
       });
 
       it("deletes existing multiple output chart files", async () => {
@@ -131,10 +128,10 @@ describe("generateLocalFileSystem (integration tests)", () => {
       });
 
       it("does not delete files with extension other than .md or .mmd even when they contain the generated label", async () => {
-        const nonChartPath = path.join(SPEC_FILES_DIRECTORY, "stale-chart.txt");
+        const textFilePath = path.join(SPEC_FILES_DIRECTORY, "stale-chart.txt");
 
         await fsExtra.outputFile(
-          nonChartPath,
+          textFilePath,
           `graph TD;\n%% ${GENERATED_BY_SPECCHARTS_LABEL}\n`
         );
 
@@ -146,7 +143,7 @@ describe("generateLocalFileSystem (integration tests)", () => {
           deleteExistingCharts: true,
         });
 
-        expect(await fsExtra.pathExists(nonChartPath)).toBe(true);
+        expect(await fsExtra.pathExists(textFilePath)).toBe(true);
       });
     });
   });
