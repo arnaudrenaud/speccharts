@@ -11,11 +11,11 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest --testPathIgnorePatterns \".*\\.integ\\.spec\\.ts\"",
-    "test:watch": "npm run test -- --watch",
+    "test:unit": "jest --testPathIgnorePatterns \".*\\.integ\\.spec\\.ts\"",
+    "test:unit:watch": "npm run test:unit -- --watch",
     "test:integ": "jest --runInBand --testMatch \"**/*.integ.spec.ts\" --testPathIgnorePatterns \"cli\\.integ\\.spec\\.ts\"",
     "test:cli": "jest --runInBand --testMatch \"**/cli.integ.spec.ts\"",
-    "build-and-test": "npm run build && npm run test && npm run test:integ && npm run test:cli"
+    "build-and-test": "npm run build && npm run test:unit && npm run test:integ && npm run test:cli"
   },
   "keywords": [],
   "author": "",
