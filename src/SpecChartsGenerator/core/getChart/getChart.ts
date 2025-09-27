@@ -87,9 +87,6 @@ export const getChart = (specTree: SpecTree): string => {
     return thisId;
   }
 
-  // Add standalone title node
-  lines.push(`title["**${escapeMermaidLabelMarkdown(specTree.name)}**"]`);
-
   for (const child of specTree.children) {
     walk(child, null, lines);
   }

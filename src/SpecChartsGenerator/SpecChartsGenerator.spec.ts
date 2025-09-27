@@ -68,7 +68,6 @@ describe("SpecChartsGenerator", () => {
             content: SPEC_FILE_CONTENT,
           },
           chart: `flowchart TD
-title["**${SPEC_FILE_PATH}**"]
 N0(["math"])
 N1["add"]
 N0 --> N1

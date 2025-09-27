@@ -2,7 +2,7 @@ import { SpecTree } from "../../../types";
 import { getChart } from "./getChart";
 
 describe("getChart", () => {
-  it("returns a Mermaid flowchart with spec name as title, stadium-shaped node for root and leaves, rectangle node for cases, edge between each case and its children", () => {
+  it("returns a Mermaid flowchart with stadium-shaped node for root and leaves, rectangle node for cases, edge between each case and its children", () => {
     const SPEC_TREE: SpecTree = {
       name: "src/math.spec.ts",
       children: [
@@ -33,7 +33,6 @@ describe("getChart", () => {
     const result = getChart(SPEC_TREE);
 
     expect(result).toEqual(`flowchart TD
-title["**src/math.spec.ts**"]
 N0(["math"])
 N1["add"]
 N0 --> N1
@@ -78,7 +77,6 @@ N3 --> N4`);
       const result = getChart(SPEC_TREE);
 
       expect(result).toEqual(`flowchart TD
-title["**src/math.spec.ts**"]
 N0(["division"])
 N1{"is divider 0?"}
 N0 --> N1
@@ -130,7 +128,6 @@ N1 -- no --> N3`);
       const result = getChart(SPEC_TREE);
 
       expect(result).toEqual(`flowchart TD
-title["**src/math.spec.ts**"]
 N0(["math operations"])
 N1(["<table><tr><td>• adds 1 and 1 to get 2</td></tr><tr><td>• adds 1 and 2 to get 3</td></tr><tr><td>• adds 2 and 1 to get 3</td></tr></table>"])
 N0 --> N1
