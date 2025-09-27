@@ -138,7 +138,11 @@ npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --multiple-output-files --dele
 
 This gets rid of stale files (useful if you deleted spec files since last generation).
 
-## Programmatic API
+## JavaScript/TypeScript API
+
+```sh
+npm install --save-dev speccharts
+```
 
 ```ts
 import { SpecChartsGenerator } from "speccharts";
