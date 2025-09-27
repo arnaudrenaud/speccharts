@@ -8,13 +8,14 @@ export type File = {
 };
 
 export type SpecNode = {
-  type: "case" | "question" | "answer" | "behavior";
+  type: "case" | "question" | "answer" | "behavior" | "table";
   name: string;
   location?: {
     file: string;
     line: number;
   };
   children?: SpecNode[];
+  tableData?: unknown[];
 };
 
 export type SpecTree = {
