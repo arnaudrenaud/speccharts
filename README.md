@@ -48,7 +48,6 @@ describe("setUserAsAdmin", () => {
 
 ```mermaid
 flowchart TD
-title["**example-test-suites/setUserAsAdmin.spec.ts**"]
 N0(["setUserAsAdmin"])
 N1["when authenticated user is not admin"]
 N0 --> N1
@@ -99,7 +98,7 @@ Mermaid files (typically `.mmd`) can be:
 
 ## Command-line interface
 
-### Generate multiple chart files
+### ✏️📒 Generate multiple chart files
 
 ```sh
 npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --multiple-output-files
@@ -117,23 +116,27 @@ src/
     └── setUserAsAdmin.spec.ts.mmd  ← Generated
 ```
 
-### Generate a single Markdown file compiling all charts
+### ✏️📄 Generate a single Markdown file compiling all charts
 
 ```sh
 npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --single-output-file speccharts.md
 ```
 
-### Write Markdown chart compilation to standard output (no files created)
+This creates a [`speccharts.md` file such as this one](./speccharts.md).
+
+### ⤵️ Write the same Markdown chart compilation to standard output (no files created)
 
 ```sh
 npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}"
 ```
 
-### Delete existing charts before generating new ones
+### 🧹 Delete existing charts before generating new ones
 
 ```sh
 npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --multiple-output-files --delete-existing-charts
 ```
+
+This gets rid of stale files (useful if you deleted spec files since last generation).
 
 ## Programmatic API
 
