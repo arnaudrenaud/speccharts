@@ -42,7 +42,7 @@ function renderTreeWithLinks(
         ? `<a href="#${generateHTMLLocalAnchor(
             currentPath.join("/")
           )}">${key}</a>`
-        : key;
+        : `${key}/`;
       let result = `${prefix}${branch}${display}<br />`;
       if (!isFile) {
         result += renderTreeWithLinks(

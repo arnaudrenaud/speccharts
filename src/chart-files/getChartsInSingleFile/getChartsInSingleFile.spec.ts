@@ -1,15 +1,23 @@
+import path from "path";
 import { getChartsInSingleFile } from "./getChartsInSingleFile";
 import { GENERATED_BY_SPECCHARTS_LABEL } from "../constants";
 
 describe("getChartsInSingleFile", () => {
   it("gathers charts in single Markdown file", () => {
+    const SPEC_FILES_DIRECTORY = "src";
     const charts = [
       {
-        specFile: { path: "specFile1.ts", content: "specFile1" },
+        specFile: {
+          path: path.join(SPEC_FILES_DIRECTORY, "specFile1.ts"),
+          content: "specFile1",
+        },
         chart: "flowchart TD\nfirst chart…",
       },
       {
-        specFile: { path: "specFile2.ts", content: "specFile2" },
+        specFile: {
+          path: path.join(SPEC_FILES_DIRECTORY, "specFile2.ts"),
+          content: "specFile2",
+        },
         chart: "flowchart TD\nsecond chart…",
       },
     ];
@@ -18,11 +26,11 @@ describe("getChartsInSingleFile", () => {
 
 Jump to chart for each spec file:
 
-<pre>├── <a href="#specFile1ts">specFile1.ts</a><br />└── <a href="#specFile2ts">specFile2.ts</a><br /></pre>
+<pre>└── src/<br />    ├── <a href="#src-specFile1ts">specFile1.ts</a><br />    └── <a href="#src-specFile2ts">specFile2.ts</a><br /></pre>
 
 ---
 
-Spec file: <a id="specFile1ts"></a><a href="specFile1.ts">specFile1.ts</a>
+Spec file: <a id="src-specFile1ts"></a><a href="src/specFile1.ts">src/specFile1.ts</a>
 
 \`\`\`mermaid
 flowchart TD
@@ -31,7 +39,7 @@ first chart…
 
 ---
 
-Spec file: <a id="specFile2ts"></a><a href="specFile2.ts">specFile2.ts</a>
+Spec file: <a id="src-specFile2ts"></a><a href="src/specFile2.ts">src/specFile2.ts</a>
 
 \`\`\`mermaid
 flowchart TD
