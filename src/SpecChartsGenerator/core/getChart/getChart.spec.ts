@@ -132,24 +132,10 @@ N1 -- no --> N3`);
       expect(result).toEqual(`flowchart TD
 title["**src/math.spec.ts**"]
 N0(["math operations"])
-subgraph subgraph_N2[" "]
-  direction TB
-  N3(["adds 1 and 1 to get 2"])
-  N4(["adds 1 and 2 to get 3"])
-  N5(["adds 2 and 1 to get 3"])
-  N3 --- N4
-  N4 --- N5
-end
-N0 --> subgraph_N2
-subgraph subgraph_N7[" "]
-  direction TB
-  N8(["handles first case"])
-  N9(["handles second case"])
-  N10(["handles third case"])
-  N8 --- N9
-  N9 --- N10
-end
-N0 --> subgraph_N7`);
+N1(["<table><tr><td>• adds 1 and 1 to get 2</td></tr><tr><td>• adds 1 and 2 to get 3</td></tr><tr><td>• adds 2 and 1 to get 3</td></tr></table>"])
+N0 --> N1
+N2(["<table><tr><td>• handles first case</td></tr><tr><td>• handles second case</td></tr><tr><td>• handles third case</td></tr></table>"])
+N0 --> N2`);
     });
   });
 });

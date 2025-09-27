@@ -12,44 +12,19 @@ export const getChart = (specTree: SpecTree): string => {
     return `N${nodeId++}`;
   }
 
-  function renderTableSubgraph(
-    node: SpecNode,
-    parentId: string,
-    nodes: string[]
-  ): string {
-    const subgraphId = `subgraph_${getNodeId()}`;
-
-    nodes.push(`subgraph ${subgraphId}[" "]`);
-    nodes.push(`  direction TB`);
-
-    if (node.children && node.children.length > 0) {
-      const cellIds: string[] = [];
-
-      // First, create all the nodes
-      node.children.forEach((child, index) => {
-        const cellId = getNodeId();
-        cellIds.push(cellId);
-        const cellLabel = escapeMermaidLabelMarkdown(child.name);
-        nodes.push(`  ${cellId}(["${cellLabel}"])`);
-      });
-
-      // Then, connect them sequentially
-      for (let i = 0; i < cellIds.length - 1; i++) {
-        nodes.push(`  ${cellIds[i]} --- ${cellIds[i + 1]}`);
-      }
-    } else {
-      const emptyId = getNodeId();
-      nodes.push(`  ${emptyId}(["No test cases"])`);
+  function formatTableAsHTML(children: any[]): string {
+    if (!children || children.length === 0) {
+      return "<table><tr><td>• No test cases</td></tr></table>";
     }
 
-    nodes.push(`end`);
+    const tableRows = children
+      .map((child) => {
+        const escapedName = escapeMermaidLabelMarkdown(child.name);
+        return `<tr><td>• ${escapedName}</td></tr>`;
+      })
+      .join("");
 
-    // Connect parent to subgraph
-    if (parentId) {
-      nodes.push(`${parentId} --> ${subgraphId}`);
-    }
-
-    return subgraphId;
+    return `<table>${tableRows}</table>`;
   }
 
   function walk(
@@ -59,9 +34,19 @@ export const getChart = (specTree: SpecTree): string => {
   ): string {
     const thisId = getNodeId();
 
-    // Handle table nodes specially - render as subgraph with individual cells
+    // Handle table nodes specially - render as simple cell with HTML table
     if (node.tableData) {
-      return renderTableSubgraph(node, parentId || "", nodes);
+      const tableContent = node.children
+        ? formatTableAsHTML(node.children)
+        : "<table><tr><td>• No test cases</td></tr></table>";
+      const cellLabel = escapeMermaidLabelMarkdown(tableContent);
+      nodes.push(`${thisId}(["${cellLabel}"])`);
+
+      if (parentId) {
+        nodes.push(`${parentId} --> ${thisId}`);
+      }
+
+      return thisId;
     }
 
     const label = escapeMermaidLabelMarkdown(node.name);
