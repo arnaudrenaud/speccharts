@@ -12,12 +12,35 @@ export const getChart = (specTree: SpecTree): string => {
     return `N${nodeId++}`;
   }
 
-  function formatTableChildren(children: any[]): string {
-    if (!children || children.length === 0) {
-      return "No test cases";
+  function renderTableSubgraph(
+    node: SpecNode,
+    parentId: string,
+    nodes: string[]
+  ): string {
+    const subgraphId = `subgraph_${getNodeId()}`;
+    const tableTitle = escapeMermaidLabelMarkdown(node.name);
+
+    nodes.push(`subgraph ${subgraphId}["${tableTitle}"]`);
+
+    if (node.children && node.children.length > 0) {
+      node.children.forEach((child, index) => {
+        const cellId = getNodeId();
+        const cellLabel = escapeMermaidLabelMarkdown(child.name);
+        nodes.push(`  ${cellId}(["${cellLabel}"])`);
+      });
+    } else {
+      const emptyId = getNodeId();
+      nodes.push(`  ${emptyId}(["No test cases"])`);
     }
 
-    return children.map((child, index) => `<li>${child.name}</li>`).join("");
+    nodes.push(`end`);
+
+    // Connect parent to subgraph
+    if (parentId) {
+      nodes.push(`${parentId} --> ${subgraphId}`);
+    }
+
+    return subgraphId;
   }
 
   function walk(
@@ -27,22 +50,9 @@ export const getChart = (specTree: SpecTree): string => {
   ): string {
     const thisId = getNodeId();
 
-    // Handle table nodes specially - render as leaf with children names
+    // Handle table nodes specially - render as subgraph with individual cells
     if (node.tableData) {
-      const tableContent = node.children
-        ? formatTableChildren(node.children)
-        : "No test cases";
-      const label = escapeMermaidLabelMarkdown(
-        `${node.name}<ul>${tableContent}</ul>`
-      );
-
-      nodes.push(`${thisId}(["${label}"])`);
-
-      if (parentId) {
-        nodes.push(`${parentId} --> ${thisId}`);
-      }
-
-      return thisId;
+      return renderTableSubgraph(node, parentId || "", nodes);
     }
 
     const label = escapeMermaidLabelMarkdown(node.name);
