@@ -6,11 +6,13 @@ function endsWithQuestionMark(text: string): boolean {
   return text.trim().endsWith("?");
 }
 
+const PARSED_EXPRESSIONS = ["describe", "it", "test"];
+
 function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
   if (
     ts.isCallExpression(node) &&
     ts.isIdentifier(node.expression) &&
-    (node.expression.text === "describe" || node.expression.text === "it")
+    PARSED_EXPRESSIONS.includes(node.expression.text)
   ) {
     const [nameNode, callback] = node.arguments;
     if (ts.isStringLiteral(nameNode) && ts.isFunctionLike(callback)) {

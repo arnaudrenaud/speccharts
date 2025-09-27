@@ -12,7 +12,7 @@ describe("getSpecTree", () => {
   });
 
   describe("multiply", () => {
-    it("multiplies two numbers", () => {
+    test("multiplies two numbers", () => {
       expect(1 * 1).toEqual(1);
     });
   });
