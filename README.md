@@ -44,7 +44,7 @@ describe("setUserAsAdmin", () => {
 });
 ```
 
-…get this Mermaid flowchart ([show as plain text](https://github.com/arnaudrenaud/speccharts/blob/main/speccharts/setUserAsAdmin.spec.ts.mmd?short_path=37f24c6)):
+…get this Mermaid flowchart:
 
 ```mermaid
 flowchart TD
@@ -78,22 +78,120 @@ N13(["sets as admin in database, does not call ERP"])
 N12 --> N13
 ```
 
+## Principle
+
+Test suites tend to become less legible as they grow. At some point, you wonder where a new test belongs or if a case might not be already covered.
+These problems are only bound to increase with the advent of AI agents that contribute code you never wrote.
+
+speccharts reads your test files and generates Mermaid flowcharts that give a bird's eye view of test suites. `describe` blocks render as nodes, `it` and `test` blocks render as leaves.
+
+## Why the Mermaid format
+
+Mermaid is a plain text representation of diagrams.
+
+Mermaid files (typically `.mmd`) can be:
+
+- viewed on GitHub (native Mermaid rendering)
+- viewed in your IDE (see [Mermaid Preview](https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview) for Visual Studio Code)
+- viewed on GitBook, Notion, or Confluence
+- exported as images using Mermaid CLI
+- embedded in Markdown documentation
+
 ## Command-line interface
 
+### Generate multiple chart files
+
 ```sh
-npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" -o speccharts
+npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --multiple-output-files
 ```
 
-Output:
+This creates a `.mmd` file next to each spec file:
 
 ```
-🔎 Found 3 spec files:
-src/app/page.spec.tsx
-src/services/Service.spec.ts
-src/e2e/index.e2e.spec.ts
-
-✏️ Wrote 3 chart files:
-speccharts/page.spec.tsx
-speccharts/Service.spec.ts
-speccharts/index.e2e.spec.ts
+src/
+├── services/
+│   ├── UserService.spec.ts
+│   └── UserService.spec.ts.mmd  ← Generated
+└── admin/
+    ├── setUserAsAdmin.spec.ts
+    └── setUserAsAdmin.spec.ts.mmd  ← Generated
 ```
+
+### Generate a single Markdown file compiling all charts
+
+```sh
+npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --single-output-file speccharts.md
+```
+
+### Write Markdown chart compilation to standard output (no files created)
+
+```sh
+npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}"
+```
+
+### Delete existing charts before generating new ones
+
+```sh
+npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --multiple-output-files --delete-existing-charts
+```
+
+## Programmatic API
+
+```ts
+import { SpecChartsGenerator } from "speccharts";
+
+const generator = new SpecChartsGenerator();
+const charts = await generator.generate({
+  inputFilePatterns: ["src/**/*.spec.ts"],
+});
+
+// charts is an array of { specFile: File, chart: string }
+charts.forEach(({ specFile, chart }) => {
+  console.log(`Chart for ${specFile.path}:`);
+  console.log(chart);
+});
+```
+
+## Other specification formats supported
+
+### Question marks in spec files
+
+### Jest table syntax
+
+```ts
+describe("math operations", () => {
+  describe.each([
+    [1, 2, 3],
+    [4, 5, 9],
+    [0, 0, 0],
+  ])("addition: %d + %d = %d", (a, b, expected) => {
+    it("should add numbers correctly", () => {
+      expect(a + b).toBe(expected);
+    });
+  });
+
+  test.each([
+    ["positive", 5, 3, 2],
+    ["negative", -5, -3, -2],
+    ["zero", 0, 0, 0],
+  ])("subtraction with %s numbers: %d - %d = %d", (type, a, b, expected) => {
+    expect(a - b).toBe(expected);
+  });
+});
+```
+
+## Use cases
+
+- **Documentation**: Generate visual documentation of use cases that non-tech collaborators can understand
+- **Code reviews**: Help reviewers understand complex test scenarios at a glance
+- **Onboarding**: Help new team members understand the application behavior through test structure
+- **Testing strategy**: Visualize test organization and identify gaps in test coverage
+
+## Supported test frameworks
+
+- Jest (primary support)
+- Compatible with any testing framework that uses `describe`/`it` or `describe`/`test` syntax
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
