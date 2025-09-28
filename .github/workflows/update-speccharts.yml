@@ -1,0 +1,38 @@
+name: Update speccharts.md
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  update-speccharts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Run speccharts
+        run: npx --yes speccharts -i "src/**/*.spec.ts" -s speccharts.md
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain speccharts.md)" ]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.changes == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add speccharts.md
+          git commit -m "Update speccharts.md"
+          git push
