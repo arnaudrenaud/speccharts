@@ -46,6 +46,71 @@ function extractTableData(tableNode: ts.Node): unknown[] {
   return [];
 }
 
+function extractTemplateTableData(templateNode: ts.Node): {
+  headers: string[];
+  data: unknown[];
+} {
+  if (ts.isTemplateExpression(templateNode)) {
+    // Parse template string table format:
+    // inputA | inputB | expected
+    // ${1}   | ${1}   | ${2}
+    // ${2}   | ${3}   | ${5}
+
+    const templateText = templateNode.getText();
+    // Remove the backticks and split by lines
+    const cleanText = templateText.replace(/^`|`$/g, "");
+    const lines = cleanText
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+
+    if (lines.length < 2) return { headers: [], data: [] };
+
+    // Extract headers from first line
+    const headerLine = lines[0];
+    const headers = headerLine.split("|").map((col) => col.trim());
+
+    // Skip header line (first line with column names)
+    const dataLines = lines.slice(1);
+
+    const data = dataLines.map((line) => {
+      // Split by | and extract values from ${...} expressions
+      const columns = line.split("|").map((col) => col.trim());
+
+      return columns.map((column) => {
+        // Extract value from ${value} format
+        const match = column.match(/\$\{([^}]+)\}/);
+        if (match) {
+          const value = match[1].trim();
+
+          // Try to parse as number
+          if (!isNaN(Number(value))) {
+            return Number(value);
+          }
+
+          // Try to parse as boolean
+          if (value === "true") return true;
+          if (value === "false") return false;
+
+          // Try to parse as null/undefined
+          if (value === "null") return null;
+          if (value === "undefined") return undefined;
+
+          // Return as string (remove quotes if present)
+          return value.replace(/^["']|["']$/g, "");
+        }
+
+        // If no ${} pattern, return the column as-is
+        return column.replace(/^["']|["']$/g, "");
+      });
+    });
+
+    return { headers, data };
+  }
+
+  return { headers: [], data: [] };
+}
+
 function replacePlaceholders(template: string, values: any): string {
   // Handle single values (not arrays)
   if (!Array.isArray(values)) {
@@ -63,6 +128,47 @@ function replacePlaceholders(template: string, values: any): string {
     }
     return `%s`; // Keep placeholder if no more values
   });
+
+  return result;
+}
+
+function replaceTemplatePlaceholders(
+  template: string,
+  values: any,
+  headers?: string[]
+): string {
+  // Handle single values (not arrays)
+  if (!Array.isArray(values)) {
+    return template.replace(/\$[a-zA-Z_$][a-zA-Z0-9_$]*/g, String(values));
+  }
+
+  let result = template;
+
+  // If we have headers, map placeholder names to values
+  if (headers && headers.length > 0) {
+    result = result.replace(
+      /\$([a-zA-Z_$][a-zA-Z0-9_$]*)/g,
+      (match, placeholderName) => {
+        const headerIndex = headers.findIndex(
+          (header) => header.trim() === placeholderName
+        );
+        if (headerIndex >= 0 && headerIndex < values.length) {
+          return String(values[headerIndex]);
+        }
+        return match; // Keep original placeholder if not found
+      }
+    );
+  } else {
+    // Fallback to positional replacement
+    let valueIndex = 0;
+    result = result.replace(/\$[a-zA-Z_$][a-zA-Z0-9_$]*/g, () => {
+      if (valueIndex < values.length) {
+        const value = values[valueIndex++];
+        return String(value);
+      }
+      return `$placeholder`; // Keep placeholder if no more values
+    });
+  }
 
   return result;
 }
@@ -98,6 +204,27 @@ function isJestTableExpression(node: ts.Node): boolean {
   return false;
 }
 
+function isJestTemplateTableExpression(node: ts.Node): boolean {
+  if (ts.isCallExpression(node)) {
+    // Handle Jest template table syntax: test.each`table`(name, callback)
+    // The expression is a tagged template literal: test.each`table`
+    if (ts.isTaggedTemplateExpression(node.expression)) {
+      const taggedTemplate = node.expression;
+      if (ts.isPropertyAccessExpression(taggedTemplate.tag)) {
+        const object = taggedTemplate.tag.expression;
+        const property = taggedTemplate.tag.name;
+        return (
+          ts.isIdentifier(object) &&
+          ts.isIdentifier(property) &&
+          ["describe", "test", "it"].includes(object.text) &&
+          property.text === "each"
+        );
+      }
+    }
+  }
+  return false;
+}
+
 const PARSED_EXPRESSIONS = [
   "describe",
   "it",
@@ -108,8 +235,57 @@ const PARSED_EXPRESSIONS = [
 ];
 
 function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
+  // Handle Jest template table syntax (describe.each`table`(name, callback))
+  if (isJestTemplateTableExpression(node) && ts.isCallExpression(node)) {
+    // For Jest template table syntax: test.each`table`(name, callback)
+    // node.arguments contains [name, callback]
+    // node.expression.template contains the template literal
+    const [nameNode, callback] = node.arguments;
+    const templateNode = ts.isTaggedTemplateExpression(node.expression)
+      ? node.expression.template
+      : null;
+    if (
+      templateNode &&
+      nameNode &&
+      callback &&
+      ts.isStringLiteral(nameNode) &&
+      ts.isFunctionLike(callback)
+    ) {
+      const { headers, data: tableData } =
+        extractTemplateTableData(templateNode);
+      const current: SpecNode = {
+        type: "table",
+        name: nameNode.text,
+        tableData,
+        children: [],
+      };
+
+      // Create leaf nodes for each table case
+      tableData.forEach((row) => {
+        const resolvedName = replaceTemplatePlaceholders(
+          current.name,
+          row,
+          headers
+        );
+        const leafNode: SpecNode = {
+          type: "behavior",
+          name: resolvedName,
+        };
+        current.children!.push(leafNode);
+      });
+
+      // For table nodes, we don't process the callback body since we create leaf nodes for each table case
+      // The callback body processing is handled by the regular Jest expression logic
+
+      if (parentDescribe) {
+        parentDescribe.children!.push(current);
+      } else {
+        specTree.children.push(current);
+      }
+    }
+  }
   // Handle Jest table syntax (describe.each, test.each, it.each)
-  if (isJestTableExpression(node) && ts.isCallExpression(node)) {
+  else if (isJestTableExpression(node) && ts.isCallExpression(node)) {
     // For Jest table syntax: test.each(data)(name, callback)
     // node.arguments contains [name, callback]
     // node.expression.arguments contains [data]
