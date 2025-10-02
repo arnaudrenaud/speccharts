@@ -6,7 +6,7 @@ Jump to chart for each spec file:
 
 ---
 
-Spec file: <a id="src-SpecChartsGenerator-SpecChartsGeneratorspects"></a><a href="src/SpecChartsGenerator/SpecChartsGenerator.spec.ts">src/SpecChartsGenerator/SpecChartsGenerator.spec.ts</a>
+Spec file: <a id="src-SpecChartsGenerator-SpecChartsGeneratorspects" href="src/SpecChartsGenerator/SpecChartsGenerator.spec.ts">src/SpecChartsGenerator/SpecChartsGenerator.spec.ts</a>
 
 ```mermaid
 flowchart TD
@@ -23,7 +23,7 @@ N3 --> N4
 
 ---
 
-Spec file: <a id="src-generateLocalFileSystem-generateLocalFileSystemintegspects"></a><a href="src/generateLocalFileSystem/generateLocalFileSystem.integ.spec.ts">src/generateLocalFileSystem/generateLocalFileSystem.integ.spec.ts</a>
+Spec file: <a id="src-generateLocalFileSystem-generateLocalFileSystemintegspects" href="src/generateLocalFileSystem/generateLocalFileSystem.integ.spec.ts">src/generateLocalFileSystem/generateLocalFileSystem.integ.spec.ts</a>
 
 ```mermaid
 flowchart TD
@@ -52,7 +52,7 @@ N9 --> N10
 
 ---
 
-Spec file: <a id="src-chart-files-getChartFiles-getChartFilesspects"></a><a href="src/chart-files/getChartFiles/getChartFiles.spec.ts">src/chart-files/getChartFiles/getChartFiles.spec.ts</a>
+Spec file: <a id="src-chart-files-getChartFiles-getChartFilesspects" href="src/chart-files/getChartFiles/getChartFiles.spec.ts">src/chart-files/getChartFiles/getChartFiles.spec.ts</a>
 
 ```mermaid
 flowchart TD
@@ -67,18 +67,20 @@ N2 --> N3
 
 ---
 
-Spec file: <a id="src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects"></a><a href="src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts">src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts</a>
+Spec file: <a id="src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects" href="src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts">src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts</a>
 
 ```mermaid
 flowchart TD
 N0(["getChartsInSingleFile"])
 N1(["gathers charts in single Markdown file"])
 N0 --> N1
+N2(["converts absolute paths to relative paths"])
+N0 --> N2
 ```
 
 ---
 
-Spec file: <a id="src-cli-integspec-cliintegspects"></a><a href="src/cli/integ.spec/cli.integ.spec.ts">src/cli/integ.spec/cli.integ.spec.ts</a>
+Spec file: <a id="src-cli-integspec-cliintegspects" href="src/cli/integ.spec/cli.integ.spec.ts">src/cli/integ.spec/cli.integ.spec.ts</a>
 
 ```mermaid
 flowchart TD
@@ -111,7 +113,7 @@ N11 --> N12
 
 ---
 
-Spec file: <a id="src-SpecChartsGenerator-core-getChart-getChartspects"></a><a href="src/SpecChartsGenerator/core/getChart/getChart.spec.ts">src/SpecChartsGenerator/core/getChart/getChart.spec.ts</a>
+Spec file: <a id="src-SpecChartsGenerator-core-getChart-getChartspects" href="src/SpecChartsGenerator/core/getChart/getChart.spec.ts">src/SpecChartsGenerator/core/getChart/getChart.spec.ts</a>
 
 ```mermaid
 flowchart TD
@@ -134,7 +136,7 @@ N6 --> N7
 
 ---
 
-Spec file: <a id="src-SpecChartsGenerator-core-getSpecTree-getSpecTreespects"></a><a href="src/SpecChartsGenerator/core/getSpecTree/getSpecTree.spec.ts">src/SpecChartsGenerator/core/getSpecTree/getSpecTree.spec.ts</a>
+Spec file: <a id="src-SpecChartsGenerator-core-getSpecTree-getSpecTreespects" href="src/SpecChartsGenerator/core/getSpecTree/getSpecTree.spec.ts">src/SpecChartsGenerator/core/getSpecTree/getSpecTree.spec.ts</a>
 
 ```mermaid
 flowchart TD

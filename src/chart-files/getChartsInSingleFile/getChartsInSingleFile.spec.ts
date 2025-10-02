@@ -30,7 +30,7 @@ Jump to chart for each spec file:
 
 ---
 
-Spec file: <a id="src-specFile1ts"></a><a href="src/specFile1.ts">src/specFile1.ts</a>
+Spec file: <a id="src-specFile1ts" href="src/specFile1.ts">src/specFile1.ts</a>
 
 \`\`\`mermaid
 flowchart TD
@@ -39,7 +39,7 @@ first chart…
 
 ---
 
-Spec file: <a id="src-specFile2ts"></a><a href="src/specFile2.ts">src/specFile2.ts</a>
+Spec file: <a id="src-specFile2ts" href="src/specFile2.ts">src/specFile2.ts</a>
 
 \`\`\`mermaid
 flowchart TD
@@ -75,7 +75,7 @@ second chart…
       `<pre>└── src/<br />    └── <a href="#src-specFilets">specFile.ts</a><br /></pre>`
     );
     expect(result).toContain(
-      `<a id=\"src-specFilets\"></a><a href=\"src/specFile.ts\">src/specFile.ts</a>`
+      `<a id=\"src-specFilets\" href=\"src/specFile.ts\">src/specFile.ts</a>`
     );
   });
 });

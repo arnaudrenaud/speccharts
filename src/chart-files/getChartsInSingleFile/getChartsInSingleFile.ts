@@ -39,7 +39,7 @@ ${chartsWithRelativePaths
   .map(({ specFile, chart }) => {
     return `Spec file: <a id="${generateHTMLLocalAnchor(
       specFile.path
-    )}"></a><a href="${specFile.path}">${
+    )}" href="${specFile.path}">${
       specFile.path
     }</a>\n\n\`\`\`mermaid\n${chart}\n\`\`\``;
   })
