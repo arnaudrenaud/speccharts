@@ -3,6 +3,7 @@ import fsExtra from "fs-extra";
 import path from "path";
 
 import { GENERATED_BY_SPECCHARTS_IDENTIFIER } from "../../chart-files/constants";
+import { getCurrentDirectory } from "./getCurrentDirectory";
 
 const COMMENT_PREFIXES = [
   `%% ${GENERATED_BY_SPECCHARTS_IDENTIFIER}`,
@@ -21,7 +22,7 @@ function containsGeneratedLabel(content: string): boolean {
 
 export async function deleteGeneratedChartFiles(): Promise<string[]> {
   const candidatePaths = await glob("**/*.{md,mmd}", {
-    cwd: process.cwd(),
+    cwd: getCurrentDirectory(),
     dot: true,
     onlyFiles: true,
     absolute: true,
@@ -41,7 +42,7 @@ export async function deleteGeneratedChartFiles(): Promise<string[]> {
 
     await fsExtra.remove(filePath);
 
-    const relativePath = path.relative(process.cwd(), filePath);
+    const relativePath = path.relative(getCurrentDirectory(), filePath);
     removedPaths.push(relativePath || filePath);
   }
 

@@ -7,6 +7,7 @@ import { standardOutputLogger } from "./helpers/standardOutputLogger";
 import { getChartFiles } from "../chart-files/getChartFiles/getChartFiles";
 import { getChartsInSingleFile } from "../chart-files/getChartsInSingleFile/getChartsInSingleFile";
 import { deleteGeneratedChartFiles } from "./helpers/deleteGeneratedChartFiles";
+import { getCurrentDirectory } from "./helpers/getCurrentDirectory";
 
 export const generateAndWriteToFiles = async (
   args: GenerateLocalFileSystemArgs
@@ -32,6 +33,6 @@ export const generateAndWriteToStandardOutput = async (
 ): Promise<void> => {
   const generator = new SpecChartsGenerator(getFilePaths, readFile);
   const charts = await generator.generate(args);
-  const output = getChartsInSingleFile(charts, process.cwd());
+  const output = getChartsInSingleFile(charts, getCurrentDirectory());
   standardOutputLogger.log(output);
 };

@@ -5,16 +5,28 @@ import {
   generateAndWriteToStandardOutput,
 } from "./generateLocalFileSystem";
 import { standardOutputLogger } from "./helpers/standardOutputLogger";
+import { getCurrentDirectory } from "./helpers/getCurrentDirectory";
 import { GENERATED_BY_SPECCHARTS_LABEL } from "../chart-files/constants";
 
 jest.mock("./helpers/standardOutputLogger");
+jest.mock("./helpers/getCurrentDirectory");
 
-const SPEC_FILES_DIRECTORY = ".tmp.src";
-const SINGLE_OUTPUT_FILE = ".tmp.speccharts.md";
+const SPEC_FILES_DIRECTORY = "src";
+
+const INPUT_FILE_PATTERNS = [
+  `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
+  `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
+];
+
+const TEST_TMP_ROOT_DIR = path.join(__dirname, ".tmp.local-fs-tests");
+const SPEC_FILES_DIRECTORY_FULL_PATH = path.join(
+  TEST_TMP_ROOT_DIR,
+  SPEC_FILES_DIRECTORY
+);
+const SINGLE_OUTPUT_FILE = path.join(TEST_TMP_ROOT_DIR, "speccharts.md");
 
 const cleanUpLocalFileSystem = async () => {
-  await fsExtra.remove(SPEC_FILES_DIRECTORY);
-  await fsExtra.remove(SINGLE_OUTPUT_FILE);
+  await fsExtra.remove(TEST_TMP_ROOT_DIR);
 };
 
 describe("generateLocalFileSystem (integration tests)", () => {
@@ -22,16 +34,19 @@ describe("generateLocalFileSystem (integration tests)", () => {
   const SPEC_FILE_NAME_2 = "index.test.ts";
 
   beforeEach(async () => {
+    // Avoid deleting actual spec chart files
+    (getCurrentDirectory as jest.Mock).mockReturnValue(TEST_TMP_ROOT_DIR);
+
     await cleanUpLocalFileSystem();
 
     await fsExtra.outputFile(
-      path.join(SPEC_FILES_DIRECTORY, SPEC_FILE_NAME_1),
+      path.join(SPEC_FILES_DIRECTORY_FULL_PATH, SPEC_FILE_NAME_1),
       `describe("some test suite", () => {
   it("works", () => {});
 });`
     );
     await fsExtra.outputFile(
-      path.join(SPEC_FILES_DIRECTORY, SPEC_FILE_NAME_2),
+      path.join(SPEC_FILES_DIRECTORY_FULL_PATH, SPEC_FILE_NAME_2),
       `describe("some other test suite", () => {
   it("works too", () => {});
 });`
@@ -47,14 +62,19 @@ describe("generateLocalFileSystem (integration tests)", () => {
   describe("generateAndWriteToFiles", () => {
     it("writes chart files next to spec files", async () => {
       await generateAndWriteToFiles({
-        inputFilePatterns: [
-          `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
-          `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
-        ],
+        inputFilePatterns: INPUT_FILE_PATTERNS,
       });
 
-      const chart1Path = `${SPEC_FILES_DIRECTORY}/${SPEC_FILE_NAME_1}.mmd`;
-      const chart2Path = `${SPEC_FILES_DIRECTORY}/${SPEC_FILE_NAME_2}.mmd`;
+      const chart1Path = path.join(
+        TEST_TMP_ROOT_DIR,
+        "src",
+        `${SPEC_FILE_NAME_1}.mmd`
+      );
+      const chart2Path = path.join(
+        TEST_TMP_ROOT_DIR,
+        "src",
+        `${SPEC_FILE_NAME_2}.mmd`
+      );
 
       expect(await fsExtra.pathExists(chart1Path)).toBe(true);
       expect(await fsExtra.pathExists(chart2Path)).toBe(true);
@@ -69,17 +89,16 @@ describe("generateLocalFileSystem (integration tests)", () => {
     describe("when `singleOutputFilePath` is provided", () => {
       it("writes single Markdown file", async () => {
         await generateAndWriteToFiles({
-          inputFilePatterns: [
-            `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
-            `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
-          ],
+          inputFilePatterns: INPUT_FILE_PATTERNS,
           singleOutputFilePath: SINGLE_OUTPUT_FILE,
         });
 
-        expect(await fsExtra.pathExists(SINGLE_OUTPUT_FILE)).toBe(true);
+        const singleOutputPath = path.join(TEST_TMP_ROOT_DIR, "speccharts.md");
+        expect(await fsExtra.pathExists(singleOutputPath)).toBe(true);
         const fileContent = (
-          await fsExtra.readFile(SINGLE_OUTPUT_FILE)
+          await fsExtra.readFile(singleOutputPath)
         ).toString();
+
         expect(fileContent).toContain("spec.ts");
         expect(fileContent).toContain("test.ts");
         expect(fileContent).toContain("some test suite");
@@ -95,10 +114,7 @@ describe("generateLocalFileSystem (integration tests)", () => {
         );
 
         await generateAndWriteToFiles({
-          inputFilePatterns: [
-            `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
-            `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
-          ],
+          inputFilePatterns: INPUT_FILE_PATTERNS,
           deleteExistingCharts: true,
         });
 
@@ -107,7 +123,8 @@ describe("generateLocalFileSystem (integration tests)", () => {
 
       it("deletes existing multiple output chart files", async () => {
         const staleChartPath = path.join(
-          SPEC_FILES_DIRECTORY,
+          TEST_TMP_ROOT_DIR,
+          "src",
           "stale-chart.mmd"
         );
 
@@ -117,10 +134,7 @@ describe("generateLocalFileSystem (integration tests)", () => {
         );
 
         await generateAndWriteToFiles({
-          inputFilePatterns: [
-            `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
-            `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
-          ],
+          inputFilePatterns: [`src/index.spec.ts`, `src/index.test.ts`],
           deleteExistingCharts: true,
         });
 
@@ -128,7 +142,11 @@ describe("generateLocalFileSystem (integration tests)", () => {
       });
 
       it("does not delete files with extension other than .md or .mmd even when they contain the generated label", async () => {
-        const textFilePath = path.join(SPEC_FILES_DIRECTORY, "stale-chart.txt");
+        const textFilePath = path.join(
+          TEST_TMP_ROOT_DIR,
+          "src",
+          "stale-chart.txt"
+        );
 
         await fsExtra.outputFile(
           textFilePath,
@@ -136,10 +154,7 @@ describe("generateLocalFileSystem (integration tests)", () => {
         );
 
         await generateAndWriteToFiles({
-          inputFilePatterns: [
-            `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
-            `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
-          ],
+          inputFilePatterns: INPUT_FILE_PATTERNS,
           deleteExistingCharts: true,
         });
 
@@ -151,10 +166,7 @@ describe("generateLocalFileSystem (integration tests)", () => {
   describe("generateAndWriteToStandardOutput", () => {
     it("logs single Markdown file content to standard output", async () => {
       await generateAndWriteToStandardOutput({
-        inputFilePatterns: [
-          `${SPEC_FILES_DIRECTORY}/**/*.spec.ts`,
-          `${SPEC_FILES_DIRECTORY}/**/*.test.ts`,
-        ],
+        inputFilePatterns: INPUT_FILE_PATTERNS,
       });
 
       expect(standardOutputLogger.log).toHaveBeenCalledTimes(1);

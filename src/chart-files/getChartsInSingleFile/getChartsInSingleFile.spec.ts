@@ -49,4 +49,33 @@ second chart…
 <!-- ${GENERATED_BY_SPECCHARTS_LABEL} -->
 `);
   });
+
+  it("converts absolute paths to relative paths", () => {
+    const SPEC_FILES_DIRECTORY_ABSOLUTE_DIRECTORY = "/my-repo/src";
+    const OUTPUT_DIRECTORY_ABSOLUTE_DIRECTORY = "/my-repo";
+    const charts = [
+      {
+        specFile: {
+          path: path.join(
+            SPEC_FILES_DIRECTORY_ABSOLUTE_DIRECTORY,
+            "specFile.ts"
+          ),
+          content: "specFile",
+        },
+        chart: "flowchart TD\nfirst chart…",
+      },
+    ];
+
+    const result = getChartsInSingleFile(
+      charts,
+      OUTPUT_DIRECTORY_ABSOLUTE_DIRECTORY
+    );
+
+    expect(result).toContain(
+      `<pre>└── src/<br />    └── <a href="#src-specFilets">specFile.ts</a><br /></pre>`
+    );
+    expect(result).toContain(
+      `<a id=\"src-specFilets\"></a><a href=\"src/specFile.ts\">src/specFile.ts</a>`
+    );
+  });
 });
