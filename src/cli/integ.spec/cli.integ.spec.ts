@@ -1,30 +1,29 @@
 import fsExtra from "fs-extra";
 import path from "path";
-import { runCli } from "./utils";
+import { getRunCli } from "./utils";
 import { GENERATED_BY_SPECCHARTS_LABEL } from "../../chart-files/constants";
-import { deleteGeneratedChartFiles } from "../../generateLocalFileSystem/helpers/deleteGeneratedChartFiles";
 
-const ROOT_DIR = path.resolve(__dirname, "../../..");
-
-const SPEC_FILES_DIRECTORY = path.resolve(ROOT_DIR, ".tmp.cli.src");
+const TEST_TMP_ROOT_DIR = path.resolve(__dirname, ".tmp.cli-tests");
+const SPEC_FILES_DIRECTORY_FULL_PATH = path.join(TEST_TMP_ROOT_DIR, "src");
 const SPEC_FILE_NAME = "cli-example.spec.ts";
-const SPEC_FILE_PATH = path.join(SPEC_FILES_DIRECTORY, SPEC_FILE_NAME);
+const SPEC_FILE_PATH = path.join(
+  SPEC_FILES_DIRECTORY_FULL_PATH,
+  SPEC_FILE_NAME
+);
 
 const SPEC_FILE_CONTENT = `describe("some test suite", () => {
   it("implements behavior", () => {});
 });`;
 
-const SPEC_GLOB = `${path.relative(
-  ROOT_DIR,
-  SPEC_FILES_DIRECTORY
-)}/**/*.spec.ts`;
+const SPEC_GLOB = `src/**/*.spec.ts`;
 
-const SINGLE_OUTPUT_FILE = path.resolve(ROOT_DIR, ".tmp.cli-output.md");
+const SINGLE_OUTPUT_FILE = path.join(TEST_TMP_ROOT_DIR, "cli-output.md");
 
 async function cleanUpLocalFileSystem() {
-  await fsExtra.remove(SPEC_FILES_DIRECTORY);
-  await deleteGeneratedChartFiles();
+  await fsExtra.remove(TEST_TMP_ROOT_DIR);
 }
+
+const runCli = getRunCli(TEST_TMP_ROOT_DIR);
 
 describe("speccharts CLI (integration tests)", () => {
   beforeEach(async () => {
