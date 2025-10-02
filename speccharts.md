@@ -2,7 +2,7 @@
 
 Jump to chart for each spec file:
 
-<pre>└── src/<br />    ├── SpecChartsGenerator/<br />    │   ├── <a href="#src-SpecChartsGenerator-SpecChartsGeneratorspects">SpecChartsGenerator.spec.ts</a><br />    │   └── core/<br />    │       ├── getChart/<br />    │       │   └── <a href="#src-SpecChartsGenerator-core-getChart-getChartspects">getChart.spec.ts</a><br />    │       └── getSpecTree/<br />    │           └── <a href="#src-SpecChartsGenerator-core-getSpecTree-getSpecTreespects">getSpecTree.spec.ts</a><br />    ├── generateLocalFileSystem/<br />    │   └── <a href="#src-generateLocalFileSystem-generateLocalFileSystemintegspects">generateLocalFileSystem.integ.spec.ts</a><br />    ├── cli/<br />    │   └── integ.spec/<br />    │       └── <a href="#src-cli-integspec-cliintegspects">cli.integ.spec.ts</a><br />    └── chart-files/<br />        ├── getChartFiles/<br />        │   └── <a href="#src-chart-files-getChartFiles-getChartFilesspects">getChartFiles.spec.ts</a><br />        └── getChartsInSingleFile/<br />            └── <a href="#src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects">getChartsInSingleFile.spec.ts</a><br /></pre>
+<pre>└── src/<br />    ├── SpecChartsGenerator/<br />    │   ├── <a href="#src-SpecChartsGenerator-SpecChartsGeneratorspects">SpecChartsGenerator.spec.ts</a><br />    │   └── core/<br />    │       ├── getChart/<br />    │       │   └── <a href="#src-SpecChartsGenerator-core-getChart-getChartspects">getChart.spec.ts</a><br />    │       └── getSpecTree/<br />    │           └── <a href="#src-SpecChartsGenerator-core-getSpecTree-getSpecTreespects">getSpecTree.spec.ts</a><br />    ├── generateLocalFileSystem/<br />    │   └── <a href="#src-generateLocalFileSystem-generateLocalFileSystemintegspects">generateLocalFileSystem.integ.spec.ts</a><br />    ├── chart-files/<br />    │   ├── getChartFiles/<br />    │   │   └── <a href="#src-chart-files-getChartFiles-getChartFilesspects">getChartFiles.spec.ts</a><br />    │   └── getChartsInSingleFile/<br />    │       └── <a href="#src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects">getChartsInSingleFile.spec.ts</a><br />    └── cli/<br />        └── integ.spec/<br />            └── <a href="#src-cli-integspec-cliintegspects">cli.integ.spec.ts</a><br /></pre>
 
 ---
 
@@ -52,6 +52,32 @@ N9 --> N10
 
 ---
 
+Spec file: <a id="src-chart-files-getChartFiles-getChartFilesspects"></a><a href="src/chart-files/getChartFiles/getChartFiles.spec.ts">src/chart-files/getChartFiles/getChartFiles.spec.ts</a>
+
+```mermaid
+flowchart TD
+N0(["getChartFiles"])
+N1(["returns one Mermaid file per chart next to corresponding spec file"])
+N0 --> N1
+N2["if \`singleOutputFilePath\` is provided"]
+N0 --> N2
+N3(["returns one Markdown file gathering all charts at the specified path"])
+N2 --> N3
+```
+
+---
+
+Spec file: <a id="src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects"></a><a href="src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts">src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts</a>
+
+```mermaid
+flowchart TD
+N0(["getChartsInSingleFile"])
+N1(["gathers charts in single Markdown file"])
+N0 --> N1
+```
+
+---
+
 Spec file: <a id="src-cli-integspec-cliintegspects"></a><a href="src/cli/integ.spec/cli.integ.spec.ts">src/cli/integ.spec/cli.integ.spec.ts</a>
 
 ```mermaid
@@ -85,32 +111,6 @@ N11 --> N12
 
 ---
 
-Spec file: <a id="src-chart-files-getChartFiles-getChartFilesspects"></a><a href="src/chart-files/getChartFiles/getChartFiles.spec.ts">src/chart-files/getChartFiles/getChartFiles.spec.ts</a>
-
-```mermaid
-flowchart TD
-N0(["getChartFiles"])
-N1(["returns one Mermaid file per chart next to corresponding spec file"])
-N0 --> N1
-N2["if \`singleOutputFilePath\` is provided"]
-N0 --> N2
-N3(["returns one Markdown file gathering all charts at the specified path"])
-N2 --> N3
-```
-
----
-
-Spec file: <a id="src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects"></a><a href="src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts">src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts</a>
-
-```mermaid
-flowchart TD
-N0(["getChartsInSingleFile"])
-N1(["gathers charts in single Markdown file"])
-N0 --> N1
-```
-
----
-
 Spec file: <a id="src-SpecChartsGenerator-core-getChart-getChartspects"></a><a href="src/SpecChartsGenerator/core/getChart/getChart.spec.ts">src/SpecChartsGenerator/core/getChart/getChart.spec.ts</a>
 
 ```mermaid
@@ -126,6 +126,10 @@ N4["if spec tree contains nodes with type \`table\`"]
 N0 --> N4
 N5(["returns a Mermaid flowchart with table node rendered as leaf containing formatted table data"])
 N4 --> N5
+N6["if spec tree has multiple root-level nodes with type \`case\`"]
+N0 --> N6
+N7(["returns a multiple-flowchart Mermaid document, one for each root-level case"])
+N6 --> N7
 ```
 
 ---
@@ -141,16 +145,32 @@ N2["if case node label ends with a question mark"]
 N0 --> N2
 N3(["returns case node with type \`question\`, children with type \`answer\`"])
 N2 --> N3
-N4["Jest table syntax"]
+N4["if spec has more than one \`describe\` block at root-level"]
 N0 --> N4
-N5(["parses test.each with array table data"])
+N5(["returns a spec tree made of the same number of spec trees"])
 N4 --> N5
-N6(["parses describe.each with mixed data types"])
-N4 --> N6
-N7(["parses it.each with single values"])
-N4 --> N7
-N8(["parses nested describe.each within regular describe"])
-N4 --> N8
+N6["Jest table syntax"]
+N0 --> N6
+N7(["parses test.each with array table data"])
+N6 --> N7
+N8(["parses describe.each with mixed data types"])
+N6 --> N8
+N9(["parses it.each with single values"])
+N6 --> N9
+N10(["parses nested describe.each within regular describe"])
+N6 --> N10
+N11["Jest template string table syntax"]
+N0 --> N11
+N12(["parses test.each with template string table"])
+N11 --> N12
+N13(["parses describe.each with template string table and mixed data types"])
+N11 --> N13
+N14(["parses it.each with template string table and boolean values"])
+N11 --> N14
+N15(["parses nested describe.each with template string within regular describe"])
+N11 --> N15
+N16(["parses template string table with null and undefined values"])
+N11 --> N16
 ```
 
 <!-- ✴ Generated by speccharts v0.3.1 ✴ https://github.com/arnaudrenaud/speccharts -->

@@ -101,6 +101,69 @@ describe("getSpecTree", () => {
     });
   });
 
+  describe("if spec has more than one `describe` block at root-level", () => {
+    it("returns a spec tree made of the same number of spec trees", () => {
+      const SPEC_FILE_CONTENT = `describe("math operations", () => {
+  it("adds two numbers", () => {
+    expect(1 + 1).toEqual(2);
+  });
+});
+
+describe("string operations", () => {
+  it("concatenates strings", () => {
+    expect("hello" + "world").toEqual("helloworld");
+  });
+});
+
+describe("array operations", () => {
+  it("filters array elements", () => {
+    expect([1, 2, 3].filter(x => x > 1)).toEqual([2, 3]);
+  });
+});`;
+
+      const result = getSpecTree({
+        path: SPEC_FILE_PATH,
+        content: SPEC_FILE_CONTENT,
+      });
+
+      expect(result).toEqual({
+        name: SPEC_FILE_PATH,
+        children: [
+          {
+            type: "case",
+            name: "math operations",
+            children: [
+              {
+                type: "behavior",
+                name: "adds two numbers",
+              },
+            ],
+          },
+          {
+            type: "case",
+            name: "string operations",
+            children: [
+              {
+                type: "behavior",
+                name: "concatenates strings",
+              },
+            ],
+          },
+          {
+            type: "case",
+            name: "array operations",
+            children: [
+              {
+                type: "behavior",
+                name: "filters array elements",
+              },
+            ],
+          },
+        ],
+      });
+    });
+  });
+
   describe("Jest table syntax", () => {
     it("parses test.each with array table data", () => {
       const SPEC_FILE_CONTENT = `test.each([

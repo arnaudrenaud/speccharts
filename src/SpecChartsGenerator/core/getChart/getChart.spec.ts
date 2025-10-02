@@ -135,4 +135,57 @@ N2(["<table><tr><td>• handles first case</td></tr><tr><td>• handles second c
 N0 --> N2`);
     });
   });
+
+  describe("if spec tree has multiple root-level nodes with type `case`", () => {
+    it("returns a multiple-flowchart Mermaid document, one for each root-level case", () => {
+      const SPEC_TREE: SpecTree = {
+        name: "src/math.spec.ts",
+        children: [
+          {
+            type: "case",
+            name: "math operations",
+            children: [
+              {
+                type: "behavior",
+                name: "adds two numbers",
+              },
+            ],
+          },
+          {
+            type: "case",
+            name: "string operations",
+            children: [
+              {
+                type: "behavior",
+                name: "concatenates strings",
+              },
+            ],
+          },
+          {
+            type: "case",
+            name: "array operations",
+            children: [
+              {
+                type: "behavior",
+                name: "filters array elements",
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = getChart(SPEC_TREE);
+
+      expect(result).toEqual(`flowchart TD
+N0(["math operations"])
+N1(["adds two numbers"])
+N0 --> N1
+N2(["string operations"])
+N3(["concatenates strings"])
+N2 --> N3
+N4(["array operations"])
+N5(["filters array elements"])
+N4 --> N5`);
+    });
+  });
 });
