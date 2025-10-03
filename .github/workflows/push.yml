@@ -37,4 +37,5 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
-      - run: npx speccharts -y -i "src/**/*.spec.ts"
+      - run: npm install speccharts@latest
+      - run: npm run speccharts
