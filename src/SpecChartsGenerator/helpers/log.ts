@@ -1,3 +1,4 @@
+import path from "path";
 import { File } from "../../types";
 
 function pluralize(word: string, count: number): string {
@@ -5,22 +6,36 @@ function pluralize(word: string, count: number): string {
 }
 
 export class Logger {
-  constructor(public log: (message: string) => void) {}
+  constructor(
+    public log: (message: string) => void,
+    private workingDirectory: string = process.cwd()
+  ) {}
+
+  private getRelativePath = (absolutePath: string): string => {
+    return path.relative(this.workingDirectory, absolutePath);
+  };
 
   logSpecFilesFound(specFilePaths: string[]) {
+    const relativePaths = specFilePaths.map(this.getRelativePath);
+
     this.log(
       `🔎 Found ${pluralize(
         "spec file",
         specFilePaths.length
-      )}:\n${specFilePaths.join("\n")}\n`
+      )}:\n${relativePaths.join("\n")}\n`
     );
   }
 
   logChartFilesWritten(filesWritten: File[]): void {
+    const relativePaths = filesWritten.map(({ path }) =>
+      this.getRelativePath(path)
+    );
+
     this.log(
-      `✏️ Wrote ${pluralize("chart file", filesWritten.length)}:\n${filesWritten
-        .map((file) => file.path)
-        .join("\n")}`
+      `✏️ Wrote ${pluralize(
+        "chart file",
+        filesWritten.length
+      )}:\n${relativePaths.join("\n")}`
     );
   }
 
@@ -29,11 +44,13 @@ export class Logger {
       return;
     }
 
+    const relativePaths = paths.map(this.getRelativePath);
+
     this.log(
       `🧹 Deleted ${pluralize(
         "existing chart file",
         paths.length
-      )}:\n${paths.join("\n")}\n`
+      )}:\n${relativePaths.join("\n")}\n`
     );
   }
 }
