@@ -27,24 +27,21 @@ Spec file: <a id="src-SpecChartsGenerator-core-getChart-getChartspects" href="sr
 
 ```mermaid
 flowchart TD
-N0(["new spec"])
-N1(["works"])
+N0(["getChart"])
+N1(["returns a Mermaid flowchart with stadium-shaped node for root and leaves, rectangle node for cases, edge between each case and its children"])
 N0 --> N1
-N2(["getChart"])
-N3(["returns a Mermaid flowchart with stadium-shaped node for root and leaves, rectangle node for cases, edge between each case and its children"])
+N2["if spec tree contains nodes with type \`question\`, \`answer\`"]
+N0 --> N2
+N3(["returns a Mermaid flowchart with rhombus-shaped node for question, answer as edge label instead of node"])
 N2 --> N3
-N4["if spec tree contains nodes with type \`question\`, \`answer\`"]
-N2 --> N4
-N5(["returns a Mermaid flowchart with rhombus-shaped node for question, answer as edge label instead of node"])
+N4["if spec tree contains nodes with type \`table\`"]
+N0 --> N4
+N5(["returns a Mermaid flowchart with table node rendered as leaf containing formatted table data"])
 N4 --> N5
-N6["if spec tree contains nodes with type \`table\`"]
-N2 --> N6
-N7(["returns a Mermaid flowchart with table node rendered as leaf containing formatted table data"])
+N6["if spec tree has multiple root-level nodes with type \`case\`"]
+N0 --> N6
+N7(["returns a multiple-flowchart Mermaid document, one for each root-level case"])
 N6 --> N7
-N8["if spec tree has multiple root-level nodes with type \`case\`"]
-N2 --> N8
-N9(["returns a multiple-flowchart Mermaid document, one for each root-level case"])
-N8 --> N9
 ```
 
 ---
