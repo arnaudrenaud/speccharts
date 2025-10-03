@@ -23,7 +23,7 @@ jobs:
         run: npm run build
 
       - name: Run speccharts
-        run: npm run speccharts
+        run: npx speccharts -i \"src/**/*.spec.ts\" --single-output-file speccharts.md --delete-existing-charts
 
       - name: Check for changes
         id: check-changes

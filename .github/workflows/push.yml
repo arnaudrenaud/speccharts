@@ -38,4 +38,4 @@ jobs:
         with:
           node-version: "22"
       - run: npm install speccharts@latest
-      - run: npm run speccharts
+      - run: npx speccharts -i \"src/**/*.spec.ts\"
