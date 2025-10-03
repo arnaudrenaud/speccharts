@@ -18,11 +18,8 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Install dependencies
-        run: npm ci
-
       - name: Run speccharts
-        run: npx speccharts -i "src/**/*.spec.ts" --single-output-file speccharts.md
+        run: npx speccharts -y -i "src/**/*.spec.ts" --single-output-file speccharts.md
 
       - name: Check for changes
         id: check-changes
