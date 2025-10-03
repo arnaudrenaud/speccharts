@@ -2,7 +2,6 @@ name: Update speccharts.md
 
 on:
   pull_request:
-    types: [opened, reopened]
 
 jobs:
   update-speccharts:
@@ -31,7 +30,7 @@ jobs:
           fi
 
       - name: Commit and push changes
-        if: steps.check-changes.outputs.changes == 'true' && github.event_name == 'push'
+        if: steps.check-changes.outputs.changes == 'true'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
