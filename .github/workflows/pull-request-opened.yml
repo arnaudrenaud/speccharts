@@ -1,8 +1,6 @@
 name: Update speccharts.md
 
 on:
-  push:
-    branches: [main]
   pull_request:
     types: [opened, reopened]
 
@@ -19,9 +17,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build project
-        run: npm run build
-
+      # ⚠️ speccharts must be included in dependencies
       - name: Run speccharts
         run: npx speccharts -i \"src/**/*.spec.ts\" --single-output-file speccharts.md --delete-existing-charts
 
