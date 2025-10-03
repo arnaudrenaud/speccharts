@@ -17,7 +17,7 @@ N2(["throws"])
 N1 --> N2
 N3["if found at least one spec file"]
 N0 --> N3
-N4(["returns chart files based on spec files"])
+N4(["returns charts based on spec files, alphabetically sorted by spec file path"])
 N3 --> N4
 ```
 
