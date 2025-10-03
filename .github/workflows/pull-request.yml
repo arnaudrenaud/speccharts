@@ -18,8 +18,9 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Run speccharts
-        run: npx speccharts -y -i "src/**/*.spec.ts" --single-output-file speccharts.md
+      - run: npm ci
+
+      - run: npm run speccharts
 
       - name: Check for changes
         id: check-changes
