@@ -1,6 +1,10 @@
 import { SpecTree } from "../../../types";
 import { getChart } from "./getChart";
 
+describe("new spec", () => {
+  it("works", () => {});
+});
+
 describe("getChart", () => {
   it("returns a Mermaid flowchart with stadium-shaped node for root and leaves, rectangle node for cases, edge between each case and its children", () => {
     const SPEC_TREE: SpecTree = {
