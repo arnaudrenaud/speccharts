@@ -30,7 +30,8 @@ function renderTreeWithLinks(
   fullPath: string[] = [],
   prefix = ""
 ): string {
-  const entries = Object.keys(node);
+  // Sort entries alphabetically at each level for deterministic output
+  const entries = Object.keys(node).sort();
   return entries
     .map((key, idx) => {
       const isLast = idx === entries.length - 1;

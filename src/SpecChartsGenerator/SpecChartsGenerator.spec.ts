@@ -12,8 +12,7 @@ class MockLogger extends Logger {
 }
 
 describe("SpecChartsGenerator", () => {
-  const SPEC_FILE_BASE_NAME = "math.spec.ts";
-  const SPEC_FILE_PATH = `src/${SPEC_FILE_BASE_NAME}`;
+  const SPEC_FILE_PATH = `src/math.spec.ts`;
   const SPEC_FILE_CONTENT = `
       describe("math", () => {
         describe("add", () => {
@@ -44,14 +43,20 @@ describe("SpecChartsGenerator", () => {
   });
 
   describe("if found at least one spec file", () => {
-    it("returns chart files based on spec files", async () => {
+    it("returns charts based on spec files, alphabetically sorted by spec file path", async () => {
+      const SPEC_FILE_B = "src/b.spec.ts";
+      const SPEC_FILE_A = "src/a.spec.ts";
+
       const mockLogger = new MockLogger();
       const generator = new SpecChartsGenerator(
-        async () => [SPEC_FILE_PATH],
+        async () => [SPEC_FILE_B, SPEC_FILE_A],
+
         async (path) => {
           return {
             path,
-            content: path === SPEC_FILE_PATH ? SPEC_FILE_CONTENT : "",
+            content: [SPEC_FILE_A, SPEC_FILE_B].includes(path)
+              ? SPEC_FILE_CONTENT
+              : "",
           };
         },
         mockLogger
@@ -64,7 +69,19 @@ describe("SpecChartsGenerator", () => {
       const expectedResult: SpecChart[] = [
         {
           specFile: {
-            path: SPEC_FILE_PATH,
+            path: SPEC_FILE_A,
+            content: SPEC_FILE_CONTENT,
+          },
+          chart: `flowchart TD
+N0(["math"])
+N1["add"]
+N0 --> N1
+N2(["adds two numbers"])
+N1 --> N2`,
+        },
+        {
+          specFile: {
+            path: SPEC_FILE_B,
             content: SPEC_FILE_CONTENT,
           },
           chart: `flowchart TD
@@ -78,7 +95,8 @@ N1 --> N2`,
 
       expect(mockLogger.logSpecFilesFound).toHaveBeenCalledTimes(1);
       expect(mockLogger.logSpecFilesFound).toHaveBeenCalledWith([
-        SPEC_FILE_PATH,
+        SPEC_FILE_A,
+        SPEC_FILE_B,
       ]);
 
       expect(actualResult).toEqual(expectedResult);
