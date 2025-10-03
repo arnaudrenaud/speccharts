@@ -9,9 +9,6 @@
   "bin": {
     "speccharts": "./dist/cli/index.js"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsc",
     "test:unit": "jest --testPathIgnorePatterns \".*\\.integ\\.spec\\.ts\"",
