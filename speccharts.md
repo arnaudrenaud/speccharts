@@ -110,13 +110,13 @@ N8(["logs multiple chart files with correct plural form"])
 N6 --> N8
 N9(["converts absolute paths to relative paths"])
 N6 --> N9
-N10["logChartFilesRemoved"]
+N10["logChartFilesDeleted"]
 N0 --> N10
-N11(["does not log when no files are removed"])
+N11(["does not log when no files are deleted"])
 N10 --> N11
-N12(["logs a single removed file with correct singular form"])
+N12(["logs a single deleted file with correct singular form"])
 N10 --> N12
-N13(["logs multiple removed files with correct plural form"])
+N13(["logs multiple deleted files with correct plural form"])
 N10 --> N13
 N14(["converts absolute paths to relative paths"])
 N10 --> N14
@@ -167,7 +167,7 @@ N4(["writes Mermaid files next to spec files and prints command header"])
 N3 --> N4
 N5["when passed \`--multiple-output-files\` and \`--delete-existing-charts\`"]
 N0 --> N5
-N6(["removes existing chart files before writing new ones"])
+N6(["deletes existing chart files before writing new ones"])
 N5 --> N6
 N7["when passed both \`--single-output-file\` and \`--multiple-output-files\`"]
 N0 --> N7
