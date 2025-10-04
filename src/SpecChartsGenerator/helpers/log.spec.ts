@@ -17,9 +17,8 @@ describe("Logger", () => {
 
       logger.logSpecFilesFound(specFilePaths);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `🔎 Found 1 spec file:\nsrc/test.spec.ts\n`
-      );
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(/🔎 Found 1 spec file:\nsrc[/\\]test\.spec\.ts\n/);
     });
 
     it("logs multiple spec files with correct plural form", () => {
@@ -32,8 +31,9 @@ describe("Logger", () => {
 
       logger.logSpecFilesFound(specFilePaths);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `🔎 Found 3 spec files:\nsrc/test1.spec.ts\nsrc/test2.spec.ts\nsrc/test3.spec.ts\n`
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(
+        /🔎 Found 3 spec files:\nsrc[/\\]test1\.spec\.ts\nsrc[/\\]test2\.spec\.ts\nsrc[/\\]test3\.spec\.ts\n/
       );
     });
 
@@ -45,8 +45,9 @@ describe("Logger", () => {
 
       logger.logSpecFilesFound(specFilePaths);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `🔎 Found 1 spec file:\nsrc/nested/deep/test.spec.ts\n`
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(
+        /🔎 Found 1 spec file:\nsrc[/\\]nested[/\\]deep[/\\]test\.spec\.ts\n/
       );
     });
 
@@ -57,9 +58,8 @@ describe("Logger", () => {
 
       logger.logSpecFilesFound(specFilePaths);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `🔎 Found 1 spec file:\ntest.spec.ts\n`
-      );
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toBe(`🔎 Found 1 spec file:\ntest.spec.ts\n`);
     });
   });
 
@@ -75,9 +75,8 @@ describe("Logger", () => {
 
       logger.logChartFilesWritten(filesWritten);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `✏️ Wrote 1 chart file:\nsrc/chart.mmd`
-      );
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(/✏️ Wrote 1 chart file:\nsrc[/\\]chart\.mmd/);
     });
 
     it("logs multiple chart files with correct plural form", () => {
@@ -95,8 +94,9 @@ describe("Logger", () => {
 
       logger.logChartFilesWritten(filesWritten);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `✏️ Wrote 2 chart files:\nsrc/chart1.mmd\nsrc/chart2.mmd`
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(
+        /✏️ Wrote 2 chart files:\nsrc[/\\]chart1\.mmd\nsrc[/\\]chart2\.mmd/
       );
     });
 
@@ -111,8 +111,9 @@ describe("Logger", () => {
 
       logger.logChartFilesWritten(filesWritten);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `✏️ Wrote 1 chart file:\noutput/charts/spec.mmd`
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(
+        /✏️ Wrote 1 chart file:\noutput[/\\]charts[/\\]spec\.mmd/
       );
     });
   });
@@ -132,8 +133,9 @@ describe("Logger", () => {
 
       logger.logChartFilesRemoved(paths);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `🧹 Deleted 1 existing chart file:\nsrc/old-chart.mmd\n`
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(
+        /🧹 Deleted 1 existing chart file:\nsrc[/\\]old-chart\.mmd\n/
       );
     });
 
@@ -147,8 +149,9 @@ describe("Logger", () => {
 
       logger.logChartFilesRemoved(paths);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `🧹 Deleted 3 existing chart files:\nsrc/old-chart1.mmd\nsrc/old-chart2.mmd\nsrc/old-chart3.mmd\n`
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(
+        /🧹 Deleted 3 existing chart files:\nsrc[/\\]old-chart1\.mmd\nsrc[/\\]old-chart2\.mmd\nsrc[/\\]old-chart3\.mmd\n/
       );
     });
 
@@ -158,8 +161,9 @@ describe("Logger", () => {
 
       logger.logChartFilesRemoved(paths);
 
-      expect(mockLog).toHaveBeenCalledWith(
-        `🧹 Deleted 1 existing chart file:\ndist/generated/chart.mmd\n`
+      const call = mockLog.mock.calls[0][0];
+      expect(call).toMatch(
+        /🧹 Deleted 1 existing chart file:\ndist[/\\]generated[/\\]chart\.mmd\n/
       );
     });
   });

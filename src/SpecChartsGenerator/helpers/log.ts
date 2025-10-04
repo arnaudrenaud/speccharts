@@ -11,31 +11,37 @@ export class Logger {
     private workingDirectory: string = process.cwd()
   ) {}
 
-  private getRelativePath = (absolutePath: string): string => {
-    return path.relative(this.workingDirectory, absolutePath);
+  private getDisplayPath = (absolutePath: string): string => {
+    const relativePath = path.relative(this.workingDirectory, absolutePath);
+
+    if (relativePath.includes("\\")) {
+      // Windows paths can have double backslashes, replace with single
+      return relativePath.replace(/\\\\/g, "\\");
+    }
+    return relativePath; // Unix paths have forward slashes
   };
 
   logSpecFilesFound(specFilePaths: string[]) {
-    const relativePaths = specFilePaths.map(this.getRelativePath);
+    const displayPaths = specFilePaths.map(this.getDisplayPath);
 
     this.log(
       `🔎 Found ${pluralize(
         "spec file",
         specFilePaths.length
-      )}:\n${relativePaths.join("\n")}\n`
+      )}:\n${displayPaths.join("\n")}\n`
     );
   }
 
   logChartFilesWritten(filesWritten: File[]): void {
-    const relativePaths = filesWritten.map(({ path }) =>
-      this.getRelativePath(path)
+    const displayPaths = filesWritten.map(({ path }) =>
+      this.getDisplayPath(path)
     );
 
     this.log(
       `✏️ Wrote ${pluralize(
         "chart file",
         filesWritten.length
-      )}:\n${relativePaths.join("\n")}`
+      )}:\n${displayPaths.join("\n")}`
     );
   }
 
@@ -44,13 +50,13 @@ export class Logger {
       return;
     }
 
-    const relativePaths = paths.map(this.getRelativePath);
+    const displayPaths = paths.map(this.getDisplayPath);
 
     this.log(
       `🧹 Deleted ${pluralize(
         "existing chart file",
         paths.length
-      )}:\n${relativePaths.join("\n")}\n`
+      )}:\n${displayPaths.join("\n")}\n`
     );
   }
 }
