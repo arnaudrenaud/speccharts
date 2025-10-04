@@ -86,17 +86,33 @@ speccharts reads your test files and generates Mermaid flowcharts that give a bi
 
 ## Why the Mermaid format
 
-Mermaid is a plain text representation of diagrams.
+Mermaid is a plain text diagram representation.
 
 Mermaid files (typically `.mmd`) can be:
 
 - viewed on GitHub (native Mermaid rendering)
-- viewed in your IDE (see [Mermaid Preview](https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview) for Visual Studio Code)
+- viewed in your IDE (install [Mermaid Preview](https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview) for Visual Studio Code)
 - viewed on GitBook, Notion, or Confluence
 - exported as images using Mermaid CLI
 - embedded in Markdown documentation
 
 ## Command-line interface
+
+### ✏️📄 Generate a single Markdown chartbook
+
+```sh
+npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --single-output-file speccharts.md
+```
+
+This creates a `speccharts.md` file [such as this one](./speccharts.md).
+
+### ⤵️ Pipe Markdown chartbook to standard output
+
+```sh
+npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}"
+```
+
+Ideal to pipe output to documentation outside of the repository.
 
 ### ✏️📒 Generate multiple chart files
 
@@ -104,7 +120,7 @@ Mermaid files (typically `.mmd`) can be:
 npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --multiple-output-files
 ```
 
-This creates a `.mmd` file next to each spec file:
+This creates a Mermaid file next to each spec file:
 
 ```
 src/
@@ -116,29 +132,15 @@ src/
     └── setUserAsAdmin.spec.ts.mmd  ← Generated
 ```
 
-### ✏️📄 Generate a single Markdown file compiling all charts
-
-```sh
-npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --single-output-file speccharts.md
-```
-
-This creates a [`speccharts.md` file such as this one](./speccharts.md).
-
-### ⤵️ Write the same Markdown chart compilation to standard output (no files created)
-
-```sh
-npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}"
-```
-
 ### 🧹 Delete existing charts before generating new ones
 
 ```sh
 npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --multiple-output-files --delete-existing-charts
 ```
 
-This gets rid of stale files (useful if you deleted spec files since last generation).
+Useful if you deleted or moved spec files since last generation.
 
-## JavaScript/TypeScript API
+## JavaScript (TypeScript) API
 
 ```sh
 npm install --save-dev speccharts
