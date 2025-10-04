@@ -45,7 +45,7 @@ export class Logger {
     );
   }
 
-  logChartFilesRemoved(paths: string[]): void {
+  logChartFilesDeleted(paths: string[]): void {
     if (paths.length === 0) {
       return;
     }

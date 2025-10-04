@@ -84,7 +84,7 @@ describe("speccharts CLI (integration tests)", () => {
   });
 
   describe("when passed `--multiple-output-files` and `--delete-existing-charts`", () => {
-    it("removes existing chart files before writing new ones", async () => {
+    it("deletes existing chart files before writing new ones", async () => {
       const staleChartPath = `${SPEC_FILE_PATH}.stale.mmd`;
       await fsExtra.outputFile(
         staleChartPath,

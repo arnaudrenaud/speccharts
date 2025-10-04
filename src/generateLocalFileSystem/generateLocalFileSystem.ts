@@ -22,7 +22,7 @@ export const generateAndWriteToFiles = async (
 
   if (args.deleteExistingCharts) {
     const removedPaths = await deleteGeneratedChartFiles();
-    standardOutputLogger.logChartFilesRemoved(removedPaths);
+    standardOutputLogger.logChartFilesDeleted(removedPaths);
   }
 
   await writeToLocalFileSystem(files);

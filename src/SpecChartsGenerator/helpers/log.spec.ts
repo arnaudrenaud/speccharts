@@ -118,20 +118,20 @@ describe("Logger", () => {
     });
   });
 
-  describe("logChartFilesRemoved", () => {
-    it("does not log when no files are removed", () => {
+  describe("logChartFilesDeleted", () => {
+    it("does not log when no files are deleted", () => {
       const logger = new Logger(mockLog, workingDirectory);
 
-      logger.logChartFilesRemoved([]);
+      logger.logChartFilesDeleted([]);
 
       expect(mockLog).not.toHaveBeenCalled();
     });
 
-    it("logs a single removed file with correct singular form", () => {
+    it("logs a single deleted file with correct singular form", () => {
       const logger = new Logger(mockLog, workingDirectory);
       const paths = [path.join(workingDirectory, "src/old-chart.mmd")];
 
-      logger.logChartFilesRemoved(paths);
+      logger.logChartFilesDeleted(paths);
 
       const call = mockLog.mock.calls[0][0];
       expect(call).toMatch(
@@ -139,7 +139,7 @@ describe("Logger", () => {
       );
     });
 
-    it("logs multiple removed files with correct plural form", () => {
+    it("logs multiple deleted files with correct plural form", () => {
       const logger = new Logger(mockLog, workingDirectory);
       const paths = [
         path.join(workingDirectory, "src/old-chart1.mmd"),
@@ -147,7 +147,7 @@ describe("Logger", () => {
         path.join(workingDirectory, "src/old-chart3.mmd"),
       ];
 
-      logger.logChartFilesRemoved(paths);
+      logger.logChartFilesDeleted(paths);
 
       const call = mockLog.mock.calls[0][0];
       expect(call).toMatch(
@@ -159,7 +159,7 @@ describe("Logger", () => {
       const logger = new Logger(mockLog, workingDirectory);
       const paths = [path.join(workingDirectory, "dist/generated/chart.mmd")];
 
-      logger.logChartFilesRemoved(paths);
+      logger.logChartFilesDeleted(paths);
 
       const call = mockLog.mock.calls[0][0];
       expect(call).toMatch(
