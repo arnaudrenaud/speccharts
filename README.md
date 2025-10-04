@@ -148,15 +148,12 @@ npm install --save-dev speccharts
 import { SpecChartsGenerator } from "speccharts";
 
 const generator = new SpecChartsGenerator();
-const charts = await generator.generate({
-  inputFilePatterns: ["src/**/*.spec.ts"],
-});
 
-// charts is an array of { specFile: File, chart: string }
-charts.forEach(({ specFile, chart }) => {
-  console.log(`Chart for ${specFile.path}:`);
-  console.log(chart);
-});
+console.log(
+  await generator.generate({
+    inputFilePatterns: ["src/**/*.spec.{ts,tsx}"],
+  })
+);
 ```
 
 ## Other specification formats supported
