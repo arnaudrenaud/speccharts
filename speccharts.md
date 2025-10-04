@@ -124,6 +124,34 @@ N10 --> N14
 
 ---
 
+Spec file: <a id="src-chart-files-getChartFiles-getChartFilesspects" href="src/chart-files/getChartFiles/getChartFiles.spec.ts">src/chart-files/getChartFiles/getChartFiles.spec.ts</a>
+
+```mermaid
+flowchart TD
+N0(["getChartFiles"])
+N1(["returns one Mermaid file per chart next to corresponding spec file"])
+N0 --> N1
+N2["if \`singleOutputFilePath\` is provided"]
+N0 --> N2
+N3(["returns one Markdown file gathering all charts at the specified path"])
+N2 --> N3
+```
+
+---
+
+Spec file: <a id="src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects" href="src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts">src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts</a>
+
+```mermaid
+flowchart TD
+N0(["getChartsInSingleFile"])
+N1(["gathers charts in single Markdown file"])
+N0 --> N1
+N2(["converts absolute paths to relative paths"])
+N0 --> N2
+```
+
+---
+
 Spec file: <a id="src-cli-integspec-cliintegspects" href="src/cli/integ.spec/cli.integ.spec.ts">src/cli/integ.spec/cli.integ.spec.ts</a>
 
 ```mermaid
@@ -157,35 +185,7 @@ N11 --> N12
 
 ---
 
-Spec file: <a id="src-chart-files-getChartFiles-getChartFilesspects" href="src/chart-files/getChartFiles/getChartFiles.spec.ts">src/chart-files/getChartFiles/getChartFiles.spec.ts</a>
-
-```mermaid
-flowchart TD
-N0(["getChartFiles"])
-N1(["returns one Mermaid file per chart next to corresponding spec file"])
-N0 --> N1
-N2["if \`singleOutputFilePath\` is provided"]
-N0 --> N2
-N3(["returns one Markdown file gathering all charts at the specified path"])
-N2 --> N3
-```
-
----
-
-Spec file: <a id="src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects" href="src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts">src/chart-files/getChartsInSingleFile/getChartsInSingleFile.spec.ts</a>
-
-```mermaid
-flowchart TD
-N0(["getChartsInSingleFile"])
-N1(["gathers charts in single Markdown file"])
-N0 --> N1
-N2(["converts absolute paths to relative paths"])
-N0 --> N2
-```
-
----
-
-Spec file: <a id="src-SpecChartsGenerator-core-getChart-getChartspects" href="src/SpecChartsGenerator/core/getChart/getChart.spec.ts">src/SpecChartsGenerator/core/getChart/getChart.spec.ts</a>
+Spec file: <a id="src-generateLocalFileSystem-generateLocalFileSystemintegspects" href="src/generateLocalFileSystem/generateLocalFileSystem.integ.spec.ts">src/generateLocalFileSystem/generateLocalFileSystem.integ.spec.ts</a>
 
 ```mermaid
 flowchart TD
