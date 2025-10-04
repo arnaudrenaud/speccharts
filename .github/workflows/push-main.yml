@@ -38,5 +38,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add speccharts.md
-          git commit -m "Update speccharts.md"
+          git commit -m "Update `speccharts.md`"
           git push
