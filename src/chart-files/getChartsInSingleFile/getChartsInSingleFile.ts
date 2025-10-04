@@ -1,7 +1,7 @@
 import { GENERATED_BY_SPECCHARTS_LABEL } from "../constants";
 import { getTreeText, generateHTMLLocalAnchor } from "./helpers";
 import { SpecChart } from "../../types";
-import { getRelativePath } from "./getRelativePath";
+import { getForwardSlashRelativePath } from "./getRelativePath";
 
 export type Tree = { [key: string]: Tree | {} };
 
@@ -12,7 +12,7 @@ function getChartsWithRelativePath(
   return charts.map(({ specFile, chart }) => ({
     specFile: {
       ...specFile,
-      path: getRelativePath(outputDirectoryPath, specFile),
+      path: getForwardSlashRelativePath(outputDirectoryPath, specFile),
     },
     chart,
   }));
