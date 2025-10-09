@@ -2,6 +2,17 @@
 
 This document explains how to make `speccharts` available via Homebrew for macOS users.
 
+## Quick Start
+
+To enable Homebrew distribution:
+
+1. Create a new GitHub repository: `arnaudrenaud/homebrew-tap`
+2. Copy `Formula/speccharts.rb` to the root of that repository as `speccharts.rb`
+3. Commit and push
+4. Users can now install with: `brew install arnaudrenaud/tap/speccharts`
+
+See detailed instructions below.
+
 ## Overview
 
 The Homebrew formula for `speccharts` is provided in the `Formula/speccharts.rb` file. To make this available to users, you need to create a Homebrew tap (a Git repository containing formulas).
