@@ -1,0 +1,66 @@
+name: Update Homebrew Formula
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to update (e.g., 0.4.1)'
+        required: true
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout speccharts repository
+        uses: actions/checkout@v4
+
+      - name: Set version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION="${VERSION#v}"  # Remove 'v' prefix if present
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Updating formula for version: $VERSION"
+
+      - name: Download tarball and calculate SHA256
+        id: tarball
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          URL="https://registry.npmjs.org/speccharts/-/speccharts-${VERSION}.tgz"
+          SHA256=$(curl -sL "$URL" | sha256sum | cut -d' ' -f1)
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "Downloaded tarball SHA256: $SHA256"
+
+      - name: Update formula file
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA256="${{ steps.tarball.outputs.sha256 }}"
+          URL="${{ steps.tarball.outputs.url }}"
+          
+          sed -i "s|url \".*\"|url \"$URL\"|" Formula/speccharts.rb
+          sed -i "s|sha256 \".*\"|sha256 \"$SHA256\"|" Formula/speccharts.rb
+          
+          echo "Updated Formula/speccharts.rb:"
+          cat Formula/speccharts.rb
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Update Homebrew formula to version ${{ steps.version.outputs.version }}"
+          title: "Update Homebrew formula to version ${{ steps.version.outputs.version }}"
+          body: |
+            Automated update of the Homebrew formula for speccharts version ${{ steps.version.outputs.version }}.
+            
+            - URL: ${{ steps.tarball.outputs.url }}
+            - SHA256: ${{ steps.tarball.outputs.sha256 }}
+            
+            After merging this PR, update the homebrew-tap repository with the new formula.
+          branch: update-homebrew-formula-${{ steps.version.outputs.version }}
+          delete-branch: true

@@ -96,6 +96,33 @@ Mermaid files (typically `.mmd`) can be:
 - exported as images using Mermaid CLI
 - embedded in Markdown documentation
 
+## Installation
+
+### macOS (Homebrew)
+
+```sh
+brew install arnaudrenaud/tap/speccharts
+```
+
+To set up the tap for the first time:
+
+```sh
+brew tap arnaudrenaud/tap https://github.com/arnaudrenaud/homebrew-tap
+brew install speccharts
+```
+
+### npm
+
+```sh
+npm install -g speccharts
+```
+
+Or use directly with `npx`:
+
+```sh
+npx speccharts [options]
+```
+
 ## Command-line interface
 
 ### ✏️📄 Generate a single Markdown chartbook
