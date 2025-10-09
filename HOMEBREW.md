@@ -71,7 +71,7 @@ When you release a new version of `speccharts`:
 Before publishing, you can test the formula locally:
 
 ```bash
-# Test installation
+# Test installation (requires Homebrew to be installed)
 brew install --build-from-source Formula/speccharts.rb
 
 # Test the audit
@@ -82,6 +82,18 @@ speccharts --help
 
 # Uninstall when done testing
 brew uninstall speccharts
+```
+
+### Verifying the Formula
+
+To verify the formula is correct without installing:
+
+```bash
+# Check Ruby syntax
+ruby -c Formula/speccharts.rb
+
+# Verify SHA256 hash
+curl -sL https://registry.npmjs.org/speccharts/-/speccharts-0.4.1.tgz | shasum -a 256
 ```
 
 ## Alternative: Submit to homebrew-core
