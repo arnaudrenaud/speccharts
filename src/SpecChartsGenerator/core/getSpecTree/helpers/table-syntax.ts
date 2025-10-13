@@ -107,31 +107,79 @@ export function extractTemplateTableData(templateNode: ts.Node): {
   return { headers: [], data: [] };
 }
 
-export function replacePlaceholders(template: string, values: any): string {
+export function replacePlaceholders(
+  template: string,
+  values: any,
+  index?: number
+): string {
   // Handle single values (not arrays)
   if (!Array.isArray(values)) {
-    return template.replace(/%[sdio]/, String(values));
+    return template.replace(/%[sdiofpj]/, (match) => {
+      if (match === "%p" || match === "%j") {
+        return formatValue(values, match);
+      }
+      return String(values);
+    });
   }
 
   let result = template;
   let valueIndex = 0;
 
+  // First pass: replace %% with a placeholder to avoid replacing it
+  result = result.replace(/%%/g, "\x00PERCENT\x00");
+
+  // Replace %# with index
+  if (index !== undefined) {
+    result = result.replace(/%#/g, String(index));
+  }
+
   // Replace placeholders with actual values
-  result = result.replace(/%[sdio]/g, () => {
+  result = result.replace(/%([sdiofpj])/g, (match, formatter) => {
     if (valueIndex < values.length) {
       const value = values[valueIndex++];
-      return String(value);
+      return formatValue(value, `%${formatter}`);
     }
-    return `%s`; // Keep placeholder if no more values
+    return match; // Keep placeholder if no more values
   });
 
+  // Restore %% as single %
+  result = result.replace(/\x00PERCENT\x00/g, "%");
+
   return result;
+}
+
+function formatValue(value: any, formatter: string): string {
+  switch (formatter) {
+    case "%s":
+      return String(value);
+    case "%d":
+    case "%i":
+      return String(Math.floor(Number(value)));
+    case "%f":
+      return String(Number(value));
+    case "%o":
+      return String(value);
+    case "%j":
+      return JSON.stringify(value);
+    case "%p":
+      // Pretty-format: similar to %j but more readable
+      // For objects/arrays, use JSON with indentation; for primitives, use toString
+      if (value === null) return "null";
+      if (value === undefined) return "undefined";
+      if (typeof value === "object") {
+        return JSON.stringify(value, null, 2);
+      }
+      return String(value);
+    default:
+      return String(value);
+  }
 }
 
 export function replaceTemplatePlaceholders(
   template: string,
   values: any,
-  headers?: string[]
+  headers?: string[],
+  index?: number
 ): string {
   // Handle single values (not arrays)
   if (!Array.isArray(values)) {
@@ -139,6 +187,11 @@ export function replaceTemplatePlaceholders(
   }
 
   let result = template;
+
+  // Replace $# with index
+  if (index !== undefined) {
+    result = result.replace(/\$#/g, String(index));
+  }
 
   // If we have headers, map placeholder names to values
   if (headers && headers.length > 0) {
@@ -169,32 +222,46 @@ export function replaceTemplatePlaceholders(
   return result;
 }
 
+// Helper function to find the base Jest function (test, describe, or it) in a property chain
+function getBaseJestFunction(expr: ts.Expression): string | null {
+  if (ts.isIdentifier(expr)) {
+    return ["describe", "test", "it"].includes(expr.text) ? expr.text : null;
+  }
+  if (ts.isPropertyAccessExpression(expr)) {
+    return getBaseJestFunction(expr.expression);
+  }
+  return null;
+}
+
+// Helper function to check if 'each' is in the property chain
+function hasEachProperty(expr: ts.Expression): boolean {
+  if (ts.isPropertyAccessExpression(expr)) {
+    if (ts.isIdentifier(expr.name) && expr.name.text === "each") {
+      return true;
+    }
+    return hasEachProperty(expr.expression);
+  }
+  return false;
+}
+
 export function isJestTableExpression(node: ts.Node): boolean {
   if (ts.isCallExpression(node)) {
     // Handle Jest table syntax: test.each(data)(name, callback)
+    // or test.only.each(data)(name, callback)
+    // or test.concurrent.only.each(data)(name, callback)
     if (ts.isCallExpression(node.expression)) {
       const innerCall = node.expression;
       if (ts.isPropertyAccessExpression(innerCall.expression)) {
-        const object = innerCall.expression.expression;
-        const property = innerCall.expression.name;
-        return (
-          ts.isIdentifier(object) &&
-          ts.isIdentifier(property) &&
-          ["describe", "test", "it"].includes(object.text) &&
-          property.text === "each"
-        );
+        const baseFunction = getBaseJestFunction(innerCall.expression);
+        const hasEach = hasEachProperty(innerCall.expression);
+        return baseFunction !== null && hasEach;
       }
     }
     // Handle direct property access: test.each
     if (ts.isPropertyAccessExpression(node.expression)) {
-      const object = node.expression.expression;
-      const property = node.expression.name;
-      return (
-        ts.isIdentifier(object) &&
-        ts.isIdentifier(property) &&
-        ["describe", "test", "it"].includes(object.text) &&
-        property.text === "each"
-      );
+      const baseFunction = getBaseJestFunction(node.expression);
+      const hasEach = hasEachProperty(node.expression);
+      return baseFunction !== null && hasEach;
     }
   }
   return false;
@@ -203,18 +270,15 @@ export function isJestTableExpression(node: ts.Node): boolean {
 export function isJestTemplateTableExpression(node: ts.Node): boolean {
   if (ts.isCallExpression(node)) {
     // Handle Jest template table syntax: test.each`table`(name, callback)
+    // or test.only.each`table`(name, callback)
+    // or test.concurrent.only.each`table`(name, callback)
     // The expression is a tagged template literal: test.each`table`
     if (ts.isTaggedTemplateExpression(node.expression)) {
       const taggedTemplate = node.expression;
       if (ts.isPropertyAccessExpression(taggedTemplate.tag)) {
-        const object = taggedTemplate.tag.expression;
-        const property = taggedTemplate.tag.name;
-        return (
-          ts.isIdentifier(object) &&
-          ts.isIdentifier(property) &&
-          ["describe", "test", "it"].includes(object.text) &&
-          property.text === "each"
-        );
+        const baseFunction = getBaseJestFunction(taggedTemplate.tag);
+        const hasEach = hasEachProperty(taggedTemplate.tag);
+        return baseFunction !== null && hasEach;
       }
     }
   }

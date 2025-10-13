@@ -50,11 +50,12 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
       };
 
       // Create leaf nodes for each table case
-      tableData.forEach((row) => {
+      tableData.forEach((row, index) => {
         const resolvedName = replaceTemplatePlaceholders(
           current.name,
           row,
-          headers
+          headers,
+          index
         );
         const leafNode: SpecNode = {
           type: "behavior",
@@ -98,8 +99,8 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
       };
 
       // Create leaf nodes for each table case
-      tableData.forEach((row) => {
-        const resolvedName = replacePlaceholders(current.name, row);
+      tableData.forEach((row, index) => {
+        const resolvedName = replacePlaceholders(current.name, row, index);
         const leafNode: SpecNode = {
           type: "behavior",
           name: resolvedName,
