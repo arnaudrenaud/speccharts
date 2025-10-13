@@ -5,41 +5,37 @@ Based on test suites in your source code, generate diagrams that reveal your app
 From this spec file:
 
 ```ts
-describe("setUserAsAdmin", () => {
-  describe("when authenticated user is not admin", () => {
-    it("throws exception", () => {
-      // …
+describe("sendRequest", () => {
+  describe("when server responds", () => {
+    describe("with success status", () => {
+      describe("when body valid JSON", () => {
+        it("returns parsed body", async () => {});
+      });
+
+      describe("when body invalid JSON", () => {
+        it("throws MALFORMED_RESPONSE", async () => {});
+      });
+    });
+
+    describe("with error status", () => {
+      describe("when error message matches known exception", () => {
+        it("re-throws exception", async () => {});
+      });
+
+      describe("when error message unknown", () => {
+        describe("when status 4xx", () => {
+          it("throws MALFORMED_REQUEST", async () => {});
+        });
+
+        describe("when status 5xx", () => {
+          it("throws INTERNAL_SERVER_ERROR", async () => {});
+        });
+      });
     });
   });
 
-  describe("when authenticated user is admin", () => {
-    describe("when email matches no user in database", () => {
-      describe("when user not found in ERP", () => {
-        it("throws exception", () => {
-          // …
-        });
-      });
-
-      describe("when user found in ERP", () => {
-        it("creates user from ERP, sets as admin in database", () => {
-          // …
-        });
-      });
-    });
-
-    describe("when email matches user in database", () => {
-      describe("when user already has admin role", () => {
-        it("throws exception", () => {
-          // …
-        });
-      });
-
-      describe("when user has no admin role", () => {
-        it("sets as admin in database, does not call ERP", () => {
-          // …
-        });
-      });
-    });
+  describe("when server does not respond", () => {
+    it("throws SERVER_TIMEOUT", async () => {});
   });
 });
 ```
@@ -48,33 +44,39 @@ describe("setUserAsAdmin", () => {
 
 ```mermaid
 flowchart TD
-N0(["setUserAsAdmin"])
-N1["when authenticated user is not admin"]
+N0(["sendRequest"])
+N1["when server responds"]
 N0 --> N1
-N2(["throws exception"])
+N2["with success status"]
 N1 --> N2
-N3["when authenticated user is admin"]
-N0 --> N3
-N4["when email matches no user in database"]
+N3["when body valid JSON"]
+N2 --> N3
+N4(["returns parsed body"])
 N3 --> N4
-N5["when user not found in ERP"]
-N4 --> N5
-N6(["throws exception"])
+N5["when body invalid JSON"]
+N2 --> N5
+N6(["throws MALFORMED_RESPONSE"])
 N5 --> N6
-N7["when user found in ERP"]
-N4 --> N7
-N8(["creates user from ERP, sets as admin in database"])
+N7["with error status"]
+N1 --> N7
+N8["when error message matches known exception"]
 N7 --> N8
-N9["when email matches user in database"]
-N3 --> N9
-N10["when user already has admin role"]
-N9 --> N10
-N11(["throws exception"])
+N9(["re-throws exception"])
+N8 --> N9
+N10["when error message unknown"]
+N7 --> N10
+N11["when status 4xx"]
 N10 --> N11
-N12["when user has no admin role"]
-N9 --> N12
-N13(["sets as admin in database, does not call ERP"])
-N12 --> N13
+N12(["throws MALFORMED_REQUEST"])
+N11 --> N12
+N13["when status 5xx"]
+N10 --> N13
+N14(["throws INTERNAL_SERVER_ERROR"])
+N13 --> N14
+N15["when server does not respond"]
+N0 --> N15
+N16(["throws SERVER_TIMEOUT"])
+N15 --> N16
 ```
 
 ## Principle
@@ -180,7 +182,7 @@ describe("math operations", () => {
     ["positive", 5, 3, 2],
     ["negative", -5, -3, -2],
     ["zero", 0, 0, 0],
-  ])("subtraction with %s numbers: %d - %d = %d", (type, a, b, expected) => {
+  ])("substraction with %s numbers: %d - %d = %d", (type, a, b, expected) => {
     expect(a - b).toBe(expected);
   });
 });
