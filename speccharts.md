@@ -2,7 +2,7 @@
 
 Jump to chart for each spec file:
 
-<pre>└── src/<br />    ├── SpecChartsGenerator/<br />    │   ├── <a href="#src-SpecChartsGenerator-SpecChartsGeneratorspects">SpecChartsGenerator.spec.ts</a><br />    │   ├── core/<br />    │   │   ├── getChart/<br />    │   │   │   └── <a href="#src-SpecChartsGenerator-core-getChart-getChartspects">getChart.spec.ts</a><br />    │   │   └── getSpecTree/<br />    │   │       └── <a href="#src-SpecChartsGenerator-core-getSpecTree-getSpecTreespects">getSpecTree.spec.ts</a><br />    │   └── helpers/<br />    │       └── <a href="#src-SpecChartsGenerator-helpers-logspects">log.spec.ts</a><br />    ├── chart-files/<br />    │   ├── getChartFiles/<br />    │   │   └── <a href="#src-chart-files-getChartFiles-getChartFilesspects">getChartFiles.spec.ts</a><br />    │   └── getChartsInSingleFile/<br />    │       └── <a href="#src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects">getChartsInSingleFile.spec.ts</a><br />    ├── cli/<br />    │   └── integ.spec/<br />    │       └── <a href="#src-cli-integspec-cliintegspects">cli.integ.spec.ts</a><br />    └── generateLocalFileSystem/<br />        └── <a href="#src-generateLocalFileSystem-generateLocalFileSystemintegspects">generateLocalFileSystem.integ.spec.ts</a><br /></pre>
+<pre>└── src/<br />    ├── SpecChartsGenerator/<br />    │   ├── <a href="#src-SpecChartsGenerator-SpecChartsGeneratorspects">SpecChartsGenerator.spec.ts</a><br />    │   ├── core/<br />    │   │   ├── getChart/<br />    │   │   │   └── <a href="#src-SpecChartsGenerator-core-getChart-getChartspects">getChart.spec.ts</a><br />    │   │   └── getSpecTree/<br />    │   │       ├── <a href="#src-SpecChartsGenerator-core-getSpecTree-getSpecTreespects">getSpecTree.spec.ts</a><br />    │   │       └── <a href="#src-SpecChartsGenerator-core-getSpecTree-getTableSyntaxSpecTreespects">getTableSyntaxSpecTree.spec.ts</a><br />    │   └── helpers/<br />    │       └── <a href="#src-SpecChartsGenerator-helpers-logspects">log.spec.ts</a><br />    ├── chart-files/<br />    │   ├── getChartFiles/<br />    │   │   └── <a href="#src-chart-files-getChartFiles-getChartFilesspects">getChartFiles.spec.ts</a><br />    │   └── getChartsInSingleFile/<br />    │       └── <a href="#src-chart-files-getChartsInSingleFile-getChartsInSingleFilespects">getChartsInSingleFile.spec.ts</a><br />    ├── cli/<br />    │   └── integ.spec/<br />    │       └── <a href="#src-cli-integspec-cliintegspects">cli.integ.spec.ts</a><br />    └── generateLocalFileSystem/<br />        └── <a href="#src-generateLocalFileSystem-generateLocalFileSystemintegspects">generateLocalFileSystem.integ.spec.ts</a><br /></pre>
 
 ---
 
@@ -36,7 +36,7 @@ N3(["returns a Mermaid flowchart with rhombus-shaped node for question, answer a
 N2 --> N3
 N4["if spec tree contains nodes with type \`table\`"]
 N0 --> N4
-N5(["returns a Mermaid flowchart with table node rendered as leaf containing formatted table data"])
+N5(["returns a Mermaid flowchart with table node rendered as round-corner rectangle leaf containing formatted table data"])
 N4 --> N5
 N6["if spec tree has multiple root-level nodes with type \`case\`"]
 N0 --> N6
@@ -61,28 +61,47 @@ N4["if spec has more than one \`describe\` block at root-level"]
 N0 --> N4
 N5(["returns a spec tree made of the same number of spec trees"])
 N4 --> N5
-N6["Jest table syntax"]
+```
+
+---
+
+Spec file: <a id="src-SpecChartsGenerator-core-getSpecTree-getTableSyntaxSpecTreespects" href="src/SpecChartsGenerator/core/getSpecTree/getTableSyntaxSpecTree.spec.ts">src/SpecChartsGenerator/core/getSpecTree/getTableSyntaxSpecTree.spec.ts</a>
+
+```mermaid
+flowchart TD
+N0(["getTableSyntaxSpecTree"])
+N1["describe.each"]
+N0 --> N1
+N2["when passed array of arrays"]
+N1 --> N2
+N3(["returns node with type \`table\`, children with type \`behavior\`"])
+N2 --> N3
+N4["when passed table-like template literal"]
+N1 --> N4
+N5(["returns node with type \`table\`, children with type \`behavior\`"])
+N4 --> N5
+N6["test.each"]
 N0 --> N6
-N7(["parses test.each with array table data"])
+N7(["behaves like \`describe.each\`"])
 N6 --> N7
-N8(["parses describe.each with mixed data types"])
-N6 --> N8
-N9(["parses it.each with single values"])
-N6 --> N9
-N10(["parses nested describe.each within regular describe"])
-N6 --> N10
-N11["Jest template string table syntax"]
-N0 --> N11
-N12(["parses test.each with template string table"])
-N11 --> N12
-N13(["parses describe.each with template string table and mixed data types"])
-N11 --> N13
-N14(["parses it.each with template string table and boolean values"])
-N11 --> N14
-N15(["parses nested describe.each with template string within regular describe"])
-N11 --> N15
-N16(["parses template string table with null and undefined values"])
-N11 --> N16
+N8["it.each"]
+N0 --> N8
+N9(["behaves like \`test.each\`"])
+N8 --> N9
+N10["modifiers (only, skip, concurrent, failing)"]
+N0 --> N10
+N11(["<table><tr><td>• ignores modifier in test.only.each</td></tr><tr><td>• ignores modifier in test.skip.each</td></tr><tr><td>• ignores modifier in test.concurrent.each</td></tr><tr><td>• ignores modifier in test.concurrent.only.each</td></tr><tr><td>• ignores modifier in test.concurrent.skip.each</td></tr><tr><td>• ignores modifier in test.failing.each</td></tr><tr><td>• ignores modifier in describe.only.each</td></tr><tr><td>• ignores modifier in describe.skip.each</td></tr><tr><td>• ignores modifier in it.only.each</td></tr><tr><td>• ignores modifier in it.skip.each</td></tr></table>"])
+N10 --> N11
+N12["placeholders"]
+N0 --> N12
+N13["when passed type-based placeholders in template string (%s, %d, %i, %f, %#, %%)"]
+N12 --> N13
+N14(["returns values formatted according to type"])
+N13 --> N14
+N15["when passed named variables in template string and argument (object)"]
+N12 --> N15
+N16(["returns interpolated values"])
+N15 --> N16
 ```
 
 ---
