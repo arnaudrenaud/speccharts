@@ -40,7 +40,7 @@ export const getChart = (specTree: SpecTree): string => {
         ? formatTableAsHTML(node.children)
         : "<table><tr><td>• No test cases</td></tr></table>";
       const cellLabel = escapeMermaidLabelMarkdown(tableContent);
-      nodes.push(`${thisId}(["${cellLabel}"])`);
+      nodes.push(`${thisId}("${cellLabel}")`);
 
       if (parentId) {
         nodes.push(`${parentId} --> ${thisId}`);

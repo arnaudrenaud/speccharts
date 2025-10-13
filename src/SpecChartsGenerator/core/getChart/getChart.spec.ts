@@ -88,7 +88,7 @@ N1 -- no --> N3`);
   });
 
   describe("if spec tree contains nodes with type `table`", () => {
-    it("returns a Mermaid flowchart with table node rendered as leaf containing formatted table data", () => {
+    it("returns a Mermaid flowchart with table node rendered as round-corner rectangle leaf containing formatted table data", () => {
       const SPEC_TREE: SpecTree = {
         name: "src/math.spec.ts",
         children: [
@@ -129,9 +129,9 @@ N1 -- no --> N3`);
 
       expect(result).toEqual(`flowchart TD
 N0(["math operations"])
-N1(["<table><tr><td>• adds 1 and 1 to get 2</td></tr><tr><td>• adds 1 and 2 to get 3</td></tr><tr><td>• adds 2 and 1 to get 3</td></tr></table>"])
+N1("<table><tr><td>• adds 1 and 1 to get 2</td></tr><tr><td>• adds 1 and 2 to get 3</td></tr><tr><td>• adds 2 and 1 to get 3</td></tr></table>")
 N0 --> N1
-N2(["<table><tr><td>• handles first case</td></tr><tr><td>• handles second case</td></tr><tr><td>• handles third case</td></tr></table>"])
+N2("<table><tr><td>• handles first case</td></tr><tr><td>• handles second case</td></tr><tr><td>• handles third case</td></tr></table>")
 N0 --> N2`);
     });
   });
