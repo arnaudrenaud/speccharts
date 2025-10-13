@@ -1,5 +1,7 @@
 import ts from "typescript";
 
+// Handle table-like syntax for test cases: https://jestjs.io/docs/api#describeeachtablename-fn-timeout
+
 export function extractTableData(tableNode: ts.Node): unknown[] {
   if (ts.isArrayLiteralExpression(tableNode)) {
     return tableNode.elements.map((element) => {

@@ -8,7 +8,7 @@ import {
   isJestTemplateTableExpression,
   replacePlaceholders,
   replaceTemplatePlaceholders,
-} from "./helpers/tableSpec";
+} from "./helpers/table-syntax";
 
 function endsWithQuestionMark(text: string): boolean {
   return text.trim().endsWith("?");
