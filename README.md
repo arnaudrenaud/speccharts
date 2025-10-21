@@ -2,7 +2,7 @@
 
 Based on test suites in your source code, generate diagrams that reveal your application specs.
 
-From this spec file:
+From this spec file…
 
 ```ts
 describe("sendRequest", () => {
