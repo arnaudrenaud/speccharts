@@ -81,40 +81,21 @@ N15 --> N16
 
 ## Principle
 
-Test suites tend to become less legible as they grow. At some point, you wonder where a new test belongs or if a case might not be already covered.
-These problems are only bound to increase with the advent of AI agents that contribute code you never wrote.
+Test suites tend to become less legible as they grow. At some point, you wonder where to write a new test or if a case might not be already covered. This gets worse with AI agents that contribute code you never wrote.
 
-speccharts reads your test files and generates Mermaid flowcharts that give a bird's eye view of test suites. `describe` blocks render as nodes, `it` and `test` blocks render as leaves.
+`speccharts` reads your test files and generates Mermaid flowcharts that give a bird's eye view of test suites. `describe` blocks render as nodes, `it` and `test` blocks render as leaves.
 
-## Why the Mermaid format
-
-Mermaid is a plain text diagram representation.
-
-Mermaid files (typically `.mmd`) can be:
-
-- viewed on GitHub (native Mermaid rendering)
-- viewed in your IDE (install [Mermaid Preview](https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview) for Visual Studio Code)
-- viewed on GitBook, Notion, or Confluence
-- exported as images using Mermaid CLI
-- embedded in Markdown documentation
+It works especially well with deeply nested test suites. Some have advised against this way of organizing tests, but it helps convey ramified logic.
 
 ## Command-line interface
 
-### ✏️📄 Generate a single Markdown chartbook
+### ✏️📄 Generate a single Markdown file with all charts
 
 ```sh
 npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --single-output-file speccharts.md
 ```
 
-This creates a `speccharts.md` file [such as this one](./speccharts.md).
-
-### ⤵️ Pipe Markdown chartbook to standard output
-
-```sh
-npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}"
-```
-
-Ideal to pipe output to documentation outside of the repository.
+This gathers all charts to a `speccharts.md` file [such as this one](./speccharts.md).
 
 ### ✏️📒 Generate multiple chart files
 
@@ -126,12 +107,12 @@ This creates a Mermaid file next to each spec file:
 
 ```
 src/
-├── services/
-│   ├── UserService.spec.ts
-│   └── UserService.spec.ts.mmd  ← Generated
-└── admin/
-    ├── setUserAsAdmin.spec.ts
-    └── setUserAsAdmin.spec.ts.mmd  ← Generated
+├── http/
+│   ├── sendRequest.spec.ts
+│   └── sendRequest.spec.ts.mmd  ← Generated
+└── services/
+    ├── getUser.spec.ts
+    └── getUser.spec.ts.mmd  ← Generated
 ```
 
 ### 🧹 Delete existing charts before generating new ones
@@ -141,6 +122,14 @@ npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --multiple-output-files --dele
 ```
 
 Useful if you deleted or moved spec files since last generation.
+
+### ⤵️ Pipe Markdown to standard output
+
+```sh
+npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}"
+```
+
+Instead of writing all charts to a file, send Markdown content to standard output.
 
 ## JavaScript (TypeScript) API
 
@@ -195,11 +184,19 @@ describe("math operations", () => {
 - **Onboarding**: Help new team members understand the application behavior through test structure
 - **Testing strategy**: Visualize test organization and identify gaps in test coverage
 
+## Why the Mermaid format
+
+Mermaid is a plain text diagram representation.
+
+Mermaid files (typically `.mmd`) can be:
+
+- viewed on GitHub (native Mermaid rendering)
+- viewed in your IDE (install [Mermaid Preview](https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview) for Visual Studio Code)
+- viewed on GitBook, Notion, or Confluence
+- exported as images using Mermaid CLI
+- embedded in Markdown documentation
+
 ## Supported test frameworks
 
 - Jest (primary support)
 - Compatible with any testing framework that uses `describe`/`it` or `describe`/`test` syntax
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
