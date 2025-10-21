@@ -226,13 +226,6 @@ N1("<table><tr><td>• empty name → no initials (&quot&quot → &quot&quot)</t
 N0 --> N1
 ```
 
-## Use cases
-
-- **Documentation**: Generate visual documentation of use cases that non-tech collaborators can understand
-- **Code reviews**: Help reviewers understand complex test scenarios at a glance
-- **Onboarding**: Help new team members understand the application behavior through test structure
-- **Testing strategy**: Visualize test organization and identify gaps in test coverage
-
 ## Why the Mermaid format
 
 Mermaid is a plain text diagram representation.
@@ -245,7 +238,13 @@ Mermaid files (typically `.mmd`) can be:
 - exported as images using Mermaid CLI
 - embedded in Markdown documentation
 
+## Use cases
+
+- documentation & onboarding: supply non-tech collaborators and new team members with visual, up-to-date specifications
+- code reviews: help reviewers understand complex test suites at a glance
+- testing strategy: identify imbalances between test suites
+
 ## Supported test frameworks
 
-- Jest (primary support)
-- Compatible with any testing framework that uses `describe`/`it` or `describe`/`test` syntax
+- Jest (main target)
+- any testing framework that uses `describe > it` or `describe > test` syntax
