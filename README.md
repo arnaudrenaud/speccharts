@@ -149,32 +149,81 @@ console.log(
 );
 ```
 
-## Other specification formats supported
+## Supported specification variants
 
-### Question marks in spec files
+### Questions (decision node)
 
-### Jest table syntax
+`describe` blocks ending with a question mark render as decision nodes (rhombus-shaped).
+
+Example spec:
 
 ```ts
-describe("math operations", () => {
-  describe.each([
-    [1, 2, 3],
-    [4, 5, 9],
-    [0, 0, 0],
-  ])("addition: %d + %d = %d", (a, b, expected) => {
-    it("should add numbers correctly", () => {
-      expect(a + b).toBe(expected);
+describe("getUser", () => {
+  describe("is store available?", () => {
+    describe("no", () => {
+      it("returns `null`", async () => {});
+    });
+
+    describe("yes", () => {
+      describe("is user found?", () => {
+        describe("no", () => {
+          it("returns `null`", async () => {});
+        });
+
+        describe("yes", () => {
+          it("returns user", async () => {});
+        });
+      });
     });
   });
+});
+```
 
+Resulting chart:
+
+```mermaid
+flowchart TD
+N0(["getUser"])
+N1{"is store available?"}
+N0 --> N1
+N2(["returns \`null\`"])
+N1 -- no --> N2
+N3{"is user found?"}
+N4(["returns \`null\`"])
+N3 -- no --> N4
+N5(["returns user"])
+N3 -- yes --> N5
+N1 -- yes --> N3
+```
+
+### Tables
+
+Blocks with [Jest table syntax](https://jestjs.io/docs/api#describeeachtablename-fn-timeout) render as a list in a leaf.
+
+Example spec:
+
+```ts
+describe("getInitials", () => {
   test.each([
-    ["positive", 5, 3, 2],
-    ["negative", -5, -3, -2],
-    ["zero", 0, 0, 0],
-  ])("substraction with %s numbers: %d - %d = %d", (type, a, b, expected) => {
-    expect(a - b).toBe(expected);
+    ["empty name", "no initials", "", ""],
+    ["one-word name", "one initial", "John", "J"],
+    ["two-word name", "two initials", "John Doe", "JD"],
+    ["lowercase name", "two initials", "john doe", "JD"],
+    ["three-word name", "three initials", "John Steve Doe", "JSD"],
+    ["four-word name", "three initials", "John Steve Doe Barry", "JSD"],
+  ])('%s → %s ("%p" → "%p")', (name, behavior, input, output) => {
+    // expect(getInitials(input)).toEqual(output);
   });
 });
+```
+
+Resulting chart:
+
+```mermaid
+flowchart TD
+N0(["getInitials"])
+N1("<table><tr><td>• empty name → no initials (&quot&quot → &quot&quot)</td></tr><tr><td>• one-word name → one initial (&quotJohn&quot → &quotJ&quot)</td></tr><tr><td>• two-word name → two initials (&quotJohn Doe&quot → &quotJD&quot)</td></tr><tr><td>• lowercase name → two initials (&quotjohn doe&quot → &quotJD&quot)</td></tr><tr><td>• three-word name → three initials (&quotJohn Steve Doe&quot → &quotJSD&quot)</td></tr><tr><td>• four-word name → three initials (&quotJohn Steve Doe Barry&quot → &quotJSD&quot)</td></tr></table>")
+N0 --> N1
 ```
 
 ## Use cases
