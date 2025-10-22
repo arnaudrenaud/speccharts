@@ -83,7 +83,7 @@ N15 --> N16
 
 Test suites tend to become less legible as they grow. At some point, you wonder where to write a new test or if a case might not be already covered. This gets worse with AI agents that contribute code you never wrote.
 
-`speccharts` reads your test files and generates Mermaid flowcharts that give a bird's eye view of test suites. `describe` blocks render as nodes, `it` and `test` blocks render as leaves.
+`speccharts` reads your test files (JS or TS) and generates Mermaid flowcharts that give a bird's eye view of test suites. `describe` blocks render as nodes, `it` and `test` blocks render as leaves.
 
 It works especially well with deeply nested test suites. Some have advised against this way of organizing tests, but it helps convey ramified logic.
 
@@ -149,7 +149,7 @@ console.log(
 );
 ```
 
-## Supported specification variants
+## Supported syntax variants
 
 ### Questions (decision node)
 
@@ -244,7 +244,8 @@ Mermaid files (typically `.mmd`) can be:
 - code reviews: help reviewers understand complex test suites at a glance
 - testing strategy: identify imbalances between test suites
 
-## Supported test frameworks
+## Language and syntax support
 
-- Jest (main target)
-- any testing framework that uses `describe > it` or `describe > test` syntax
+For now, only JavaScript and TypeScript test files are supported.
+
+Any files that use `describe > it` or `describe > test` syntax are supported.
