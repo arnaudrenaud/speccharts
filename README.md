@@ -244,6 +244,8 @@ Mermaid files (typically `.mmd`) can be:
 - code reviews: help reviewers understand complex test suites at a glance
 - testing strategy: identify imbalances between test suites
 
+To add chart generation to a CI pipeline, see GitHub action example: [push-main.yml](.github/workflows/push-main.yml).
+
 ## Language and syntax support
 
 For now, only JavaScript and TypeScript test files are supported.
