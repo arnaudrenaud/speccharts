@@ -233,10 +233,10 @@ Mermaid is a plain text diagram representation.
 Mermaid files (typically `.mmd`) can be:
 
 - viewed on GitHub (native Mermaid rendering)
+- embedded in Markdown documentation
 - viewed in your IDE (install [Mermaid Preview](https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview) for Visual Studio Code)
 - viewed on GitBook, Notion, or Confluence
 - exported as images using Mermaid CLI
-- embedded in Markdown documentation
 
 ## Use cases
 
