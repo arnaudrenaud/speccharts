@@ -87,6 +87,12 @@ Test suites tend to become less legible as they grow. At some point, you wonder 
 
 It works especially well with deeply nested test suites. Some have advised against this way of organizing tests, but it helps convey ramified logic.
 
+## Language and syntax support
+
+For now, only JavaScript and TypeScript test files are supported.
+
+Any files that use `describe > it` or `describe > test` syntax are supported.
+
 ## Command-line interface
 
 ### ✏️📄 Generate a single Markdown file with all charts
@@ -245,9 +251,3 @@ Mermaid files (typically `.mmd`) can be:
 - testing strategy: identify imbalances between test suites
 
 To add chart generation to a CI pipeline, see GitHub action example: [push-main.yml](.github/workflows/push-main.yml).
-
-## Language and syntax support
-
-For now, only JavaScript and TypeScript test files are supported.
-
-Any files that use `describe > it` or `describe > test` syntax are supported.
