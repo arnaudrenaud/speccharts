@@ -18,6 +18,7 @@ export type SpecNode = {
   };
   children?: SpecNode[];
   tableData?: unknown[];
+  isInterpolated?: boolean; // For table-cell nodes: true if contains interpolated value
 };
 
 export type SpecTree = {

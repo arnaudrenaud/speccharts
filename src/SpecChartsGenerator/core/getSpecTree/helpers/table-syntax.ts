@@ -285,14 +285,19 @@ export function isJestTemplateTableExpression(node: ts.Node): boolean {
   return false;
 }
 
+export type TemplateSegment = {
+  value: string;
+  isInterpolated: boolean;
+};
+
 // Parse template string with placeholders into segments
-// Example: "adds %d and %d" with values [1, 2] becomes ["adds ", "1", " and ", "2"]
+// Example: "adds %d and %d" with values [1, 2] becomes [{ value: "adds ", isInterpolated: false }, { value: "1", isInterpolated: true }, ...]
 export function parseTemplateIntoSegments(
   template: string,
   values: any,
   index?: number
-): string[] {
-  const segments: string[] = [];
+): TemplateSegment[] {
+  const segments: TemplateSegment[] = [];
 
   if (!Array.isArray(values)) {
     values = [values];
@@ -321,12 +326,12 @@ export function parseTemplateIntoSegments(
         const value = values[valueIndex++];
         const formatted = formatValue(value, part);
         // Always push, even if empty string
-        segments.push(formatted);
+        segments.push({ value: formatted, isInterpolated: true });
       }
     } else if (part) {
       // This is literal text - restore %% as single %
       const restored = part.replace(/\x00PERCENT\x00/g, "%");
-      segments.push(restored);
+      segments.push({ value: restored, isInterpolated: false });
     }
   }
 
@@ -334,14 +339,14 @@ export function parseTemplateIntoSegments(
 }
 
 // Parse template string with named placeholders into segments
-// Example: "adds $a and $b" with values [1, 2] and headers ["a", "b"] becomes ["adds ", "1", " and ", "2"]
+// Example: "adds $a and $b" with values [1, 2] and headers ["a", "b"] becomes [{ value: "adds ", isInterpolated: false }, { value: "1", isInterpolated: true }, ...]
 export function parseTemplateIntoSegmentsWithHeaders(
   template: string,
   values: any,
   headers?: string[],
   index?: number
-): string[] {
-  const segments: string[] = [];
+): TemplateSegment[] {
+  const segments: TemplateSegment[] = [];
 
   if (!Array.isArray(values)) {
     values = [values];
@@ -371,12 +376,12 @@ export function parseTemplateIntoSegmentsWithHeaders(
         if (headerIndex >= 0 && headerIndex < values.length) {
           const value = String(values[headerIndex]);
           // Always push, even if empty string
-          segments.push(value);
+          segments.push({ value, isInterpolated: true });
         }
       }
     } else if (part) {
       // This is literal text
-      segments.push(part);
+      segments.push({ value: part, isInterpolated: false });
     }
   }
 

@@ -24,7 +24,11 @@ export const getChart = (specTree: SpecTree): string => {
           const cells = row.children
             .map((cell: any) => {
               const escapedContent = escapeMermaidLabelMarkdown(cell.name);
-              return `<td>${escapedContent}</td>`;
+              // Apply monospace font to interpolated values
+              const style = cell.isInterpolated
+                ? " style='font-family: monospace'"
+                : "";
+              return `<td${style}>${escapedContent}</td>`;
             })
             .join("");
           return `<tr>${cells}</tr>`;

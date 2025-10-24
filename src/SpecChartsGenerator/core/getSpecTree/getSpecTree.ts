@@ -71,7 +71,8 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
           name: resolvedName,
           children: segments.map((segment) => ({
             type: "table-cell",
-            name: segment,
+            name: segment.value,
+            isInterpolated: segment.isInterpolated,
           })),
         };
         current.children!.push(tableRowNode);
@@ -121,7 +122,8 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
           name: resolvedName,
           children: segments.map((segment) => ({
             type: "table-cell",
-            name: segment,
+            name: segment.value,
+            isInterpolated: segment.isInterpolated,
           })),
         };
         current.children!.push(tableRowNode);

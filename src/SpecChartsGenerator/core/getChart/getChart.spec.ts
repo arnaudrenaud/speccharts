@@ -109,36 +109,72 @@ N1 -- no --> N3`);
                     type: "table-row",
                     name: "addition: 1 + 1 = 2",
                     children: [
-                      { type: "table-cell", name: "addition: " },
-                      { type: "table-cell", name: "1" },
-                      { type: "table-cell", name: " + " },
-                      { type: "table-cell", name: "1" },
-                      { type: "table-cell", name: " = " },
-                      { type: "table-cell", name: "2" },
+                      {
+                        type: "table-cell",
+                        name: "addition: ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "1", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " + ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "1", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " = ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "2", isInterpolated: true },
                     ],
                   },
                   {
                     type: "table-row",
                     name: "addition: 1 + 2 = 3",
                     children: [
-                      { type: "table-cell", name: "addition: " },
-                      { type: "table-cell", name: "1" },
-                      { type: "table-cell", name: " + " },
-                      { type: "table-cell", name: "2" },
-                      { type: "table-cell", name: " = " },
-                      { type: "table-cell", name: "3" },
+                      {
+                        type: "table-cell",
+                        name: "addition: ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "1", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " + ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "2", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " = ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "3", isInterpolated: true },
                     ],
                   },
                   {
                     type: "table-row",
                     name: "addition: 2 + 1 = 3",
                     children: [
-                      { type: "table-cell", name: "addition: " },
-                      { type: "table-cell", name: "2" },
-                      { type: "table-cell", name: " + " },
-                      { type: "table-cell", name: "1" },
-                      { type: "table-cell", name: " = " },
-                      { type: "table-cell", name: "3" },
+                      {
+                        type: "table-cell",
+                        name: "addition: ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "2", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " + ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "1", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " = ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "3", isInterpolated: true },
                     ],
                   },
                 ],
@@ -152,24 +188,48 @@ N1 -- no --> N3`);
                     type: "table-row",
                     name: "handles first case",
                     children: [
-                      { type: "table-cell", name: "handles " },
-                      { type: "table-cell", name: "first case" },
+                      {
+                        type: "table-cell",
+                        name: "handles ",
+                        isInterpolated: false,
+                      },
+                      {
+                        type: "table-cell",
+                        name: "first case",
+                        isInterpolated: true,
+                      },
                     ],
                   },
                   {
                     type: "table-row",
                     name: "handles second case",
                     children: [
-                      { type: "table-cell", name: "handles " },
-                      { type: "table-cell", name: "second case" },
+                      {
+                        type: "table-cell",
+                        name: "handles ",
+                        isInterpolated: false,
+                      },
+                      {
+                        type: "table-cell",
+                        name: "second case",
+                        isInterpolated: true,
+                      },
                     ],
                   },
                   {
                     type: "table-row",
                     name: "handles third case",
                     children: [
-                      { type: "table-cell", name: "handles " },
-                      { type: "table-cell", name: "third case" },
+                      {
+                        type: "table-cell",
+                        name: "handles ",
+                        isInterpolated: false,
+                      },
+                      {
+                        type: "table-cell",
+                        name: "third case",
+                        isInterpolated: true,
+                      },
                     ],
                   },
                 ],
@@ -183,9 +243,9 @@ N1 -- no --> N3`);
 
       expect(result).toEqual(`flowchart TD
 N0(["math operations"])
-N1("<table style='text-align: left;'><tr><td>addition: </td><td>1</td><td> + </td><td>1</td><td> = </td><td>2</td></tr><tr><td>addition: </td><td>1</td><td> + </td><td>2</td><td> = </td><td>3</td></tr><tr><td>addition: </td><td>2</td><td> + </td><td>1</td><td> = </td><td>3</td></tr></table>")
+N1("<table style='text-align: left;'><tr><td>addition: </td><td style='font-family: monospace'>1</td><td> + </td><td style='font-family: monospace'>1</td><td> = </td><td style='font-family: monospace'>2</td></tr><tr><td>addition: </td><td style='font-family: monospace'>1</td><td> + </td><td style='font-family: monospace'>2</td><td> = </td><td style='font-family: monospace'>3</td></tr><tr><td>addition: </td><td style='font-family: monospace'>2</td><td> + </td><td style='font-family: monospace'>1</td><td> = </td><td style='font-family: monospace'>3</td></tr></table>")
 N0 --> N1
-N2("<table style='text-align: left;'><tr><td>handles </td><td>first case</td></tr><tr><td>handles </td><td>second case</td></tr><tr><td>handles </td><td>third case</td></tr></table>")
+N2("<table style='text-align: left;'><tr><td>handles </td><td style='font-family: monospace'>first case</td></tr><tr><td>handles </td><td style='font-family: monospace'>second case</td></tr><tr><td>handles </td><td style='font-family: monospace'>third case</td></tr></table>")
 N0 --> N2`);
     });
   });
