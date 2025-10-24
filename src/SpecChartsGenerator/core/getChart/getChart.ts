@@ -14,40 +14,44 @@ export const getChart = (specTree: SpecTree): string => {
 
   function formatTableAsHTML(children: any[]): string {
     if (!children || children.length === 0) {
-      return "<table><tr><td style='padding: 0 8px'>• No test cases</td></tr></table>";
+      return "<table><tr><td style='padding-inline: 0.5rem'>No test cases</td></tr></table>";
     }
 
     const tableRows = children
       .map((row, rowIndex) => {
-        // Determine vertical padding based on row position
+        // Determine vertical padding based on row position (row-level concern)
         const isFirstRow = rowIndex === 0;
         const isLastRow = rowIndex === children.length - 1;
-        let verticalPadding: string;
-        if (isFirstRow) {
-          verticalPadding = "0 8px 8px 8px"; // bottom only
-        } else if (isLastRow) {
-          verticalPadding = "8px 8px 0 8px"; // top only
-        } else {
-          verticalPadding = "8px"; // all sides
-        }
+
+        // Build row style conditionally (only include non-zero padding)
+        const rowStyles: string[] = [];
+        if (!isFirstRow) rowStyles.push("padding-top: 0.5rem");
+        if (!isLastRow) rowStyles.push("padding-bottom: 0.5rem");
+        const rowStyle =
+          rowStyles.length > 0 ? ` style='${rowStyles.join("; ")}'` : "";
+
+        // Horizontal padding is cell-level concern
+        const cellStyle = " style='padding-inline: 0.5rem'";
+        const cellStyleMonospace =
+          " style='font-family: monospace; padding-inline: 0.5rem'";
 
         // If the row has table-cell children, render them as individual <td> elements
         if (row.children && row.children.length > 0) {
           const cells = row.children
             .map((cell: any) => {
               const escapedContent = escapeMermaidLabelMarkdown(cell.name);
-              // Apply monospace font to interpolated values, padding to all cells
+              // Apply monospace font to interpolated values
               const style = cell.isInterpolated
-                ? ` style='font-family: monospace; padding: ${verticalPadding}'`
-                : ` style='padding: ${verticalPadding}'`;
+                ? cellStyleMonospace
+                : cellStyle;
               return `<td${style}>${escapedContent}</td>`;
             })
             .join("");
-          return `<tr>${cells}</tr>`;
+          return `<tr${rowStyle}>${cells}</tr>`;
         }
         // Fallback for old format (backwards compatibility)
         const escapedName = escapeMermaidLabelMarkdown(row.name);
-        return `<tr><td style='padding: ${verticalPadding}'>• ${escapedName}</td></tr>`;
+        return `<tr${rowStyle}><td${cellStyle}>• ${escapedName}</td></tr>`;
       })
       .join("");
 
