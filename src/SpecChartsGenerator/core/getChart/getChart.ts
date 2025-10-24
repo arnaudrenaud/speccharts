@@ -18,7 +18,19 @@ export const getChart = (specTree: SpecTree): string => {
     }
 
     const tableRows = children
-      .map((row) => {
+      .map((row, rowIndex) => {
+        // Determine vertical padding based on row position
+        const isFirstRow = rowIndex === 0;
+        const isLastRow = rowIndex === children.length - 1;
+        let verticalPadding: string;
+        if (isFirstRow) {
+          verticalPadding = "0 8px 8px 8px"; // bottom only
+        } else if (isLastRow) {
+          verticalPadding = "8px 8px 0 8px"; // top only
+        } else {
+          verticalPadding = "8px"; // all sides
+        }
+
         // If the row has table-cell children, render them as individual <td> elements
         if (row.children && row.children.length > 0) {
           const cells = row.children
@@ -26,8 +38,8 @@ export const getChart = (specTree: SpecTree): string => {
               const escapedContent = escapeMermaidLabelMarkdown(cell.name);
               // Apply monospace font to interpolated values, padding to all cells
               const style = cell.isInterpolated
-                ? " style='font-family: monospace; padding: 0 8px'"
-                : " style='padding: 0 8px'";
+                ? ` style='font-family: monospace; padding: ${verticalPadding}'`
+                : ` style='padding: ${verticalPadding}'`;
               return `<td${style}>${escapedContent}</td>`;
             })
             .join("");
@@ -35,7 +47,7 @@ export const getChart = (specTree: SpecTree): string => {
         }
         // Fallback for old format (backwards compatibility)
         const escapedName = escapeMermaidLabelMarkdown(row.name);
-        return `<tr><td style='padding: 0 8px'>• ${escapedName}</td></tr>`;
+        return `<tr><td style='padding: ${verticalPadding}'>• ${escapedName}</td></tr>`;
       })
       .join("");
 
