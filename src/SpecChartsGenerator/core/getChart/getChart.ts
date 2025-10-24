@@ -14,7 +14,7 @@ export const getChart = (specTree: SpecTree): string => {
 
   function formatTableAsHTML(children: any[]): string {
     if (!children || children.length === 0) {
-      return "<table><tr><td>• No test cases</td></tr></table>";
+      return "<table><tr><td style='padding: 0 8px'>• No test cases</td></tr></table>";
     }
 
     const tableRows = children
@@ -24,10 +24,10 @@ export const getChart = (specTree: SpecTree): string => {
           const cells = row.children
             .map((cell: any) => {
               const escapedContent = escapeMermaidLabelMarkdown(cell.name);
-              // Apply monospace font to interpolated values
+              // Apply monospace font to interpolated values, padding to all cells
               const style = cell.isInterpolated
-                ? " style='font-family: monospace'"
-                : "";
+                ? " style='font-family: monospace; padding: 0 8px'"
+                : " style='padding: 0 8px'";
               return `<td${style}>${escapedContent}</td>`;
             })
             .join("");
@@ -35,7 +35,7 @@ export const getChart = (specTree: SpecTree): string => {
         }
         // Fallback for old format (backwards compatibility)
         const escapedName = escapeMermaidLabelMarkdown(row.name);
-        return `<tr><td>• ${escapedName}</td></tr>`;
+        return `<tr><td style='padding: 0 8px'>• ${escapedName}</td></tr>`;
       })
       .join("");
 

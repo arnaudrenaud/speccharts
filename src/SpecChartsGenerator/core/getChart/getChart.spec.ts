@@ -243,9 +243,9 @@ N1 -- no --> N3`);
 
       expect(result).toEqual(`flowchart TD
 N0(["math operations"])
-N1("<table style='text-align: left;'><tr><td>addition: </td><td style='font-family: monospace'>1</td><td> + </td><td style='font-family: monospace'>1</td><td> = </td><td style='font-family: monospace'>2</td></tr><tr><td>addition: </td><td style='font-family: monospace'>1</td><td> + </td><td style='font-family: monospace'>2</td><td> = </td><td style='font-family: monospace'>3</td></tr><tr><td>addition: </td><td style='font-family: monospace'>2</td><td> + </td><td style='font-family: monospace'>1</td><td> = </td><td style='font-family: monospace'>3</td></tr></table>")
+N1("<table style='text-align: left;'><tr><td style='padding: 0 8px'>addition: </td><td style='font-family: monospace; padding: 0 8px'>1</td><td style='padding: 0 8px'> + </td><td style='font-family: monospace; padding: 0 8px'>1</td><td style='padding: 0 8px'> = </td><td style='font-family: monospace; padding: 0 8px'>2</td></tr><tr><td style='padding: 0 8px'>addition: </td><td style='font-family: monospace; padding: 0 8px'>1</td><td style='padding: 0 8px'> + </td><td style='font-family: monospace; padding: 0 8px'>2</td><td style='padding: 0 8px'> = </td><td style='font-family: monospace; padding: 0 8px'>3</td></tr><tr><td style='padding: 0 8px'>addition: </td><td style='font-family: monospace; padding: 0 8px'>2</td><td style='padding: 0 8px'> + </td><td style='font-family: monospace; padding: 0 8px'>1</td><td style='padding: 0 8px'> = </td><td style='font-family: monospace; padding: 0 8px'>3</td></tr></table>")
 N0 --> N1
-N2("<table style='text-align: left;'><tr><td>handles </td><td style='font-family: monospace'>first case</td></tr><tr><td>handles </td><td style='font-family: monospace'>second case</td></tr><tr><td>handles </td><td style='font-family: monospace'>third case</td></tr></table>")
+N2("<table style='text-align: left;'><tr><td style='padding: 0 8px'>handles </td><td style='font-family: monospace; padding: 0 8px'>first case</td></tr><tr><td style='padding: 0 8px'>handles </td><td style='font-family: monospace; padding: 0 8px'>second case</td></tr><tr><td style='padding: 0 8px'>handles </td><td style='font-family: monospace; padding: 0 8px'>third case</td></tr></table>")
 N0 --> N2`);
     });
   });
