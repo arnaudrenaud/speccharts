@@ -7,8 +7,10 @@ export type File = {
   content: string;
 };
 
+export type TableSpecNodeType = "table" | "table-row" | "table-cell";
+
 export type SpecNode = {
-  type: "case" | "question" | "answer" | "behavior" | "table";
+  type: "case" | "question" | "answer" | "behavior" | TableSpecNodeType;
   name: string;
   location?: {
     file: string;

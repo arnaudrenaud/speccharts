@@ -284,3 +284,107 @@ export function isJestTemplateTableExpression(node: ts.Node): boolean {
   }
   return false;
 }
+
+// Parse template string with placeholders into segments
+// Example: "adds %d and %d" with values [1, 2] becomes ["adds ", "1", " and ", "2"]
+export function parseTemplateIntoSegments(
+  template: string,
+  values: any,
+  index?: number
+): string[] {
+  const segments: string[] = [];
+
+  if (!Array.isArray(values)) {
+    values = [values];
+  }
+
+  let result = template;
+  let valueIndex = 0;
+
+  // First pass: replace %% with a placeholder to avoid replacing it
+  result = result.replace(/%%/g, "\x00PERCENT\x00");
+
+  // Replace %# with index
+  if (index !== undefined) {
+    result = result.replace(/%#/g, String(index));
+  }
+
+  // Split by placeholders and track both text and values
+  const parts = result.split(/(%[sdiofpj])/);
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+
+    if (part.match(/^%[sdiofpj]$/)) {
+      // This is a placeholder - replace with actual value
+      if (valueIndex < values.length) {
+        const value = values[valueIndex++];
+        const formatted = formatValue(value, part);
+        if (formatted) {
+          segments.push(formatted);
+        }
+      }
+    } else if (part) {
+      // This is literal text - restore %% as single %
+      const restored = part.replace(/\x00PERCENT\x00/g, "%");
+      if (restored) {
+        segments.push(restored);
+      }
+    }
+  }
+
+  return segments;
+}
+
+// Parse template string with named placeholders into segments
+// Example: "adds $a and $b" with values [1, 2] and headers ["a", "b"] becomes ["adds ", "1", " and ", "2"]
+export function parseTemplateIntoSegmentsWithHeaders(
+  template: string,
+  values: any,
+  headers?: string[],
+  index?: number
+): string[] {
+  const segments: string[] = [];
+
+  if (!Array.isArray(values)) {
+    values = [values];
+  }
+
+  let result = template;
+
+  // Replace $# with index
+  if (index !== undefined) {
+    result = result.replace(/\$#/g, String(index));
+  }
+
+  // Split by placeholders and track both text and values
+  const parts = result.split(/(\$[a-zA-Z_$][a-zA-Z0-9_$]*)/);
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+
+    if (part.match(/^\$[a-zA-Z_$][a-zA-Z0-9_$]*$/)) {
+      // This is a placeholder - replace with actual value
+      const placeholderName = part.slice(1); // Remove $
+
+      if (headers && headers.length > 0) {
+        const headerIndex = headers.findIndex(
+          (header) => header.trim() === placeholderName
+        );
+        if (headerIndex >= 0 && headerIndex < values.length) {
+          const value = String(values[headerIndex]);
+          if (value) {
+            segments.push(value);
+          }
+        }
+      }
+    } else if (part) {
+      // This is literal text
+      if (part) {
+        segments.push(part);
+      }
+    }
+  }
+
+  return segments;
+}
