@@ -35,7 +35,9 @@ export const getChart = (specTree: SpecTree): string => {
         if (row.children && row.children.length > 0) {
           const cells = row.children
             .map((cell: any) => {
-              const escapedContent = escapeMermaidLabelMarkdown(cell.name);
+              const escapedContent = escapeMermaidLabelMarkdown(
+                cell.name
+              ).trim();
               // Apply monospace font to interpolated values
               const style = cell.isInterpolated
                 ? ` style='font-family: monospace; padding: ${cellPadding}'`
@@ -45,9 +47,6 @@ export const getChart = (specTree: SpecTree): string => {
             .join("");
           return `<tr>${cells}</tr>`;
         }
-        // Fallback for old format (backwards compatibility)
-        const escapedName = escapeMermaidLabelMarkdown(row.name);
-        return `<tr><td style='padding: ${cellPadding}'>• ${escapedName}</td></tr>`;
       })
       .join("");
 
@@ -76,7 +75,7 @@ export const getChart = (specTree: SpecTree): string => {
       return thisId;
     }
 
-    const label = escapeMermaidLabelMarkdown(node.name);
+    const label = escapeMermaidLabelMarkdown(node.name).trim();
 
     nodes.push(
       `${thisId}${
