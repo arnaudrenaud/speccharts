@@ -7,16 +7,24 @@ export type File = {
   content: string;
 };
 
+type SpecNodeBaseType = "case" | "question" | "answer" | "behavior";
+
+export type TableSpecNodeType = "table" | "table-row" | "table-cell";
+
+export type TableSpecNodeSpecifics = {
+  tableData?: unknown[];
+  isInterpolated?: boolean;
+};
+
 export type SpecNode = {
-  type: "case" | "question" | "answer" | "behavior" | "table";
+  type: SpecNodeBaseType | TableSpecNodeType;
   name: string;
   location?: {
     file: string;
     line: number;
   };
   children?: SpecNode[];
-  tableData?: unknown[];
-};
+} & TableSpecNodeSpecifics;
 
 export type SpecTree = {
   name: string;

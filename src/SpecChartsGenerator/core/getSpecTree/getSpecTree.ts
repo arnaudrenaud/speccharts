@@ -6,6 +6,8 @@ import {
   extractTemplateTableData,
   isJestTableExpression,
   isJestTemplateTableExpression,
+  parseTemplateIntoSegments,
+  parseTemplateIntoSegmentsWithHeaders,
   replacePlaceholders,
   replaceTemplatePlaceholders,
 } from "./helpers/table-syntax";
@@ -49,7 +51,7 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
         children: [],
       };
 
-      // Create leaf nodes for each table case
+      // Create table-row nodes for each table case
       tableData.forEach((row, index) => {
         const resolvedName = replaceTemplatePlaceholders(
           current.name,
@@ -57,11 +59,23 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
           headers,
           index
         );
-        const leafNode: SpecNode = {
-          type: "behavior",
+        const segments = parseTemplateIntoSegmentsWithHeaders(
+          current.name,
+          row,
+          headers,
+          index
+        );
+
+        const tableRowNode: SpecNode = {
+          type: "table-row",
           name: resolvedName,
+          children: segments.map((segment) => ({
+            type: "table-cell",
+            name: segment.value,
+            isInterpolated: segment.isInterpolated,
+          })),
         };
-        current.children!.push(leafNode);
+        current.children!.push(tableRowNode);
       });
 
       // For table nodes, we don't process the callback body since we create leaf nodes for each table case
@@ -98,14 +112,21 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
         children: [],
       };
 
-      // Create leaf nodes for each table case
+      // Create table-row nodes for each table case
       tableData.forEach((row, index) => {
         const resolvedName = replacePlaceholders(current.name, row, index);
-        const leafNode: SpecNode = {
-          type: "behavior",
+        const segments = parseTemplateIntoSegments(current.name, row, index);
+
+        const tableRowNode: SpecNode = {
+          type: "table-row",
           name: resolvedName,
+          children: segments.map((segment) => ({
+            type: "table-cell",
+            name: segment.value,
+            isInterpolated: segment.isInterpolated,
+          })),
         };
-        current.children!.push(leafNode);
+        current.children!.push(tableRowNode);
       });
 
       // For table nodes, we don't process the callback body since we create leaf nodes for each table case

@@ -18,13 +18,28 @@ export const getChart = (specTree: SpecTree): string => {
     }
 
     const tableRows = children
-      .map((child) => {
-        const escapedName = escapeMermaidLabelMarkdown(child.name);
+      .map((row) => {
+        // If the row has table-cell children, render them as individual <td> elements
+        if (row.children && row.children.length > 0) {
+          const cells = row.children
+            .map((cell: any) => {
+              const escapedContent = escapeMermaidLabelMarkdown(cell.name);
+              // Apply monospace font to interpolated values
+              const style = cell.isInterpolated
+                ? " style='font-family: monospace'"
+                : "";
+              return `<td${style}>${escapedContent}</td>`;
+            })
+            .join("");
+          return `<tr>${cells}</tr>`;
+        }
+        // Fallback for old format (backwards compatibility)
+        const escapedName = escapeMermaidLabelMarkdown(row.name);
         return `<tr><td>• ${escapedName}</td></tr>`;
       })
       .join("");
 
-    return `<table>${tableRows}</table>`;
+    return `<table style='text-align: left;'>${tableRows}</table>`;
   }
 
   function walk(

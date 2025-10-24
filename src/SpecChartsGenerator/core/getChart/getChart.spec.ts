@@ -100,14 +100,83 @@ N1 -- no --> N3`);
                 type: "table",
                 name: "addition: %d + %d = %d",
                 tableData: [
+                  [1, 1, 2],
                   [1, 2, 3],
-                  [4, 5, 9],
-                  [0, 0, 0],
+                  [2, 1, 3],
                 ],
                 children: [
-                  { type: "behavior", name: "adds 1 and 1 to get 2" },
-                  { type: "behavior", name: "adds 1 and 2 to get 3" },
-                  { type: "behavior", name: "adds 2 and 1 to get 3" },
+                  {
+                    type: "table-row",
+                    name: "addition: 1 + 1 = 2",
+                    children: [
+                      {
+                        type: "table-cell",
+                        name: "addition: ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "1", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " + ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "1", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " = ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "2", isInterpolated: true },
+                    ],
+                  },
+                  {
+                    type: "table-row",
+                    name: "addition: 1 + 2 = 3",
+                    children: [
+                      {
+                        type: "table-cell",
+                        name: "addition: ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "1", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " + ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "2", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " = ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "3", isInterpolated: true },
+                    ],
+                  },
+                  {
+                    type: "table-row",
+                    name: "addition: 2 + 1 = 3",
+                    children: [
+                      {
+                        type: "table-cell",
+                        name: "addition: ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "2", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " + ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "1", isInterpolated: true },
+                      {
+                        type: "table-cell",
+                        name: " = ",
+                        isInterpolated: false,
+                      },
+                      { type: "table-cell", name: "3", isInterpolated: true },
+                    ],
+                  },
                 ],
               },
               {
@@ -115,9 +184,54 @@ N1 -- no --> N3`);
                 name: "handles %s",
                 tableData: ["first case", "second case", "third case"],
                 children: [
-                  { type: "behavior", name: "handles first case" },
-                  { type: "behavior", name: "handles second case" },
-                  { type: "behavior", name: "handles third case" },
+                  {
+                    type: "table-row",
+                    name: "handles first case",
+                    children: [
+                      {
+                        type: "table-cell",
+                        name: "handles ",
+                        isInterpolated: false,
+                      },
+                      {
+                        type: "table-cell",
+                        name: "first case",
+                        isInterpolated: true,
+                      },
+                    ],
+                  },
+                  {
+                    type: "table-row",
+                    name: "handles second case",
+                    children: [
+                      {
+                        type: "table-cell",
+                        name: "handles ",
+                        isInterpolated: false,
+                      },
+                      {
+                        type: "table-cell",
+                        name: "second case",
+                        isInterpolated: true,
+                      },
+                    ],
+                  },
+                  {
+                    type: "table-row",
+                    name: "handles third case",
+                    children: [
+                      {
+                        type: "table-cell",
+                        name: "handles ",
+                        isInterpolated: false,
+                      },
+                      {
+                        type: "table-cell",
+                        name: "third case",
+                        isInterpolated: true,
+                      },
+                    ],
+                  },
                 ],
               },
             ],
@@ -129,9 +243,9 @@ N1 -- no --> N3`);
 
       expect(result).toEqual(`flowchart TD
 N0(["math operations"])
-N1("<table><tr><td>• adds 1 and 1 to get 2</td></tr><tr><td>• adds 1 and 2 to get 3</td></tr><tr><td>• adds 2 and 1 to get 3</td></tr></table>")
+N1("<table style='text-align: left;'><tr><td>addition: </td><td style='font-family: monospace'>1</td><td> + </td><td style='font-family: monospace'>1</td><td> = </td><td style='font-family: monospace'>2</td></tr><tr><td>addition: </td><td style='font-family: monospace'>1</td><td> + </td><td style='font-family: monospace'>2</td><td> = </td><td style='font-family: monospace'>3</td></tr><tr><td>addition: </td><td style='font-family: monospace'>2</td><td> + </td><td style='font-family: monospace'>1</td><td> = </td><td style='font-family: monospace'>3</td></tr></table>")
 N0 --> N1
-N2("<table><tr><td>• handles first case</td></tr><tr><td>• handles second case</td></tr><tr><td>• handles third case</td></tr></table>")
+N2("<table style='text-align: left;'><tr><td>handles </td><td style='font-family: monospace'>first case</td></tr><tr><td>handles </td><td style='font-family: monospace'>second case</td></tr><tr><td>handles </td><td style='font-family: monospace'>third case</td></tr></table>")
 N0 --> N2`);
     });
   });

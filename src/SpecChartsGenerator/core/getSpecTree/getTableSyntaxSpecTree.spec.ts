@@ -5,7 +5,7 @@ describe("getTableSyntaxSpecTree", () => {
 
   describe("describe.each", () => {
     describe("when passed array of arrays", () => {
-      it("returns node with type `table`, children with type `behavior`", () => {
+      it("returns node with type `table`, children with type `table-row`", () => {
         const result = getSpecTree({
           path: SPEC_FILE_PATH,
           content: `describe.each([
@@ -25,8 +25,26 @@ describe("getTableSyntaxSpecTree", () => {
               [3, 4],
             ],
             children: [
-              { type: "behavior", name: "adds 1 and 2" },
-              { type: "behavior", name: "adds 3 and 4" },
+              {
+                type: "table-row",
+                name: "adds 1 and 2",
+                children: [
+                  { type: "table-cell", name: "adds ", isInterpolated: false },
+                  { type: "table-cell", name: "1", isInterpolated: true },
+                  { type: "table-cell", name: " and ", isInterpolated: false },
+                  { type: "table-cell", name: "2", isInterpolated: true },
+                ],
+              },
+              {
+                type: "table-row",
+                name: "adds 3 and 4",
+                children: [
+                  { type: "table-cell", name: "adds ", isInterpolated: false },
+                  { type: "table-cell", name: "3", isInterpolated: true },
+                  { type: "table-cell", name: " and ", isInterpolated: false },
+                  { type: "table-cell", name: "4", isInterpolated: true },
+                ],
+              },
             ],
           },
         ]);
@@ -34,7 +52,7 @@ describe("getTableSyntaxSpecTree", () => {
     });
 
     describe("when passed table-like template literal", () => {
-      it("returns node with type `table`, children with type `behavior`", () => {
+      it("returns node with type `table`, children with type `table-row`", () => {
         const result = getSpecTree({
           path: SPEC_FILE_PATH,
           content: `describe.each\`
@@ -55,8 +73,26 @@ describe("getTableSyntaxSpecTree", () => {
               [3, 4],
             ],
             children: [
-              { type: "behavior", name: "adds 1 and 2" },
-              { type: "behavior", name: "adds 3 and 4" },
+              {
+                type: "table-row",
+                name: "adds 1 and 2",
+                children: [
+                  { type: "table-cell", name: "adds ", isInterpolated: false },
+                  { type: "table-cell", name: "1", isInterpolated: true },
+                  { type: "table-cell", name: " and ", isInterpolated: false },
+                  { type: "table-cell", name: "2", isInterpolated: true },
+                ],
+              },
+              {
+                type: "table-row",
+                name: "adds 3 and 4",
+                children: [
+                  { type: "table-cell", name: "adds ", isInterpolated: false },
+                  { type: "table-cell", name: "3", isInterpolated: true },
+                  { type: "table-cell", name: " and ", isInterpolated: false },
+                  { type: "table-cell", name: "4", isInterpolated: true },
+                ],
+              },
             ],
           },
         ]);
@@ -83,8 +119,30 @@ describe("getTableSyntaxSpecTree", () => {
             [2, 3, 5],
           ],
           children: [
-            { type: "behavior", name: "adds 1 and 1 to get 2" },
-            { type: "behavior", name: "adds 2 and 3 to get 5" },
+            {
+              type: "table-row",
+              name: "adds 1 and 1 to get 2",
+              children: [
+                { type: "table-cell", name: "adds ", isInterpolated: false },
+                { type: "table-cell", name: "1", isInterpolated: true },
+                { type: "table-cell", name: " and ", isInterpolated: false },
+                { type: "table-cell", name: "1", isInterpolated: true },
+                { type: "table-cell", name: " to get ", isInterpolated: false },
+                { type: "table-cell", name: "2", isInterpolated: true },
+              ],
+            },
+            {
+              type: "table-row",
+              name: "adds 2 and 3 to get 5",
+              children: [
+                { type: "table-cell", name: "adds ", isInterpolated: false },
+                { type: "table-cell", name: "2", isInterpolated: true },
+                { type: "table-cell", name: " and ", isInterpolated: false },
+                { type: "table-cell", name: "3", isInterpolated: true },
+                { type: "table-cell", name: " to get ", isInterpolated: false },
+                { type: "table-cell", name: "5", isInterpolated: true },
+              ],
+            },
           ],
         },
       ]);
@@ -110,8 +168,30 @@ describe("getTableSyntaxSpecTree", () => {
             [2, 3, 5],
           ],
           children: [
-            { type: "behavior", name: "adds 1 and 1 to get 2" },
-            { type: "behavior", name: "adds 2 and 3 to get 5" },
+            {
+              type: "table-row",
+              name: "adds 1 and 1 to get 2",
+              children: [
+                { type: "table-cell", name: "adds ", isInterpolated: false },
+                { type: "table-cell", name: "1", isInterpolated: true },
+                { type: "table-cell", name: " and ", isInterpolated: false },
+                { type: "table-cell", name: "1", isInterpolated: true },
+                { type: "table-cell", name: " to get ", isInterpolated: false },
+                { type: "table-cell", name: "2", isInterpolated: true },
+              ],
+            },
+            {
+              type: "table-row",
+              name: "adds 2 and 3 to get 5",
+              children: [
+                { type: "table-cell", name: "adds ", isInterpolated: false },
+                { type: "table-cell", name: "2", isInterpolated: true },
+                { type: "table-cell", name: " and ", isInterpolated: false },
+                { type: "table-cell", name: "3", isInterpolated: true },
+                { type: "table-cell", name: " to get ", isInterpolated: false },
+                { type: "table-cell", name: "5", isInterpolated: true },
+              ],
+            },
           ],
         },
       ]);
@@ -162,12 +242,38 @@ describe("getTableSyntaxSpecTree", () => {
 
         expect(result.children[0].children).toEqual([
           {
-            type: "behavior",
+            type: "table-row",
             name: "Test 0: 1 + 2 = 3 (100% done)",
+            children: [
+              { type: "table-cell", name: "Test 0: ", isInterpolated: false },
+              { type: "table-cell", name: "1", isInterpolated: true },
+              { type: "table-cell", name: " + ", isInterpolated: false },
+              { type: "table-cell", name: "2", isInterpolated: true },
+              { type: "table-cell", name: " = ", isInterpolated: false },
+              { type: "table-cell", name: "3", isInterpolated: true },
+              {
+                type: "table-cell",
+                name: " (100% done)",
+                isInterpolated: false,
+              },
+            ],
           },
           {
-            type: "behavior",
+            type: "table-row",
             name: "Test 1: 2 + 3 = 5 (100% done)",
+            children: [
+              { type: "table-cell", name: "Test 1: ", isInterpolated: false },
+              { type: "table-cell", name: "2", isInterpolated: true },
+              { type: "table-cell", name: " + ", isInterpolated: false },
+              { type: "table-cell", name: "3", isInterpolated: true },
+              { type: "table-cell", name: " = ", isInterpolated: false },
+              { type: "table-cell", name: "5", isInterpolated: true },
+              {
+                type: "table-cell",
+                name: " (100% done)",
+                isInterpolated: false,
+              },
+            ],
           },
         ]);
       });
@@ -185,8 +291,65 @@ describe("getTableSyntaxSpecTree", () => {
         });
 
         expect(result.children[0].children).toEqual([
-          { type: "behavior", name: "Case 0: 1 + 2 = 3" },
-          { type: "behavior", name: "Case 1: 2 + 3 = 5" },
+          {
+            type: "table-row",
+            name: "Case 0: 1 + 2 = 3",
+            children: [
+              { type: "table-cell", name: "Case 0: ", isInterpolated: false },
+              { type: "table-cell", name: "1", isInterpolated: true },
+              { type: "table-cell", name: " + ", isInterpolated: false },
+              { type: "table-cell", name: "2", isInterpolated: true },
+              { type: "table-cell", name: " = ", isInterpolated: false },
+              { type: "table-cell", name: "3", isInterpolated: true },
+            ],
+          },
+          {
+            type: "table-row",
+            name: "Case 1: 2 + 3 = 5",
+            children: [
+              { type: "table-cell", name: "Case 1: ", isInterpolated: false },
+              { type: "table-cell", name: "2", isInterpolated: true },
+              { type: "table-cell", name: " + ", isInterpolated: false },
+              { type: "table-cell", name: "3", isInterpolated: true },
+              { type: "table-cell", name: " = ", isInterpolated: false },
+              { type: "table-cell", name: "5", isInterpolated: true },
+            ],
+          },
+        ]);
+      });
+    });
+
+    describe("when passed empty strings in test values", () => {
+      it("returns empty cells", () => {
+        const result = getSpecTree({
+          path: SPEC_FILE_PATH,
+          content: `test.each([
+["", ""],
+["John", "J"]
+])("Initials: %s → %s", (input, output) => {});`,
+        });
+
+        expect(result.children[0].children).toEqual([
+          {
+            type: "table-row",
+            name: "Initials:  → ",
+            children: [
+              { type: "table-cell", name: "Initials: ", isInterpolated: false },
+              { type: "table-cell", name: "", isInterpolated: true },
+              { type: "table-cell", name: " → ", isInterpolated: false },
+              { type: "table-cell", name: "", isInterpolated: true },
+            ],
+          },
+          {
+            type: "table-row",
+            name: "Initials: John → J",
+            children: [
+              { type: "table-cell", name: "Initials: ", isInterpolated: false },
+              { type: "table-cell", name: "John", isInterpolated: true },
+              { type: "table-cell", name: " → ", isInterpolated: false },
+              { type: "table-cell", name: "J", isInterpolated: true },
+            ],
+          },
         ]);
       });
     });
