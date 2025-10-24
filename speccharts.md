@@ -74,11 +74,11 @@ N1["describe.each"]
 N0 --> N1
 N2["when passed array of arrays"]
 N1 --> N2
-N3(["returns node with type \`table\`, children with type \`behavior\`"])
+N3(["returns node with type \`table\`, children with type \`table-row\`"])
 N2 --> N3
 N4["when passed table-like template literal"]
 N1 --> N4
-N5(["returns node with type \`table\`, children with type \`behavior\`"])
+N5(["returns node with type \`table\`, children with type \`table-row\`"])
 N4 --> N5
 N6["test.each"]
 N0 --> N6
@@ -90,7 +90,7 @@ N9(["behaves like \`test.each\`"])
 N8 --> N9
 N10["modifiers (only, skip, concurrent, failing)"]
 N0 --> N10
-N11("<table><tr><td>• ignores modifier in test.only.each</td></tr><tr><td>• ignores modifier in test.skip.each</td></tr><tr><td>• ignores modifier in test.concurrent.each</td></tr><tr><td>• ignores modifier in test.concurrent.only.each</td></tr><tr><td>• ignores modifier in test.concurrent.skip.each</td></tr><tr><td>• ignores modifier in test.failing.each</td></tr><tr><td>• ignores modifier in describe.only.each</td></tr><tr><td>• ignores modifier in describe.skip.each</td></tr><tr><td>• ignores modifier in it.only.each</td></tr><tr><td>• ignores modifier in it.skip.each</td></tr></table>")
+N11("<table style='text-align: left;'><tr><td>ignores modifier in </td><td>test.only.each</td></tr><tr><td>ignores modifier in </td><td>test.skip.each</td></tr><tr><td>ignores modifier in </td><td>test.concurrent.each</td></tr><tr><td>ignores modifier in </td><td>test.concurrent.only.each</td></tr><tr><td>ignores modifier in </td><td>test.concurrent.skip.each</td></tr><tr><td>ignores modifier in </td><td>test.failing.each</td></tr><tr><td>ignores modifier in </td><td>describe.only.each</td></tr><tr><td>ignores modifier in </td><td>describe.skip.each</td></tr><tr><td>ignores modifier in </td><td>it.only.each</td></tr><tr><td>ignores modifier in </td><td>it.skip.each</td></tr></table>")
 N10 --> N11
 N12["placeholders"]
 N0 --> N12
@@ -102,6 +102,10 @@ N15["when passed named variables in template string and argument (object)"]
 N12 --> N15
 N16(["returns interpolated values"])
 N15 --> N16
+N17["when passed empty strings in test values"]
+N12 --> N17
+N18(["returns empty cells"])
+N17 --> N18
 ```
 
 ---

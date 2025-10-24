@@ -217,7 +217,7 @@ describe("getInitials", () => {
     ["lowercase name", "two initials", "john doe", "JD"],
     ["three-word name", "three initials", "John Steve Doe", "JSD"],
     ["four-word name", "three initials", "John Steve Doe Barry", "JSD"],
-  ])('%s → %s ("%p" → "%p")', (name, behavior, input, output) => {
+  ])("%s → %s: %p → %p", (name, behavior, input, output) => {
     expect(getInitials(input)).toEqual(output);
   });
 });
@@ -228,7 +228,7 @@ Resulting chart:
 ```mermaid
 flowchart TD
 N0(["getInitials"])
-N1("<table><tr><td>• empty name → no initials (&quot&quot → &quot&quot)</td></tr><tr><td>• one-word name → one initial (&quotJohn&quot → &quotJ&quot)</td></tr><tr><td>• two-word name → two initials (&quotJohn Doe&quot → &quotJD&quot)</td></tr><tr><td>• lowercase name → two initials (&quotjohn doe&quot → &quotJD&quot)</td></tr><tr><td>• three-word name → three initials (&quotJohn Steve Doe&quot → &quotJSD&quot)</td></tr><tr><td>• four-word name → three initials (&quotJohn Steve Doe Barry&quot → &quotJSD&quot)</td></tr></table>")
+N1("<table style='text-align: left;'><tr><td>empty name</td><td> → </td><td>no initials</td><td>: </td><td></td><td> → </td><td></td></tr><tr><td>one-word name</td><td> → </td><td>one initial</td><td>: </td><td>John</td><td> → </td><td>J</td></tr><tr><td>two-word name</td><td> → </td><td>two initials</td><td>: </td><td>John Doe</td><td> → </td><td>JD</td></tr><tr><td>lowercase name</td><td> → </td><td>two initials</td><td>: </td><td>john doe</td><td> → </td><td>JD</td></tr><tr><td>three-word name</td><td> → </td><td>three initials</td><td>: </td><td>John Steve Doe</td><td> → </td><td>JSD</td></tr><tr><td>four-word name</td><td> → </td><td>three initials</td><td>: </td><td>John Steve Doe Barry</td><td> → </td><td>JSD</td></tr></table>")
 N0 --> N1
 ```
 

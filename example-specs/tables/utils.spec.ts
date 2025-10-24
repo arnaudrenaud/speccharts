@@ -6,7 +6,7 @@ describe("getInitials", () => {
     ["lowercase name", "two initials", "john doe", "JD"],
     ["three-word name", "three initials", "John Steve Doe", "JSD"],
     ["four-word name", "three initials", "John Steve Doe Barry", "JSD"],
-  ])('%s → %s ("%p" → "%p")', (name, behavior, input, output) => {
+  ])("%s → %s: %p → %p", (name, behavior, input, output) => {
     // expect(getInitials(input)).toEqual(output);
   });
 });
