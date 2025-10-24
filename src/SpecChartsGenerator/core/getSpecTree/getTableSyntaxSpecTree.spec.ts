@@ -310,5 +310,40 @@ describe("getTableSyntaxSpecTree", () => {
         ]);
       });
     });
+
+    describe("when passed empty strings in test values", () => {
+      it("returns empty cells", () => {
+        const result = getSpecTree({
+          path: SPEC_FILE_PATH,
+          content: `test.each([
+["", ""],
+["John", "J"]
+])("Initials: %s → %s", (input, output) => {});`,
+        });
+
+        expect(result.children[0].children).toEqual([
+          {
+            type: "table-row",
+            name: "Initials:  → ",
+            children: [
+              { type: "table-cell", name: "Initials: " },
+              { type: "table-cell", name: "" },
+              { type: "table-cell", name: " → " },
+              { type: "table-cell", name: "" },
+            ],
+          },
+          {
+            type: "table-row",
+            name: "Initials: John → J",
+            children: [
+              { type: "table-cell", name: "Initials: " },
+              { type: "table-cell", name: "John" },
+              { type: "table-cell", name: " → " },
+              { type: "table-cell", name: "J" },
+            ],
+          },
+        ]);
+      });
+    });
   });
 });

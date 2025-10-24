@@ -320,16 +320,13 @@ export function parseTemplateIntoSegments(
       if (valueIndex < values.length) {
         const value = values[valueIndex++];
         const formatted = formatValue(value, part);
-        if (formatted) {
-          segments.push(formatted);
-        }
+        // Always push, even if empty string
+        segments.push(formatted);
       }
     } else if (part) {
       // This is literal text - restore %% as single %
       const restored = part.replace(/\x00PERCENT\x00/g, "%");
-      if (restored) {
-        segments.push(restored);
-      }
+      segments.push(restored);
     }
   }
 
@@ -373,16 +370,13 @@ export function parseTemplateIntoSegmentsWithHeaders(
         );
         if (headerIndex >= 0 && headerIndex < values.length) {
           const value = String(values[headerIndex]);
-          if (value) {
-            segments.push(value);
-          }
+          // Always push, even if empty string
+          segments.push(value);
         }
       }
     } else if (part) {
       // This is literal text
-      if (part) {
-        segments.push(part);
-      }
+      segments.push(part);
     }
   }
 
