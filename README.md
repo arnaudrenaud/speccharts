@@ -204,7 +204,7 @@ N1 -- yes --> N3
 
 ### Tables
 
-Blocks with [Jest table syntax](https://jestjs.io/docs/api#describeeachtablename-fn-timeout) render as a list in a leaf.
+Blocks with [Jest table syntax](https://jestjs.io/docs/api#describeeachtablename-fn-timeout) render as a table.
 
 Example spec:
 
