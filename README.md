@@ -85,7 +85,7 @@ Test suites tend to become less legible as they grow. At some point, you wonder 
 
 `speccharts` reads your test files (JS or TS) and generates Mermaid flowcharts that give a bird's eye view of test suites. `describe` blocks render as nodes, `it` and `test` blocks render as leaves.
 
-It works especially well with deeply nested test suites. Some have advised against this way of organizing tests, but it helps convey ramified logic.
+It works especially well with deeply nested test suites, which can help to convey ramified logic.
 
 ## Language and syntax support
 
@@ -101,7 +101,7 @@ Any files that use `describe > it` or `describe > test` syntax are supported.
 npx speccharts -i "src/**/*.{spec,test}.{ts,tsx}" --single-output-file speccharts.md
 ```
 
-This gathers all charts to a `speccharts.md` file [such as this one](./speccharts.md).
+This gathers all charts into a `speccharts.md` file [such as this one](./speccharts.md).
 
 ### ✏️📒 Generate multiple chart files
 
