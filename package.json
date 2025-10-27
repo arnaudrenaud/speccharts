@@ -17,7 +17,8 @@
     "test:unit:watch": "npm run test:unit -- --watch",
     "test:integ": "jest --runInBand --testMatch \"**/*.integ.spec.ts\" --testPathIgnorePatterns \"cli\\.integ\\.spec\\.ts\"",
     "test:cli": "jest --runInBand --testMatch \"**/cli.integ.spec.ts\"",
-    "build-and-test": "npm run build && npm run test:unit && npm run test:integ && npm run test:cli",
+    "test:all": "jest --runInBand",
+    "build-and-test": "npm run build && npm run test:all",
     "speccharts": "speccharts -i \"src/**/*.spec.ts\" -s speccharts.md"
   },
   "keywords": [],
