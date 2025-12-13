@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
     "test:unit": "jest --testPathIgnorePatterns \".*\\.integ\\.spec\\.ts\"",
     "test:unit:watch": "npm run test:unit -- --watch",
     "test:integ": "jest --runInBand --testMatch \"**/*.integ.spec.ts\" --testPathIgnorePatterns \"cli\\.integ\\.spec\\.ts\"",
