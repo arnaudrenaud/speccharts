@@ -34,7 +34,7 @@
     "ts-jest": "^29.3.4"
   },
   "dependencies": {
-    "@commander-js/extra-typings": "^14.0.0",
+    "@commander-js/extra-typings": "^15.0.0",
     "commander": "^14.0.0",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.0",
