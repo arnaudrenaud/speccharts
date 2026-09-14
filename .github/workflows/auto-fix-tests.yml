@@ -1,0 +1,155 @@
+name: "Auto-fix failing tests in Renovate PRs"
+
+on:
+  workflow_run:
+    workflows:
+      - "Build and test always, publish on tag"
+    types:
+      - completed
+    branches:
+      - "renovate/**"
+
+concurrency:
+  group: auto-fix-tests-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+env:
+  LOCAL_TEST_COMMAND: npm run build-and-test
+
+jobs:
+  auto-fix-tests:
+    name: Fix PR failing tests
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Checkout branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install agent
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+
+      - name: Extract failed workflow logs
+        id: failed-workflow-logs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          FAILED_LOGS_PATH=/tmp/auto-fix-tests-failed-workflow-logs.txt
+          gh run view "${{ github.event.workflow_run.id }}" --log-failed > "$FAILED_LOGS_PATH"
+          echo "path=$FAILED_LOGS_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Try to fix failing tests with agent
+        id: agent
+        timeout-minutes: 30
+        env:
+          FAILED_LOGS_PATH: ${{ steps.failed-workflow-logs.outputs.path }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          AGENT_SUMMARY_PATH=/tmp/auto-fix-tests-summary.md
+          echo "agent_summary_path=$AGENT_SUMMARY_PATH" >> "$GITHUB_OUTPUT"
+
+          AGENT_PROMPT_PATH=/tmp/auto-fix-tests-agent-prompt.md
+          cat > "$AGENT_PROMPT_PATH" <<PROMPT
+          Fix the failed test run following a breaking change in a dependency update.
+
+          Constraints:
+          - Do not commit or push changes; the workflow will do it after you finish.
+          - Do not read, print, modify, or exfiltrate secrets, tokens, credentials, or \`.npmrc\`.
+          - Do not delete or disable tests unless the test is obsolete because of the dependency update, and explain why.
+          - Avoid hacks, prefer a durable fix; look for fresh documentation and discussions on the web, particularly on issue tickets for the dependency that introduced a breaking change.
+          - After changes have been applied to the working directory (not committed), run \`$LOCAL_TEST_COMMAND\`: this counts as one attempt.
+          - If no solution has been found after 3 attempts, stop and revert any changes in the working directory.
+          - At the end, whatever the outcome, write a concise Markdown summary to \`$AGENT_SUMMARY_PATH\` with exactly these sections: \`### Obstacles encountered\` and \`### Decisions taken\`. If no solution has been found, leave the "Decisions taken" empty, only with a "—".
+
+          Failed test logs:
+
+          \`\`\`text
+          $(cat "$FAILED_LOGS_PATH")
+          \`\`\`
+          PROMPT
+
+          claude \
+            -p "$(cat "$AGENT_PROMPT_PATH")" \
+            --permission-mode bypassPermissions \
+            --max-budget-usd 5.00 \
+            --output-format json \
+            > /tmp/auto-fix-tests-agent-output.json 2> /tmp/auto-fix-tests-agent-stderr.log
+          AGENT_EXIT_CODE=$?
+
+          cat /tmp/auto-fix-tests-agent-stderr.log >&2 || true
+          jq -r '.result // empty' /tmp/auto-fix-tests-agent-output.json || true
+          echo "Agent cost (USD): $(jq -r '.total_cost_usd // "unknown"' /tmp/auto-fix-tests-agent-output.json)"
+
+          exit "$AGENT_EXIT_CODE"
+
+      - name: Check whether the agent changed files
+        id: changes
+        run: |
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+      - name: Stop if tests still fail
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          $LOCAL_TEST_COMMAND
+
+      - name: Commit and push changes, if any
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          AGENT_SUMMARY_PATH: ${{ steps.agent.outputs.agent_summary_path }}
+        run: |
+          AGENT_SUMMARY=$([ -s "$AGENT_SUMMARY_PATH" ] && cat "$AGENT_SUMMARY_PATH" || echo "No agent summary was found.")
+
+          git commit \
+            -m "fix(deps): Fix tests following dependency update breaking change" \
+            -m "$AGENT_SUMMARY"
+          git push origin "HEAD:refs/heads/${{ github.event.workflow_run.head_branch }}" --force --no-verify
+
+      - name: Whatever the outcome, post report as a comment to pull request
+        if: ${{ !cancelled() }} # Run this step whatever the outcome of the agent work, except if workflow was cancelled due to concurrency
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AGENT_SUMMARY_PATH: ${{ steps.agent.outputs.agent_summary_path }}
+        run: |
+          AGENT_SUMMARY=$([ -s "$AGENT_SUMMARY_PATH" ] && cat "$AGENT_SUMMARY_PATH" || echo "No agent summary was found.")
+
+          COMMENT_BODY=$(cat <<COMMENT
+          ## Automatic fix report
+          <!-- auto-fix-tests-report -->
+
+          $AGENT_SUMMARY
+          COMMENT
+          )
+
+          gh pr comment "${{ github.event.workflow_run.head_branch }}" --repo "$GITHUB_REPOSITORY" --body "$COMMENT_BODY"
