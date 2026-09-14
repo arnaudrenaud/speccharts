@@ -95,7 +95,7 @@ jobs:
           claude \
             -p "$(cat "$AGENT_PROMPT_PATH")" \
             --permission-mode bypassPermissions \
-            --max-budget-usd 5.00 \
+            --max-budget-usd 2.00 \
             --output-format json \
             > /tmp/auto-fix-tests-agent-output.json 2> /tmp/auto-fix-tests-agent-stderr.log
           AGENT_EXIT_CODE=$?
