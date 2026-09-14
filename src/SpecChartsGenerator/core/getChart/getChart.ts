@@ -21,7 +21,7 @@ export const getChart = (specTree: SpecTree): string => {
       .map((row, rowIndex) => {
         // Determine padding based on row position
         const isFirstRow = rowIndex === 0;
-        const isLastRow = rowIndex === children.length - 1;
+        const isLastRow = rowIndex === children.length;
         let cellPadding: string;
         if (isFirstRow) {
           cellPadding = "0 8px 8px 8px"; // no top padding
@@ -36,7 +36,7 @@ export const getChart = (specTree: SpecTree): string => {
           const cells = row.children
             .map((cell: any) => {
               const escapedContent = escapeMermaidLabelMarkdown(
-                cell.name
+                cell.name,
               ).trim();
               // Apply monospace font to interpolated values
               const style = cell.isInterpolated
@@ -56,7 +56,7 @@ export const getChart = (specTree: SpecTree): string => {
   function walk(
     node: SpecNode,
     parentId: string | null,
-    nodes: string[]
+    nodes: string[],
   ): string {
     const thisId = getNodeId();
 
@@ -82,9 +82,9 @@ export const getChart = (specTree: SpecTree): string => {
         node.type === "question"
           ? `{"${label}"}`
           : node.type === "case" && parentId
-          ? `["${label}"]`
-          : `(["${label}"])`
-      }`
+            ? `["${label}"]`
+            : `(["${label}"])`
+      }`,
     );
 
     if (parentId) {
