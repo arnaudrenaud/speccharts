@@ -67,7 +67,7 @@ jobs:
         timeout-minutes: 30
         env:
           FAILED_LOGS_PATH: ${{ steps.failed-workflow-logs.outputs.path }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
           AGENT_SUMMARY_PATH=/tmp/auto-fix-tests-summary.md
           echo "agent_summary_path=$AGENT_SUMMARY_PATH" >> "$GITHUB_OUTPUT"
