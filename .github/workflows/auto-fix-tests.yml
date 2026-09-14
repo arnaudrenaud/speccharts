@@ -92,6 +92,7 @@ jobs:
           \`\`\`
           PROMPT
 
+          set +e
           claude \
             -p "$(cat "$AGENT_PROMPT_PATH")" \
             --permission-mode bypassPermissions \
@@ -99,10 +100,15 @@ jobs:
             --output-format json \
             > /tmp/auto-fix-tests-agent-output.json 2> /tmp/auto-fix-tests-agent-stderr.log
           AGENT_EXIT_CODE=$?
+          set -e
 
-          cat /tmp/auto-fix-tests-agent-stderr.log >&2 || true
+          if [ "$AGENT_EXIT_CODE" -ne 0 ]; then
+            echo "::error::Agent exited with code $AGENT_EXIT_CODE"
+            cat /tmp/auto-fix-tests-agent-stderr.log >&2 || true
+          fi
+
           jq -r '.result // empty' /tmp/auto-fix-tests-agent-output.json || true
-          echo "Agent cost (USD): $(jq -r '.total_cost_usd // "unknown"' /tmp/auto-fix-tests-agent-output.json)"
+          echo "Agent cost (USD): $(jq -r '.total_cost_usd // "unknown"' /tmp/auto-fix-tests-agent-output.json 2>/dev/null || echo unknown)"
 
           exit "$AGENT_EXIT_CODE"
 
