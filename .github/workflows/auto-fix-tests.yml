@@ -39,18 +39,6 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      # The branch above may not contain the action (e.g. it hasn't merged main yet),
-      # so fetch it separately from main into a side path that the checkout above doesn't touch.
-      - name: Checkout auto-fix-tests action from main
-        uses: actions/checkout@v5
-        with:
-          ref: main
-          path: .auto-fix-tests-action
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/auto-fix-tests
-          sparse-checkout-cone-mode: false
-
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
@@ -60,7 +48,7 @@ jobs:
         run: npm ci
 
       - name: Auto-fix failing tests
-        uses: ./.auto-fix-tests-action/.github/actions/auto-fix-tests
+        uses: ./.github/actions/auto-fix-tests
         with:
           test-command: npm run build-and-test
           failed-run-id: ${{ github.event.workflow_run.id }}
