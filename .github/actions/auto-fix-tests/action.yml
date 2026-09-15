@@ -1,0 +1,194 @@
+name: "Auto-fix Failing Tests"
+description: "Runs an AI coding agent against a failed test run, applies a fix, re-runs the tests, and commits/pushes/reports the result."
+author: "arnaudrenaud"
+
+inputs:
+  test-command:
+    description: "Shell command that runs the test suite, of which exit code 0 means all tests have succeeded."
+    required: true
+  failed-run-id:
+    description: "ID of the completed, failing workflow run whose output should be fed to the agent."
+    required: true
+  head-branch:
+    description: "Branch to push the fix to and to comment on (typically the PR branch)."
+    required: true
+  github-token:
+    description: "Token used to read the failed run output and to comment on the PR. Needs `actions: read` and `pull-requests: write`."
+    required: true
+  task-description:
+    description: "One or two sentences telling the agent what kind of fix is expected."
+    required: false
+    default: "Fix the failed test run."
+  max-attempts:
+    description: "How many times the agent may retry running the test command before giving up."
+    required: false
+    default: "3"
+  agent-install-command:
+    description: "Shell command that installs the agent CLI referenced by agent-command."
+    required: true
+  agent-command:
+    description: >
+      Shell command that invokes the agent. The prompt is available at the path in
+      $AGENT_PROMPT_PATH. Its stdout must be JSON with `.result` and `.total_cost_usd`
+      fields; stdout and stderr are captured automatically, so the command itself
+      doesn't need to redirect anything.
+    required: true
+  agent-env:
+    description: "Extra environment variables the agent command needs, one KEY=VALUE per line (e.g. an auth token secret)."
+    required: true
+  agent-timeout-minutes:
+    description: "Kill the agent command if it runs longer than this many minutes."
+    required: false
+    default: "30"
+  commit-title:
+    description: "Subject line of the commit created when the agent produces a fix."
+    required: false
+    default: "fix: Fix failing tests"
+  git-user-name:
+    required: false
+    default: "github-actions[bot]"
+  git-user-email:
+    required: false
+    default: "github-actions[bot]@users.noreply.github.com"
+
+outputs:
+  has-changes:
+    description: '"true" if the agent produced a fix that was committed and pushed.'
+    value: ${{ steps.changes.outputs.has_changes }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure Git
+      shell: bash
+      run: |
+        git config --global user.name "${{ inputs.git-user-name }}"
+        git config --global user.email "${{ inputs.git-user-email }}"
+
+    - name: Install agent
+      shell: bash
+      run: ${{ inputs.agent-install-command }}
+
+    - name: Extract failed workflow logs
+      id: failed-workflow-logs
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        FAILED_LOGS_PATH="${RUNNER_TEMP}/auto-fix-tests-failed-workflow-logs.txt"
+        gh run view "${{ inputs.failed-run-id }}" --log-failed > "$FAILED_LOGS_PATH"
+        echo "path=$FAILED_LOGS_PATH" >> "$GITHUB_OUTPUT"
+
+    - name: Try to fix failing tests with agent
+      id: agent
+      shell: bash
+      env:
+        FAILED_LOGS_PATH: ${{ steps.failed-workflow-logs.outputs.path }}
+      run: |
+        AGENT_SUMMARY_PATH="${RUNNER_TEMP}/auto-fix-tests-summary.md"
+        echo "agent_summary_path=$AGENT_SUMMARY_PATH" >> "$GITHUB_OUTPUT"
+
+        export AGENT_PROMPT_PATH="${RUNNER_TEMP}/auto-fix-tests-agent-prompt.md"
+        cat > "$AGENT_PROMPT_PATH" <<PROMPT
+        ${{ inputs.task-description }}
+
+        Constraints:
+        - Do not commit or push changes; the workflow will do it after task completion.
+        - Do not read, print, modify, or exfiltrate secrets, tokens, or credentials.
+        - Do not delete or disable tests unless a test is obsolete because of this change, and explain why.
+        - Avoid hacks, prefer a durable fix; if the failure was caused by a breaking change in a dependency update, look for fresh documentation and discussions on the web where relevant.
+        - After changes have been applied to the working directory (not committed), run \`${{ inputs.test-command }}\`: this counts as one attempt.
+        - If no solution has been found after ${{ inputs.max-attempts }} attempts, stop and revert any changes in the working directory.
+        - At the end, whatever the outcome, write a concise Markdown summary to \`$AGENT_SUMMARY_PATH\` with exactly these sections: \`### Obstacles encountered\` and \`### Decisions taken\`. If no solution has been found, leave the "Decisions taken" empty, only with a "—".
+
+        Failed test logs:
+
+        \`\`\`text
+        $(cat "$FAILED_LOGS_PATH")
+        \`\`\`
+        PROMPT
+
+        export AGENT_OUTPUT_PATH="${RUNNER_TEMP}/auto-fix-tests-agent-output.json"
+        export AGENT_STDERR_PATH="${RUNNER_TEMP}/auto-fix-tests-agent-stderr.log"
+
+        while IFS= read -r line; do
+          [ -z "$line" ] && continue
+          export "${line%%=*}=${line#*=}"
+        done <<< "${{ inputs.agent-env }}"
+
+        AGENT_COMMAND_SCRIPT="${RUNNER_TEMP}/auto-fix-tests-agent-command.sh"
+        cat > "$AGENT_COMMAND_SCRIPT" <<'AGENT_COMMAND_EOF'
+        ${{ inputs.agent-command }}
+        AGENT_COMMAND_EOF
+
+        TIMEOUT_CMD=()
+        if command -v timeout >/dev/null 2>&1; then
+          TIMEOUT_CMD=(timeout "${{ inputs.agent-timeout-minutes }}m")
+        fi
+
+        set +e
+        "${TIMEOUT_CMD[@]}" bash "$AGENT_COMMAND_SCRIPT" > "$AGENT_OUTPUT_PATH" 2> "$AGENT_STDERR_PATH"
+        AGENT_EXIT_CODE=$?
+        set -e
+
+        if [ "$AGENT_EXIT_CODE" -ne 0 ]; then
+          echo "::error::Agent exited with code $AGENT_EXIT_CODE"
+          cat "$AGENT_STDERR_PATH" >&2 || true
+        fi
+
+        jq -r '.result // empty' "$AGENT_OUTPUT_PATH" 2>/dev/null || true
+        AGENT_COST=$([ -s "$AGENT_OUTPUT_PATH" ] && jq -r '.total_cost_usd // "unknown"' "$AGENT_OUTPUT_PATH" 2>/dev/null)
+        echo "Agent cost (USD): ${AGENT_COST:-unknown}"
+
+        exit "$AGENT_EXIT_CODE"
+
+    - name: Check whether the agent changed files
+      id: changes
+      shell: bash
+      run: |
+        git add .
+
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+          echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+    - name: Stop if tests still fail
+      if: steps.changes.outputs.has_changes == 'true'
+      shell: bash
+      run: ${{ inputs.test-command }}
+
+    - name: Commit and push changes, if any
+      if: steps.changes.outputs.has_changes == 'true'
+      shell: bash
+      env:
+        AGENT_SUMMARY_PATH: ${{ steps.agent.outputs.agent_summary_path }}
+      run: |
+        AGENT_SUMMARY=$([ -s "$AGENT_SUMMARY_PATH" ] && cat "$AGENT_SUMMARY_PATH" || echo "No agent summary was found.")
+
+        git commit \
+          -m "${{ inputs.commit-title }}" \
+          -m "$AGENT_SUMMARY"
+        git push origin "HEAD:refs/heads/${{ inputs.head-branch }}" --force --no-verify
+
+    - name: Whatever the outcome, post report as a comment to pull request
+      if: ${{ !cancelled() }} # Run this step whatever the outcome of the agent work, except if the job was cancelled due to concurrency
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        AGENT_SUMMARY_PATH: ${{ steps.agent.outputs.agent_summary_path }}
+      run: |
+        AGENT_SUMMARY=$([ -s "$AGENT_SUMMARY_PATH" ] && cat "$AGENT_SUMMARY_PATH" || echo "No agent summary was found.")
+
+        COMMENT_BODY=$(cat <<COMMENT
+        ## Automatic fix report
+        <!-- auto-fix-tests-report -->
+
+        $AGENT_SUMMARY
+        COMMENT
+        )
+
+        gh pr comment "${{ inputs.head-branch }}" --repo "$GITHUB_REPOSITORY" --body "$COMMENT_BODY"
