@@ -21,7 +21,7 @@ export const getChart = (specTree: SpecTree): string => {
       .map((row, rowIndex) => {
         // Determine padding based on row position
         const isFirstRow = rowIndex === 0;
-        const isLastRow = rowIndex === children.length;
+        const isLastRow = rowIndex === children.length - 1;
         let cellPadding: string;
         if (isFirstRow) {
           cellPadding = "0 8px 8px 8px"; // no top padding
