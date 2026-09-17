@@ -48,14 +48,16 @@ jobs:
         run: npm ci
 
       - name: Auto-fix failing tests
-        uses: ./.github/actions/auto-fix-tests
+        uses: ./.github/actions/auto-fix-with-agent
         with:
-          test-command: npm run build-and-test
-          failed-run-id: ${{ github.event.workflow_run.id }}
-          head-branch: ${{ github.event.workflow_run.head_branch }}
+          success-test: npm run build-and-test
+          failed-workflow-run-id: ${{ github.event.workflow_run.id }}
+          work-branch: ${{ github.event.workflow_run.head_branch }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          task-description: "Fix the failed test run, probably because of a breaking change in a dependency update."
-          commit-title: "fix(): Fix tests following breaking change"
+          task-description: >-
+            Fix the failed test run, probably because of a breaking change in a dependency update.
+            Do not delete or disable tests unless a test is obsolete because of this change, and explain why.
+          commit-title: "fix(auto): Auto-fix tests following dependency breaking change"
           agent-install-command: npm install -g @anthropic-ai/claude-code
           agent-command: |
             claude \
