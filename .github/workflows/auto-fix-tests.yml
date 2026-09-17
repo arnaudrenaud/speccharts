@@ -20,12 +20,13 @@ permissions:
 
 jobs:
   auto-fix-tests:
-    name: Fix PR failing tests
+    name: Auto-fix tests
     if: github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Generate GitHub App token
+      - name: Generate GitHub App token to re-trigger test run after pushed fix
+        # A push made with the default `GITHUB_TOKEN` would not trigger any CI check
         id: app-token
         uses: actions/create-github-app-token@v3
         with:
@@ -50,7 +51,7 @@ jobs:
       - name: Auto-fix failing tests
         uses: ./.github/actions/auto-fix-with-agent
         with:
-          success-test: npm run build-and-test
+          success-check: npm run build-and-test
           failed-workflow-run-id: ${{ github.event.workflow_run.id }}
           work-branch: ${{ github.event.workflow_run.head_branch }}
           github-token: ${{ secrets.GITHUB_TOKEN }}

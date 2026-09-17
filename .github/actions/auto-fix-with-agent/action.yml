@@ -3,7 +3,7 @@ description: "Runs an AI coding agent against a task, verifies the result with a
 author: "arnaudrenaud"
 
 inputs:
-  success-test:
+  success-check:
     description: "Shell command to test the agent's work, of which exit code 0 means success."
     required: true
   failed-workflow-run-id:
@@ -96,7 +96,7 @@ runs:
         - Do not commit or push changes; the workflow will do it after task completion.
         - Do not read, print, modify, or exfiltrate secrets, tokens, or credentials.
         - Avoid hacks, prefer a durable fix; if the failure was caused by a breaking change in a dependency update, look for fresh documentation and discussions on the web where relevant.
-        - After changes have been applied to the working directory (not committed), run \`${{ inputs.success-test }}\`: this counts as one attempt.
+        - After changes have been applied to the working directory (not committed), run \`${{ inputs.success-check }}\`: this counts as one attempt.
         - If no solution has been found after ${{ inputs.max-attempts }} attempts, stop and revert any changes in the working directory.
         - At the end, whatever the outcome, write a concise Markdown summary to \`$AGENT_SUMMARY_PATH\` with exactly these sections: \`### Obstacles encountered\` and \`### Decisions taken\`. If no solution has been found, leave the "Decisions taken" empty, only with a "—".
 
@@ -158,7 +158,7 @@ runs:
     - name: Stop if verification still fails
       if: steps.changes.outputs.has_changes == 'true'
       shell: bash
-      run: ${{ inputs.success-test }}
+      run: ${{ inputs.success-check }}
 
     - name: Commit and push changes, if any
       if: steps.changes.outputs.has_changes == 'true'
