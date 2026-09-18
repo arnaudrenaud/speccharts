@@ -56,9 +56,10 @@ jobs:
           work-branch: ${{ github.event.workflow_run.head_branch }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           task-description: >-
-            Fix the failed test run, probably because of a breaking change in a dependency update.
+            Fix the failed test run, probably following a breaking change in a dependency upgrade in latest commit.
+            If applicable, report URLs to documentation and discussions that support the chosen fix.
             Do not delete or disable tests unless a test is obsolete because of this change, and explain why.
-          commit-title: "fix(auto): Auto-fix tests following dependency breaking change"
+          commit-title: "fix(auto): Auto-fix tests following breaking change in dependency"
           agent-install-command: npm install -g @anthropic-ai/claude-code
           agent-command: |
             claude \
