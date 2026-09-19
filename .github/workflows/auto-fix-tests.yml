@@ -63,7 +63,7 @@ jobs:
           agent-install-command: npm install -g @anthropic-ai/claude-code
           agent-command: |
             claude \
-              -p "$(cat "$AGENT_PROMPT_PATH")" \
+              -p \
               --permission-mode bypassPermissions \
               --max-budget-usd 2.00 \
               --output-format json
