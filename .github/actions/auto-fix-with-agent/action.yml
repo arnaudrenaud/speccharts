@@ -20,7 +20,7 @@ inputs:
     required: false
     default: "Complete the requested task."
   max-attempts:
-    description: "How many times the agent may retry running the verify command before giving up."
+    description: "How many times the agent may retry running the success check command before giving up."
     required: false
     default: "3"
   agent-install-command:
@@ -155,7 +155,7 @@ runs:
 
         echo "has_changes=true" >> "$GITHUB_OUTPUT"
 
-    - name: Stop if verification still fails
+    - name: Stop if success check still fails
       if: steps.changes.outputs.has_changes == 'true'
       shell: bash
       run: ${{ inputs.success-check }}
