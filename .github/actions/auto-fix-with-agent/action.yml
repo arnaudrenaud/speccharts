@@ -190,8 +190,12 @@ runs:
         fi
 
         jq -r '.result // empty' "$AGENT_OUTPUT_PATH" 2>/dev/null || true
-        AGENT_COST=$([ -s "$AGENT_OUTPUT_PATH" ] && jq -r '.total_cost_usd // "unknown"' "$AGENT_OUTPUT_PATH" 2>/dev/null)
-        echo "Agent cost (USD): ${AGENT_COST:-unknown}"
+        if [ -s "$AGENT_OUTPUT_PATH" ]; then
+          AGENT_COST=$(jq -r '.total_cost_usd // "unknown"' "$AGENT_OUTPUT_PATH" 2>/dev/null || echo unknown)
+        else
+          AGENT_COST="unknown"
+        fi
+        echo "Agent cost (USD): $AGENT_COST"
 
         exit "$AGENT_EXIT_CODE"
 
@@ -211,7 +215,7 @@ runs:
         echo "has_changes=true" >> "$GITHUB_OUTPUT"
 
     - name: Stop if success check still fails
-      if: steps.changes.outputs.has_changes == 'true'
+      if: steps.guard.outputs.proceed == 'true' && steps.changes.outputs.has_changes == 'true'
       shell: bash
       run: ${{ inputs.success-check }}
 
