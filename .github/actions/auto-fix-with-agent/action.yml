@@ -59,6 +59,47 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Compute guard cache key
+      if: inputs.run-no-more-than-once-ever-for-branch == 'true'
+      id: guard-key
+      shell: bash
+      run: |
+        HASH=$(printf '%s' "${{ inputs.success-check }}" | sha256sum | cut -c1-16)
+        echo "key=auto-fix-with-agent-once-${{ inputs.branch }}-$HASH" >> "$GITHUB_OUTPUT"
+
+    - name: Check for a prior claim on this branch + check
+      if: inputs.run-no-more-than-once-ever-for-branch == 'true'
+      id: guard-cache
+      uses: actions/cache/restore@v4
+      with:
+        path: guard-marker
+        key: ${{ steps.guard-key.outputs.key }}
+        lookup-only: true
+
+    - name: Decide whether to proceed
+      id: guard
+      shell: bash
+      run: echo "proceed=${{ inputs.run-no-more-than-once-ever-for-branch != 'true' || steps.guard-cache.outputs.cache-hit != 'true' }}" >> "$GITHUB_OUTPUT"
+
+    # Claimed immediately, before any real work, so a crash or timeout further down
+    # can't leave this branch unclaimed and open to retrying forever.
+    - name: Claim this branch + check
+      if: inputs.run-no-more-than-once-ever-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
+      shell: bash
+      run: echo claimed > guard-marker
+
+    - name: Persist the claim
+      if: inputs.run-no-more-than-once-ever-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: guard-marker
+        key: ${{ steps.guard-key.outputs.key }}
+
+    - name: Explain why nothing happened
+      if: steps.guard.outputs.proceed != 'true'
+      shell: bash
+      run: echo "::notice::The action has already run once on this branch for the success check \`${{ inputs.success-check }}\`. Because optional input \`run-no-more-than-once-ever-for-branch\` was set to \`true\`, the action cannot run again on this branch. To run it again, either:%0A- create another branch, or%0A- remove the \`run-no-more-than-once-ever-for-branch\` input from the action call."
+
     - name: Configure Git
       shell: bash
       run: |
