@@ -52,8 +52,9 @@ jobs:
         uses: ./.github/actions/auto-fix-with-agent
         with:
           success-check: npm run build-and-test
+          run-no-more-than-once-ever-for-branch: "true"
           failed-workflow-run-id: ${{ github.event.workflow_run.id }}
-          work-branch: ${{ github.event.workflow_run.head_branch }}
+          branch: ${{ github.event.workflow_run.head_branch }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           task-description: >-
             Fix the failed test run, probably following a breaking change in a dependency upgrade in latest commit.
