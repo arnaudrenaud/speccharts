@@ -9,7 +9,7 @@ inputs:
   failed-workflow-run-id:
     description: "ID of the completed, failing workflow run whose output should be fed to the agent."
     required: true
-  work-branch:
+  branch:
     description: "Branch to push the fix to and to comment on (typically the PR branch)."
     required: true
   github-token:
@@ -50,9 +50,9 @@ inputs:
   git-user-email:
     required: false
     default: "github-actions[bot]@users.noreply.github.com"
-  run-only-once-for-branch:
+  run-no-more-than-once-ever-for-branch:
     description: >
-      If "true", runs the real logic at most once per (work-branch, success-check)
+      If "true", runs the real logic at most once per (branch, success-check)
       pair — later invocations become no-ops. A bad fix from the agent isn't itself
       dangerous (success-check just keeps failing), but if a caller workflow
       re-triggers this action on every such failure, that's an unbounded loop;
@@ -69,15 +69,15 @@ runs:
   using: "composite"
   steps:
     - name: Compute guard cache key
-      if: inputs.run-only-once-for-branch == 'true'
+      if: inputs.run-no-more-than-once-ever-for-branch == 'true'
       id: guard-key
       shell: bash
       run: |
         HASH=$(printf '%s' "${{ inputs.success-check }}" | sha256sum | cut -c1-16)
-        echo "key=auto-fix-with-agent-once-${{ inputs.work-branch }}-$HASH" >> "$GITHUB_OUTPUT"
+        echo "key=auto-fix-with-agent-once-${{ inputs.branch }}-$HASH" >> "$GITHUB_OUTPUT"
 
     - name: Check for a prior claim on this branch + check
-      if: inputs.run-only-once-for-branch == 'true'
+      if: inputs.run-no-more-than-once-ever-for-branch == 'true'
       id: guard-cache
       uses: actions/cache/restore@v4
       with:
@@ -88,17 +88,17 @@ runs:
     - name: Decide whether to proceed
       id: guard
       shell: bash
-      run: echo "proceed=${{ inputs.run-only-once-for-branch != 'true' || steps.guard-cache.outputs.cache-hit != 'true' }}" >> "$GITHUB_OUTPUT"
+      run: echo "proceed=${{ inputs.run-no-more-than-once-ever-for-branch != 'true' || steps.guard-cache.outputs.cache-hit != 'true' }}" >> "$GITHUB_OUTPUT"
 
     # Claimed immediately, before any real work, so a crash or timeout further down
     # can't leave this branch unclaimed and open to retrying forever.
     - name: Claim this branch + check
-      if: inputs.run-only-once-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
+      if: inputs.run-no-more-than-once-ever-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
       shell: bash
       run: echo claimed > guard-marker
 
     - name: Persist the claim
-      if: inputs.run-only-once-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
+      if: inputs.run-no-more-than-once-ever-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
       uses: actions/cache/save@v4
       with:
         path: guard-marker
@@ -225,7 +225,7 @@ runs:
         git commit \
           -m "${{ inputs.commit-title }}" \
           -m "$AGENT_REPORT"
-        git push origin "HEAD:refs/heads/${{ inputs.work-branch }}" --force --no-verify
+        git push origin "HEAD:refs/heads/${{ inputs.branch }}" --force --no-verify
 
     - name: Whatever the outcome, post report as a comment to pull request
       # Runs whatever the outcome of the agent work, except if the job was
@@ -246,4 +246,4 @@ runs:
         COMMENT
         )
 
-        gh pr comment "${{ inputs.work-branch }}" --repo "$GITHUB_REPOSITORY" --body "$COMMENT_BODY"
+        gh pr comment "${{ inputs.branch }}" --repo "$GITHUB_REPOSITORY" --body "$COMMENT_BODY"
