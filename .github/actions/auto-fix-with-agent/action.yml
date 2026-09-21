@@ -79,7 +79,7 @@ runs:
     - name: Check for a prior claim on this branch + check
       if: inputs.run-no-more-than-once-ever-for-branch == 'true'
       id: guard-cache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v6
       with:
         path: guard-marker
         key: ${{ steps.guard-key.outputs.key }}
@@ -99,7 +99,7 @@ runs:
 
     - name: Persist the claim
       if: inputs.run-no-more-than-once-ever-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v6
       with:
         path: guard-marker
         key: ${{ steps.guard-key.outputs.key }}
