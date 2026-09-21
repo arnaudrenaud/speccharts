@@ -50,6 +50,15 @@ inputs:
   git-user-email:
     required: false
     default: "github-actions[bot]@users.noreply.github.com"
+  run-only-once-for-branch:
+    description: >
+      If "true", runs the real logic at most once per (work-branch, success-check)
+      pair — later invocations become no-ops. A bad fix from the agent isn't itself
+      dangerous (success-check just keeps failing), but if a caller workflow
+      re-triggers this action on every such failure, that's an unbounded loop;
+      enable this when that's necessary given how the caller is wired up.
+    required: false
+    default: "false"
 
 outputs:
   has-changes:
@@ -59,17 +68,56 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Compute guard cache key
+      if: inputs.run-only-once-for-branch == 'true'
+      id: guard-key
+      shell: bash
+      run: |
+        HASH=$(printf '%s' "${{ inputs.success-check }}" | sha256sum | cut -c1-16)
+        echo "key=auto-fix-with-agent-once-${{ inputs.work-branch }}-$HASH" >> "$GITHUB_OUTPUT"
+
+    - name: Check for a prior claim on this branch + check
+      if: inputs.run-only-once-for-branch == 'true'
+      id: guard-cache
+      uses: actions/cache/restore@v4
+      with:
+        path: guard-marker
+        key: ${{ steps.guard-key.outputs.key }}
+        lookup-only: true
+
+    - name: Decide whether to proceed
+      id: guard
+      shell: bash
+      run: echo "proceed=${{ inputs.run-only-once-for-branch != 'true' || steps.guard-cache.outputs.cache-hit != 'true' }}" >> "$GITHUB_OUTPUT"
+
+    # Claimed immediately, before any real work, so a crash or timeout further down
+    # can't leave this branch unclaimed and open to retrying forever.
+    - name: Claim this branch + check
+      if: inputs.run-only-once-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
+      shell: bash
+      run: echo claimed > guard-marker
+
+    - name: Persist the claim
+      if: inputs.run-only-once-for-branch == 'true' && steps.guard.outputs.proceed == 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: guard-marker
+        key: ${{ steps.guard-key.outputs.key }}
+
     - name: Configure Git
+      if: steps.guard.outputs.proceed == 'true'
       shell: bash
       run: |
         git config --global user.name "${{ inputs.git-user-name }}"
         git config --global user.email "${{ inputs.git-user-email }}"
 
     - name: Install agent
+      if: steps.guard.outputs.proceed == 'true'
       shell: bash
       run: ${{ inputs.agent-install-command }}
 
     - name: Extract failed workflow logs
+      if: steps.guard.outputs.proceed == 'true'
       id: failed-workflow-logs
       shell: bash
       env:
@@ -80,6 +128,7 @@ runs:
         echo "path=$FAILED_LOGS_PATH" >> "$GITHUB_OUTPUT"
 
     - name: Run agent
+      if: steps.guard.outputs.proceed == 'true'
       id: agent
       shell: bash
       env:
@@ -136,12 +185,17 @@ runs:
         fi
 
         jq -r '.result // empty' "$AGENT_OUTPUT_PATH" 2>/dev/null || true
-        AGENT_COST=$([ -s "$AGENT_OUTPUT_PATH" ] && jq -r '.total_cost_usd // "unknown"' "$AGENT_OUTPUT_PATH" 2>/dev/null)
-        echo "Agent cost (USD): ${AGENT_COST:-unknown}"
+        if [ -s "$AGENT_OUTPUT_PATH" ]; then
+          AGENT_COST=$(jq -r '.total_cost_usd // "unknown"' "$AGENT_OUTPUT_PATH" 2>/dev/null || echo unknown)
+        else
+          AGENT_COST="unknown"
+        fi
+        echo "Agent cost (USD): $AGENT_COST"
 
         exit "$AGENT_EXIT_CODE"
 
     - name: Check whether the agent changed files
+      if: steps.guard.outputs.proceed == 'true'
       id: changes
       shell: bash
       run: |
@@ -156,12 +210,12 @@ runs:
         echo "has_changes=true" >> "$GITHUB_OUTPUT"
 
     - name: Stop if success check still fails
-      if: steps.changes.outputs.has_changes == 'true'
+      if: steps.guard.outputs.proceed == 'true' && steps.changes.outputs.has_changes == 'true'
       shell: bash
       run: ${{ inputs.success-check }}
 
     - name: Commit and push changes, if any
-      if: steps.changes.outputs.has_changes == 'true'
+      if: steps.guard.outputs.proceed == 'true' && steps.changes.outputs.has_changes == 'true'
       shell: bash
       env:
         AGENT_REPORT_PATH: ${{ steps.agent.outputs.agent_report_path }}
@@ -174,7 +228,9 @@ runs:
         git push origin "HEAD:refs/heads/${{ inputs.work-branch }}" --force --no-verify
 
     - name: Whatever the outcome, post report as a comment to pull request
-      if: ${{ !cancelled() }} # Run this step whatever the outcome of the agent work, except if the job was cancelled due to concurrency
+      # Runs whatever the outcome of the agent work, except if the job was
+      # cancelled or the guard blocked this run (nothing happened, nothing to report).
+      if: ${{ steps.guard.outputs.proceed == 'true' && !cancelled() }}
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}

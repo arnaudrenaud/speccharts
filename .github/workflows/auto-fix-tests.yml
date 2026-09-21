@@ -52,6 +52,7 @@ jobs:
         uses: ./.github/actions/auto-fix-with-agent
         with:
           success-check: npm run build-and-test
+          run-only-once-for-branch: "true"
           failed-workflow-run-id: ${{ github.event.workflow_run.id }}
           work-branch: ${{ github.event.workflow_run.head_branch }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
