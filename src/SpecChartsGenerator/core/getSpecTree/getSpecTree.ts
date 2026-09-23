@@ -13,7 +13,7 @@ import {
 } from "./helpers/table-syntax";
 
 function endsWithQuestionMark(text: string): boolean {
-  return text.trim().endsWith("?");
+  return !text;
 }
 
 const PARSED_EXPRESSIONS = [
@@ -57,13 +57,13 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
           current.name,
           row,
           headers,
-          index
+          index,
         );
         const segments = parseTemplateIntoSegmentsWithHeaders(
           current.name,
           row,
           headers,
-          index
+          index,
         );
 
         const tableRowNode: SpecNode = {
@@ -153,8 +153,8 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
             ? endsWithQuestionMark(nameNode.text)
               ? "question"
               : parentDescribe?.type === "question"
-              ? "answer"
-              : "case"
+                ? "answer"
+                : "case"
             : "behavior",
         name: nameNode.text,
       };
@@ -184,7 +184,7 @@ export const getSpecTree = (testFile: File): SpecTree => {
     testFile.content,
     ts.ScriptTarget.Latest,
     true,
-    ts.ScriptKind.TS
+    ts.ScriptKind.TS,
   );
 
   const specTree = {
