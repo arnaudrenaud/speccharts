@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-# Verifies that when success-check passes after the agent's changes, the
-# action commits them, pushes them to the real remote, and still posts the
-# report — under real GitHub Actions composite-action semantics, using
-# nektos/act (https://github.com/nektos/act).
+# Verifies that when success-check still fails after the agent's changes,
+# the action does NOT commit or push them, but still posts the report —
+# under real GitHub Actions composite-action semantics, using nektos/act
+# (https://github.com/nektos/act). Complements success-check-passes.sh.
 #
 # Builds a throwaway, disposable fixture repo containing a copy of the
-# current action.yml, a real local bare repo as its `origin` (so an actual
-# push can be verified, without reaching any real remote), and a tiny
-# workflow that invokes the action with a stub agent that edits a tracked
-# file and a success-check that always passes. Runs act with --bind (safe
-# here since the fixture is disposable — never do this against a real
-# checkout) and asserts, from act's own log output plus the resulting git
-# state, that the fix was actually committed and pushed, and the report
-# posted.
+# current action.yml, a real local bare repo as its `origin` (so we can
+# positively confirm nothing was pushed, not just that the step didn't
+# error), and a tiny workflow that invokes the action with a stub agent
+# that edits a tracked file and a success-check that always fails. Runs
+# act with --bind (safe here since the fixture is disposable — never do
+# this against a real checkout) and asserts, from act's own log output
+# plus the resulting git state, that no commit or push happened, and that
+# the report was still posted.
 #
 # Requires: act, docker (with the daemon running).
 #
-# Usage: bash .github/actions/auto-fix-with-agent/test/success-check-passes.sh
+# Usage: bash .github/actions/fix-with-agent/test/success-check-fails.sh
 set -euo pipefail
 
 ACTION_YML="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/action.yml"
@@ -33,11 +33,11 @@ fi
 FIXTURE="$(mktemp -d)"
 trap 'rm -rf "$FIXTURE"' EXIT
 
-mkdir -p "$FIXTURE/.github/actions/auto-fix-with-agent" "$FIXTURE/.github/workflows"
-cp "$ACTION_YML" "$FIXTURE/.github/actions/auto-fix-with-agent/action.yml"
+mkdir -p "$FIXTURE/.github/actions/fix-with-agent" "$FIXTURE/.github/workflows"
+cp "$ACTION_YML" "$FIXTURE/.github/actions/fix-with-agent/action.yml"
 
 cat > "$FIXTURE/.github/workflows/test.yml" <<'EOF'
-name: test-success-check-passes
+name: test-success-check-fails
 on: workflow_dispatch
 jobs:
   test:
@@ -61,9 +61,9 @@ jobs:
           chmod +x /usr/local/bin/gh
 
       - name: Invoke the action
-        uses: ./.github/actions/auto-fix-with-agent
+        uses: ./.github/actions/fix-with-agent
         with:
-          success-check: "true"
+          success-check: "false"
           failed-workflow-run-id: "1"
           branch: "__WORK_BRANCH__"
           github-token: "dummy"
@@ -75,14 +75,15 @@ jobs:
           agent-env: ""
 EOF
 
-WORK_BRANCH="success-check-passes-branch-$(date +%s)-$$"
+WORK_BRANCH="success-check-fails-branch-$(date +%s)-$$"
 sed -i.bak "s/__WORK_BRANCH__/$WORK_BRANCH/" "$FIXTURE/.github/workflows/test.yml"
 rm -f "$FIXTURE/.github/workflows/test.yml.bak"
 
-# A real local bare repo as `origin`, so an actual push can be verified
-# without reaching any real remote. Kept inside the fixture and referenced
-# by a relative path (not an absolute host path), so it resolves correctly
-# regardless of where --bind remaps the workspace inside the container.
+# A real local bare repo as `origin`, so we can positively confirm nothing
+# was pushed (no branch created there at all), not just that the step
+# didn't error. Kept inside the fixture and referenced by a relative path
+# (not an absolute host path), so it resolves correctly regardless of where
+# --bind remaps the workspace inside the container.
 git init -q --bare "$FIXTURE/.test-origin.git"
 
 cd "$FIXTURE"
@@ -109,18 +110,18 @@ check() {
   fi
 }
 
-check "success check step runs and succeeds" \
-  'echo "$run_log" | grep -q "✅  Success - Main Stop if success check still fails"'
-check "commit and push step runs and succeeds" \
-  'echo "$run_log" | grep -q "✅  Success - Main Commit and push changes, if any"'
-check "report step runs and succeeds" \
+check "success check step runs and fails" \
+  'echo "$run_log" | grep -q "❌  Failure - Main Stop if success check still fails"'
+check "commit and push step is skipped, not merely failed (never even attempted)" \
+  '! echo "$run_log" | grep -q "⭐ Run Main Commit and push changes, if any"'
+check "report step still runs (despite the earlier failure) and succeeds" \
   'echo "$run_log" | grep -q "✅  Success - Main Whatever the outcome, post report as a comment to pull request"'
 
-check "a new commit with the fix landed in the local working repo" \
-  'git -C "$FIXTURE" log -1 --pretty=%B | grep -q "fix: stub fix"'
-check "that commit was actually pushed to origin, on the expected branch" \
-  "git --git-dir=\"$FIXTURE/.test-origin.git\" log -1 --pretty=%B \"$WORK_BRANCH\" | grep -q \"fix: stub fix\""
-check "the report was posted (stub gh pr comment was called)" \
+check "no new commit landed in the local working repo (still just the fixture commit)" \
+  '[ "$(git -C "$FIXTURE" log --oneline | wc -l)" -eq 1 ]'
+check "nothing was pushed to origin (no branch was ever created there)" \
+  '[ -z "$(git --git-dir="$FIXTURE/.test-origin.git" branch --list "$WORK_BRANCH")" ]'
+check "the report was posted anyway (stub gh pr comment was called)" \
   'echo "$run_log" | grep -q "stub: pr comment suppressed"'
 
 echo

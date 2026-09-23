@@ -19,7 +19,7 @@
 #
 # Requires: act, docker (with the daemon running).
 #
-# Usage: bash .github/actions/auto-fix-with-agent/test/run-twice-for-branch.sh
+# Usage: bash .github/actions/fix-with-agent/test/run-twice-for-branch.sh
 set -euo pipefail
 
 ACTION_YML="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/action.yml"
@@ -36,8 +36,8 @@ fi
 FIXTURE="$(mktemp -d)"
 trap 'rm -rf "$FIXTURE"' EXIT
 
-mkdir -p "$FIXTURE/.github/actions/auto-fix-with-agent" "$FIXTURE/.github/workflows"
-cp "$ACTION_YML" "$FIXTURE/.github/actions/auto-fix-with-agent/action.yml"
+mkdir -p "$FIXTURE/.github/actions/fix-with-agent" "$FIXTURE/.github/workflows"
+cp "$ACTION_YML" "$FIXTURE/.github/actions/fix-with-agent/action.yml"
 
 cat > "$FIXTURE/.github/workflows/test.yml" <<'EOF'
 name: test-no-guard
@@ -64,14 +64,13 @@ jobs:
           chmod +x /usr/local/bin/gh
 
       - name: Invoke the action
-        uses: ./.github/actions/auto-fix-with-agent
+        uses: ./.github/actions/fix-with-agent
         with:
           success-check: "true"
           failed-workflow-run-id: "1"
           branch: "__WORK_BRANCH__"
           github-token: "dummy"
           agent-install-command: "true"
-          run-no-more-than-once-ever-for-branch: "true"
           agent-command: echo '{"result":"stub ran","total_cost_usd":0.01}'
           agent-env: ""
 EOF

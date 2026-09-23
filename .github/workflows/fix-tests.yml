@@ -1,4 +1,4 @@
-name: "Auto-fix failing tests in Renovate PRs"
+name: "Fix failing tests in Renovate PRs"
 
 on:
   workflow_run:
@@ -10,7 +10,7 @@ on:
       - "renovate/**"
 
 concurrency:
-  group: auto-fix-tests-${{ github.event.workflow_run.head_branch }}
+  group: fix-tests-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
 permissions:
@@ -19,8 +19,8 @@ permissions:
   actions: read
 
 jobs:
-  auto-fix-tests:
-    name: Auto-fix tests
+  fix-tests:
+    name: Fix tests
     if: github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
 
@@ -48,8 +48,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Auto-fix failing tests
-        uses: ./.github/actions/auto-fix-with-agent
+      - name: Fix failing tests
+        uses: ./.github/actions/fix-with-agent
         with:
           success-check: npm run build-and-test
           failed-workflow-run-id: ${{ github.event.workflow_run.id }}
