@@ -49,7 +49,7 @@ jobs:
         run: npm ci
 
       - name: Fix failing tests
-        uses: arnaudrenaud/fix-with-agent@v0.1.1
+        uses: arnaudrenaud/fix-with-agent@v0.1.2
         with:
           success-check: npm run build-and-test
           failed-workflow-run-id: ${{ github.event.workflow_run.id }}
