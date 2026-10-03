@@ -49,6 +49,7 @@ jobs:
         run: npm ci
 
       - name: Fix failing tests
+        id: fix
         uses: arnaudrenaud/fix-with-agent@v0.2.0
         with:
           success-check: npm run build-and-test
@@ -69,3 +70,9 @@ jobs:
               --output-format json
           agent-env: |
             CLAUDE_CODE_OAUTH_TOKEN=${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+      - name: Log agent report
+        if: always()
+        env:
+          REPORT: ${{ steps.fix.outputs.report }}
+        run: echo "$REPORT"
