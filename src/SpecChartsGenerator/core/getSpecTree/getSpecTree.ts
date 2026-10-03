@@ -13,7 +13,7 @@ import {
 } from "./helpers/table-syntax";
 
 function endsWithQuestionMark(text: string): boolean {
-  return !text;
+  return text.trim().endsWith("?");
 }
 
 const PARSED_EXPRESSIONS = [
