@@ -46,7 +46,7 @@ jobs:
           node-version: "22"
 
       - name: Install dependencies
-        run: npm i --force
+        run: npm ci
 
       - name: Fix failing tests
         uses: arnaudrenaud/fix-with-agent@v0.2.0
