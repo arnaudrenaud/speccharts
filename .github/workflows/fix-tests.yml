@@ -68,6 +68,5 @@ jobs:
               --permission-mode bypassPermissions \
               --max-budget-usd 2.00 \
               --output-format json
-          agent-cost-attribute: total_cost_usd # Optional arg: in the agent's JSON output, attribute `total_cost_usd` will be read to report cost
           agent-env: |
             CLAUDE_CODE_OAUTH_TOKEN=${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
