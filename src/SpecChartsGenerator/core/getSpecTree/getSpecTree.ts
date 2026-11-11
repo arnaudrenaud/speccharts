@@ -32,9 +32,7 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
     // node.arguments contains [name, callback]
     // node.expression.template contains the template literal
     const [nameNode, callback] = node.arguments;
-    const templateNode = ts.isTaggedTemplateExpression(node.expression)
-      ? node.expression.template
-      : null;
+    const templateNode = null;
     if (
       templateNode &&
       nameNode &&
@@ -57,13 +55,13 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
           current.name,
           row,
           headers,
-          index
+          index,
         );
         const segments = parseTemplateIntoSegmentsWithHeaders(
           current.name,
           row,
           headers,
-          index
+          index,
         );
 
         const tableRowNode: SpecNode = {
@@ -153,8 +151,8 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
             ? endsWithQuestionMark(nameNode.text)
               ? "question"
               : parentDescribe?.type === "question"
-              ? "answer"
-              : "case"
+                ? "answer"
+                : "case"
             : "behavior",
         name: nameNode.text,
       };
@@ -184,7 +182,7 @@ export const getSpecTree = (testFile: File): SpecTree => {
     testFile.content,
     ts.ScriptTarget.Latest,
     true,
-    ts.ScriptKind.TS
+    ts.ScriptKind.TS,
   );
 
   const specTree = {
