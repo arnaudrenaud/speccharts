@@ -49,7 +49,7 @@ jobs:
         run: npm ci
 
       - name: Fix failing tests
-        uses: arnaudrenaud/fix-with-agent@v0.2.0
+        uses: arnaudrenaud/fix-with-agent@v0.3.0
         with:
           success-check: npm run build-and-test
           failed-workflow-run-id: ${{ github.event.workflow_run.id }}
@@ -61,11 +61,13 @@ jobs:
             Do not delete or disable tests unless a test is obsolete because of this change, and explain why.
           commit-title: "fix(auto): Auto-fix tests following breaking change in dependency"
           agent-install-command: npm install -g @anthropic-ai/claude-code
-          agent-command: |
+          agent-command:
+            | # Agent command must be non-interactive and take stdin for its query
             claude \
               -p \
               --permission-mode bypassPermissions \
               --max-budget-usd 2.00 \
               --output-format json
+          agent-cost-attribute: total_cost_usd # Optional arg: in the agent's JSON output, attribute `total_cost_usd` will be read to report cost
           agent-env: |
             CLAUDE_CODE_OAUTH_TOKEN=${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
