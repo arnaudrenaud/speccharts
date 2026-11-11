@@ -49,7 +49,7 @@ jobs:
         run: npm ci
 
       - name: Fix failing tests
-        uses: arnaudrenaud/fix-with-agent@v0.3.0
+        uses: arnaudrenaud/fix-with-agent@v1
         with:
           success-check: npm run build-and-test
           failed-workflow-run-id: ${{ github.event.workflow_run.id }}
@@ -59,7 +59,8 @@ jobs:
             Fix the failed test run, probably following a breaking change in a dependency upgrade in latest commit.
             If applicable, report URLs to documentation and discussions that support the chosen fix.
             Do not delete or disable tests unless a test is obsolete because of this change, and explain why.
-          commit-title: "fix(auto): Auto-fix tests following breaking change in dependency"
+          commit-title: "fix(auto): ⚠️ Auto-fix tests following breaking change in dependency"
+          add-prefix-to-pr: "⚠️ [auto-fixed] " # Optional arg: to discourage hasty merge after auto-fix, add a prefix to pull request
           agent-install-command: npm install -g @anthropic-ai/claude-code
           agent-command:
             | # Agent command must be non-interactive and take stdin for its query
