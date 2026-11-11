@@ -32,7 +32,9 @@ function visit(specTree: SpecTree, node: ts.Node, parentDescribe?: SpecNode) {
     // node.arguments contains [name, callback]
     // node.expression.template contains the template literal
     const [nameNode, callback] = node.arguments;
-    const templateNode = null;
+    const templateNode = ts.isTaggedTemplateExpression(node.expression)
+      ? node.expression.template
+      : null;
     if (
       templateNode &&
       nameNode &&
